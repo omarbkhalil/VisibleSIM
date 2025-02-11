@@ -1,0 +1,24 @@
+C:\Users\omar_\AppData\Local\JetBrains\CLion2024.2\cygwin_cmake\bin\cmake.exe -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_MAKE_PROGRAM=/cygdrive/c/Program Files/JetBrains/CLion 2024.2.1/bin/ninja/cygwin/x64/ninja.exe" -G Ninja -DPython_EXECUTABLE=C:/Users/omar_/OneDrive/Desktop/dros/iotM1/Projtut1/VisibleSim/venv/Scripts/python.exe -DPython3_EXECUTABLE=C:/Users/omar_/OneDrive/Desktop/dros/iotM1/Projtut1/VisibleSim/venv/Scripts/python.exe -S /cygdrive/c/VisibleSim/VisibleSim -B /cygdrive/c/VisibleSim/VisibleSim/cmake-build-debug-cygwin
+-- The C compiler identification is GNU 12.4.0
+-- The CXX compiler identification is GNU 12.4.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++.exe - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- >>> Linux
+-- Found GLUT: /usr/lib/x86_64-linux-gnu/libglut.so
+CMake Error at /cygdrive/c/Users/omar_/AppData/Local/JetBrains/CLion2024.2/cygwin_cmake/share/cmake-3.29.6/Modules/FindPackageHandleStandardArgs.cmake:230 (message):
+  Could NOT find OpenGL (missing: OPENGL_opengl_LIBRARY OPENGL_glx_LIBRARY)
+Call Stack (most recent call first):
+  /cygdrive/c/Users/omar_/AppData/Local/JetBrains/CLion2024.2/cygwin_cmake/share/cmake-3.29.6/Modules/FindPackageHandleStandardArgs.cmake:600 (_FPHSA_FAILURE_MESSAGE)
+  /cygdrive/c/Users/omar_/AppData/Local/JetBrains/CLion2024.2/cygwin_cmake/share/cmake-3.29.6/Modules/FindOpenGL.cmake:579 (FIND_PACKAGE_HANDLE_STANDARD_ARGS)
+  CMakeLists.txt:92 (find_package)
+
+
+-- Configuring incomplete, errors occurred!

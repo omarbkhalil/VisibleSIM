@@ -38,6 +38,8 @@ public:
     void moveTo(Hexanodes::motionDirection dir,uint32_t delay=200000);
 
     void addDebugAttributes(Scheduler* scheduler) override;
+
+
 };
 
 }

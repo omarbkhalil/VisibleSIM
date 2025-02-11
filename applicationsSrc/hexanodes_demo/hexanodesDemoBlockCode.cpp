@@ -31,16 +31,12 @@ void HexanodesDemoBlockCode::startup() {
     // Dummy translation example
     if (node->blockId == 1) {
         if (target) {
-            target->highlight();
-        }
+            target->highlight();       }
         // turn clockwise if possible !
         vector<HexanodesMotion*> tab = wrl->getAllMotionsForModule(node);
         console << "#motion=" << tab.size() << "\n";
         /*vector<HexanodesMotion*>::const_iterator ci=tab.begin();
         while (ci!=tab.end() && (*ci)->direction!=motionDirection::CW) {
-                ci++;
-        }
-        if (ci!=tab.end()) {
             Cell3DPosition destination = (*ci)->getFinalPos(node->position);
             auto orient = (*ci)->getFinalOrientation(module->orientationCode);
             scheduler->schedule(new HexanodesMotionStartEvent(scheduler->now()+1000000, node,destination,orient));

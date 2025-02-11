@@ -16,7 +16,6 @@ E1_FloodingCode::E1_FloodingCode(BlinkyBlocksBlock *host):BlinkyBlocksBlockCode(
     addMessageEventFunc2(BROADCAST_MSG_ID,
                        std::bind(&E1_FloodingCode::myBroadcastFunc,this,
                        std::placeholders::_1, std::placeholders::_2));
-
 }
 
 void E1_FloodingCode::startup() {

@@ -36,7 +36,11 @@ IF (WIN32)
         include_directories(${FREEGLUT_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIRS} ${GLUT_INTERFACE_DIRS})
         link_directories(${FREEGLUT_LIBRARY_DIRS} ${OPENGL_LIBRARY_DIRS} ${GLUT_INTERFACE_LIB_DIRS})
         add_definitions(${FREEGLUT_DEFINITIONS} ${OPENGL_DEFINITIONS})
-        add_executable(${PROJECT_NAME} ${PROJECT_FILES})
+        add_executable(${PROJECT_NAME} ${PROJECT_FILES}
+                applicationsSrc/BBshapeRecognition/neuralNetworkData.h
+                applicationsSrc/BBshapeRecognition/neuralNetworkData.h
+                applicationsSrc/catoms3DRotate/catoms3DRotate.cpp
+                applicationsSrc/myApp/myAppBlockCode.cpp)
         target_link_libraries(${PROJECT_NAME} ${FREEGLUT_LIBRARIES} ${GLUT_LIBRARIES} ${OPENGL_LIBRARIES} glutInterface.lib)
     ENDIF (MSVC)
 
@@ -46,8 +50,8 @@ IF (WIN32)
         ##########################################################
         ######Change Paths to match your library installation#####
         ##########################################################
-        set(FREEGLUT_INCLUDE_DIRS C:/VisibleSim/freeglut-3.2.1/include)
-        set(FREEGLUT_LIBRARY_DIRS C:/VisibleSim/freeglut-3.2.1/cmake-build-debug/lib)
+        set(FREEGLUT_INCLUDE_DIRS C:/VisibleSim/freeglut-3.6.0/include)
+        set(FREEGLUT_LIBRARY_DIRS C:/VisibleSim/freeglut-3.6.0/cmake-build-debug/lib)
         add_compile_definitions(GLEW_STATIC)
         set(GLEW_INCLUDE_DIRS C:/VisibleSim/glew-2.1.0/include)
         set(GLEW_LIBRARY_DIRS C:/VisibleSim/glew-2.1.0/build/cmake/cmake-build-debug/lib)
@@ -461,9 +465,9 @@ set(COMMON_SRC_FILES
         simulatorCore/src/replay/replayExporter.cpp
         simulatorCore/src/replay/replayExporter.h
         simulatorCore/src/replay/replayTags.h
-        )
+)
 
-add_library(BlinkyBlocks STATIC ${COMMON_SRC_FILES}
+add_library(BlinkyBlocks STATIC SHARED ${COMMON_SRC_FILES}
         simulatorCore/src/robots/blinkyBlocks/blinkyBlocksBlock.cpp
         simulatorCore/src/robots/blinkyBlocks/blinkyBlocksBlock.h
         simulatorCore/src/robots/blinkyBlocks/blinkyBlocksBlockCode.cpp
@@ -477,11 +481,11 @@ add_library(BlinkyBlocks STATIC ${COMMON_SRC_FILES}
         simulatorCore/src/robots/blinkyBlocks/blinkyBlocksSimulator.h
         simulatorCore/src/robots/blinkyBlocks/blinkyBlocksWorld.cpp
         simulatorCore/src/robots/blinkyBlocks/blinkyBlocksWorld.h
-        )
+)
 
 target_link_libraries(BlinkyBlocks -lOpenGL32 -lglu32 -lglewd -lfreeglut -lpthread -lmuparser)
 
-add_library(Catoms3D SHARED ${COMMON_SRC_FILES}
+add_library(Catoms3D STATIC SHARED ${COMMON_SRC_FILES}
         simulatorCore/src/robots/catoms3D/catoms3DBlock.cpp
         simulatorCore/src/robots/catoms3D/catoms3DBlock.h
         simulatorCore/src/robots/catoms3D/catoms3DBlockCode.cpp
@@ -498,11 +502,11 @@ add_library(Catoms3D SHARED ${COMMON_SRC_FILES}
         simulatorCore/src/robots/catoms3D/catoms3DSimulator.h
         simulatorCore/src/robots/catoms3D/catoms3DWorld.cpp
         simulatorCore/src/robots/catoms3D/catoms3DWorld.h
-        )
+)
 
 target_link_libraries(Catoms3D -lOpenGL32 -lglu32 -lglew32d -lfreeglut -lpthread -lmuparser)
 
-add_library(SmartBlocks STATIC ${COMMON_SRC_FILES}
+add_library(SmartBlocks STATIC SHARED ${COMMON_SRC_FILES}
         simulatorCore/src/robots/smartBlocks/smartBlocksBlock.cpp
         simulatorCore/src/robots/smartBlocks/smartBlocksBlock.h
         simulatorCore/src/robots/smartBlocks/smartBlocksBlockCode.cpp
@@ -513,10 +517,10 @@ add_library(SmartBlocks STATIC ${COMMON_SRC_FILES}
         simulatorCore/src/robots/smartBlocks/smartBlocksSimulator.h
         simulatorCore/src/robots/smartBlocks/smartBlocksWorld.cpp
         simulatorCore/src/robots/smartBlocks/smartBlocksWorld.h
-        )
+)
 target_link_libraries(SmartBlocks -lOpenGL32 -lglu32 -lglew32d -lfreeglut -lpthread -lmuparser)
 
-add_library(Hexanodes STATIC ${COMMON_SRC_FILES}
+add_library(Hexanodes STATIC SHARED ${COMMON_SRC_FILES}
         simulatorCore/src/robots/hexanodes/hexanodesBlock.cpp
         simulatorCore/src/robots/hexanodes/hexanodesBlock.h
         simulatorCore/src/robots/hexanodes/hexanodesBlockCode.cpp
@@ -531,7 +535,8 @@ add_library(Hexanodes STATIC ${COMMON_SRC_FILES}
         simulatorCore/src/robots/hexanodes/hexanodesSimulator.h
         simulatorCore/src/robots/hexanodes/hexanodesWorld.cpp
         simulatorCore/src/robots/hexanodes/hexanodesWorld.h
-        )
+
+)
 target_link_libraries(Hexanodes -lOpenGL32 -lglu32 -lglew32d -lfreeglut -lpthread -lmuparser)
 
 add_library(Datoms STATIC SHARED ${COMMON_SRC_FILES}
@@ -551,8 +556,7 @@ add_library(Datoms STATIC SHARED ${COMMON_SRC_FILES}
         simulatorCore/src/robots/datoms/deformationEvents.h
         simulatorCore/src/robots/datoms/datomsMotionRules.h
         simulatorCore/src/robots/datoms/datomsMotionRules.cpp
-        )
-target_link_libraries(Datoms -lOpenGL32 -lglu32 -lglew32d -lfreeglut -lpthread -lmuparser)
+)
 
 add_library(SlidingCubes STATIC SHARED ${COMMON_SRC_FILES}
         simulatorCore/src/robots/slidingCubes/slidingCubesGlBlock.cpp
@@ -567,7 +571,7 @@ add_library(SlidingCubes STATIC SHARED ${COMMON_SRC_FILES}
         simulatorCore/src/robots/slidingCubes/slidingCubesSimulator.h
         simulatorCore/src/robots/slidingCubes/slidingCubesWorld.cpp
         simulatorCore/src/robots/slidingCubes/slidingCubesWorld.h
-        )
+)
 target_link_libraries(SlidingCubes -lOpenGL32 -lglu32 -lglew32d -lfreeglut -lpthread -lmuparser)
 
 add_executable(stressTestSB applicationsSrc/stressTestSB/stressTestSB.cpp applicationsSrc/stressTestSB/stressTestSBBlockCode.cpp)
@@ -578,29 +582,30 @@ add_executable(simpleColorBB applicationsSrc/simpleColorBB/simpleColorBB.cpp app
 target_link_libraries(simpleColorBB -lBlinkyBlocks -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
 install(TARGETS simpleColorBB RUNTIME DESTINATION applicationsBin/simpleColorBB)
 
-add_executable(ants applicationsSrc/ants/ants.cpp applicationsSrc/ants/antsCode.cpp)
-target_link_libraries(ants -lBlinkyBlocks -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
-install(TARGETS ants RUNTIME DESTINATION applicationsBin/rainbow)
+#add_executable(rainbow applicationsSrc/rainbow/rainbow.cpp applicationsSrc/rainbow/rainbowCode.cpp)
+#target_link_libraries(rainbow -lBlinkyBlocks -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
+#install(TARGETS rainbow RUNTIME DESTINATION applicationsBin/rainbow)
 
-add_executable(myApp applicationsSrc/myApp/myApp.cpp applicationsSrc/myApp/myAppCode.cpp)
-target_link_libraries(myApp -lBlinkyBlocks -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
-install(TARGETS myApp RUNTIME DESTINATION applicationsBin/myApp)
+#add_executable(ants applicationsSrc/ants/ants.cpp applicationsSrc/ants/antsCode.cpp)
+#target_link_libraries(ants -lBlinkyBlocks -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
+#install(TARGETS ants RUNTIME DESTINATION applicationsBin/rainbow)
 
 add_executable(demoMotionsC3D applicationsSrc/demoMotionsC3D/demoMotionsC3D.cpp applicationsSrc/demoMotionsC3D/demoMotionsC3DCode.cpp)
 target_link_libraries(demoMotionsC3D -lCatoms3D -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
 install(TARGETS demoMotionsC3D RUNTIME DESTINATION applicationsBin/demoMotionsC3D)
 
-add_executable(DemoReconfC3D applicationsSrc/DemoReconfC3D/DemoReconfC3D.cpp applicationsSrc/DemoReconfC3D/DemoReconfC3DCode.cpp)
-target_link_libraries(DemoReconfC3D -lCatoms3D -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
-install(TARGETS DemoReconfC3D RUNTIME DESTINATION applicationsBin/DemoReconfC3D)
-
 add_executable(myMotionTest applicationsSrc/myMotionTest/myMotionTest.cpp applicationsSrc/myMotionTest/myMotionTestCode.cpp)
 target_link_libraries(myMotionTest -lCatoms3D -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
-install(TARGETS myMotionTest RUNTIME DESTINATION applicationsBin/myMotionTest)
+install(TARGETS myMotionTest RUNTIME DESTINATION applicationsBin/demoMotionsC3D)
 
 add_executable(hexanodes_demo applicationsSrc/hexanodes_demo/hexanodesDemo.cpp applicationsSrc/hexanodes_demo/hexanodesDemoBlockCode.cpp)
-target_link_libraries(hexanodes_demo -lHexanodes -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
+target_link_libraries(hexanodes_demo -lHexanodes -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d)
 install(TARGETS hexanodes_demo RUNTIME DESTINATION applicationsBin/hexanodes_demo)
+
+add_executable(hexaEx1 applicationsSrc/hexaEx1/hexaEx1.cpp applicationsSrc/hexaEx1/hexaEx1BlockCode.cpp)
+target_link_libraries(hexaEx1 -lHexanodes -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d)
+install(TARGETS hexaEx1 RUNTIME DESTINATION applicationsBin/hexaEx1)
+
 
 add_executable(myAppSC applicationsSrc/myAppSC/myAppSC.cpp applicationsSrc/myAppSC/myAppSCCode.cpp applicationsSrc/myAppSC/myAppSCCode.hpp)
 target_link_libraries(myAppSC -lSlidingCubes -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
@@ -622,64 +627,41 @@ add_executable(e2_goback applicationsSrc/e2_goback/e2_goback.cpp applicationsSrc
 target_link_libraries(e2_goback -lBlinkyBlocks -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
 install(TARGETS e2_goback RUNTIME DESTINATION applicationsBin/e2_goback)
 
+add_executable(test1 applicationsSrc/test1/test1.cpp applicationsSrc/test1/test1BlockCode.cpp)
+target_link_libraries(test1 -lBlinkyBlocks -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
+install(TARGETS test1 RUNTIME DESTINATION applicationsBin/test1)
+
+add_executable(myApp applicationsSrc/myApp/myApp.cpp applicationsSrc/myApp/myAppBlockCode.cpp)
+target_link_libraries(myApp -lBlinkyBlocks -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
+install(TARGETS myApp RUNTIME DESTINATION applicationsBin/myApp)
+
+add_executable(myApp2 applicationsSrc/myApp2/myApp2.cpp applicationsSrc/myApp2/myApp2BlockCode.cpp)
+target_link_libraries(myApp2 -lBlinkyBlocks -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
+install(TARGETS myApp2 RUNTIME DESTINATION applicationsBin/myApp2)
+
+add_executable(myApp2plus applicationsSrc/myApp2plus/myApp2plus.cpp applicationsSrc/myApp2plus/myApp2plusBlockCode.cpp)
+target_link_libraries(myApp2plus -lBlinkyBlocks -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
+install(TARGETS myApp2plus RUNTIME DESTINATION applicationsBin/myApp2plus)
+
+
 add_executable(e3_lightpath applicationsSrc/e3_lightpath/e3_lightpath.cpp applicationsSrc/e3_lightpath/e3_lightpathCode.cpp)
 target_link_libraries(e3_lightpath -lBlinkyBlocks -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
 install(TARGETS e3_lightpath RUNTIME DESTINATION applicationsBin/e3_lightpath)
 
-# Generated by VisibleSim BlockCode Generator
-# https://services-stgi.pu-pm.univ-fcomte.fr/visiblesim/generator.php
-# 2022-10-13
-add_executable(borders applicationsSrc/borders/borders.cpp applicationsSrc/borders/bordersCode.cpp)
-target_link_libraries(borders -lBlinkyBlocks -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d)
-install(TARGETS borders RUNTIME DESTINATION applicationsBin/borders)
 
-# Generated by VisibleSim BlockCode Generator
-# https://services-stgi.pu-pm.univ-fcomte.fr/visiblesim/generator.php
-# 2023-02-10
-add_executable(myAppMotionSC applicationsSrc/myAppMotionSC/myAppMotionSC.cpp applicationsSrc/myAppMotionSC/myAppMotionSCCode.cpp)
-target_link_libraries(myAppMotionSC -lSlidingCubes -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d)
-install(TARGETS myAppMotionSC RUNTIME DESTINATION applicationsBin/myAppMotionSC)
+add_executable(catomsTest1 applicationsSrc/catomsTest1/catomsTest1.cpp applicationsSrc/catomsTest1/catomsTest1BlockCode.cpp)
+target_link_libraries(catomsTest1 -lCatoms3D -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
+install(TARGETS catomsTest1 RUNTIME DESTINATION applicationsBin/catomsTest1)
 
-add_executable(myStabilityApp applicationsSrc/myStabilityApp/myStabilityApp.cpp applicationsSrc/myStabilityApp/myStabilityAppCode.cpp applicationsSrc/myStabilityApp/vector2d.cpp  applicationsSrc/myStabilityApp/mypolygon.cpp)
-target_link_libraries(myStabilityApp -lBlinkyBlocks -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d)
-install(TARGETS myStabilityApp RUNTIME DESTINATION applicationsBin/myStabilityApp)
+add_executable(catomsTest2 applicationsSrc/catomsTest2/catomsTest2.cpp applicationsSrc/catomsTest2/catomsTest2BlockCode.cpp)
+target_link_libraries(catomsTest2 -lCatoms3D -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
+install(TARGETS catomsTest2 RUNTIME DESTINATION applicationsBin/catomsTest2)
 
-add_executable(myCSGapp applicationsSrc/myCSGapp/myCSGapp.cpp applicationsSrc/myCSGapp/myCSGappCode.cpp)
-target_link_libraries(myCSGapp -lCatoms3D -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
-install(TARGETS myCSGapp RUNTIME DESTINATION applicationsBin/myCSGapp)
+add_executable(catomsTest3 applicationsSrc/catomsTest3/catomsTest3.cpp applicationsSrc/catomsTest3/catomsTest3BlockCode.cpp)
+target_link_libraries(catomsTest3 -lCatoms3D -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
+install(TARGETS catomsTest3 RUNTIME DESTINATION applicationsBin/catomsTest3)
 
-add_executable(myCylinder applicationsSrc/myCylinder/myCylinder.cpp applicationsSrc/myCylinder/myCylinderCode.cpp)
-target_link_libraries(myCylinder -lCatoms3D -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
-install(TARGETS myCylinder RUNTIME DESTINATION applicationsBin/myCylinder)
 
-add_executable(myBridgeApp applicationsSrc/myBridgeApp/myBridgeApp.cpp applicationsSrc/myBridgeApp/myBridgeAppCode.cpp applicationsSrc/myBridgeApp/mypolygon.cpp applicationsSrc/myBridgeApp/vector2D.cpp)
-target_link_libraries(myBridgeApp -lCatoms3D -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
-install(TARGETS myBridgeApp RUNTIME DESTINATION applicationsBin/myCylinder)
-
-add_executable(TextAppGenerator applicationsSrc/TextAppGenerator/TextAppGenerator.cpp applicationsSrc/TextAppGenerator/TextAppGeneratorCode.cpp)
-target_link_libraries(TextAppGenerator -lCatoms3D -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
-install(TARGETS TextAppGenerator RUNTIME DESTINATION applicationsBin/TextAppGenerator)
-
-add_executable(myCSGappBB applicationsSrc/myCSGappBB/myCSGappBB.cpp applicationsSrc/myCSGappBB/myCSGappBBCode.cpp)
-target_link_libraries(myCSGappBB -lBlinkyBlocks -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
-install(TARGETS myCSGappBB RUNTIME DESTINATION applicationsBin/myCSGappBB)
-
-add_executable(BBbalance applicationsSrc/BBbalance/BBbalance.cpp applicationsSrc/BBbalance/BBbalanceCode.cpp applicationsSrc/BBbalance/SupportPolygon.cpp applicationsSrc/BBbalance/SupportPolygon.h)
-target_link_libraries(BBbalance -lBlinkyBlocks -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d)
-install(TARGETS BBbalance RUNTIME DESTINATION applicationsBin/BBbalance)
-
-add_executable(BBshapeRecognition applicationsSrc/BBshapeRecognition/BBshapeRecognition.cpp applicationsSrc/BBshapeRecognition/BBshapeRecognitionCode.cpp
-        applicationsSrc/BBshapeRecognition/neuralNetworkData.h)
-target_link_libraries(BBshapeRecognition -lBlinkyBlocks -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d)
-install(TARGETS BBshapeRecognition RUNTIME DESTINATION applicationsBin/BBshapeRecognition)
-
-add_executable(XBlock applicationsSrc/XBlock/XBlock.cpp applicationsSrc/XBlock/XBlockCode.cpp)
-target_link_libraries(XBlock -lBlinkyBlocks -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d)
-install(TARGETS XBlock RUNTIME DESTINATION applicationsBin/XBlock)
-
-add_executable(datomMotions applicationsSrc/datomMotions/datomMotions.cpp applicationsSrc/datomMotions/datomMotionsCode.cpp)
-target_link_libraries(datomMotions -lDatoms -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d)
-install(TARGETS datomMotions RUNTIME DESTINATION applicationsBin/datomMotions)
 #################################################################################
 ############################ REPLAYER ###########################################
 #################################################################################
@@ -722,3 +704,4 @@ set(COMMON_REPLAY_FILES
         utilities/replay/replayCommandLine.h utilities/replay/replayWorldFactory.cpp utilities/replay/replayWorldFactory.h)
 
 
+add_executable(new_target applicationsSrc/catoms3DRotate/catoms3DRotate.cpp)
