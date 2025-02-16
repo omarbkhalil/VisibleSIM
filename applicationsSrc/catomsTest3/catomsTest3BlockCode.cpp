@@ -22,7 +22,8 @@ vector<Cell3DPosition> CatomsTest3BlockCode::teleportedPositions;
 
 
 std::priority_queue<std::pair<Cell3DPosition, double>, std::vector<std::pair<Cell3DPosition, double>>, std::function<bool(std::pair<Cell3DPosition, double>, std::pair<Cell3DPosition, double>)>> CatomsTest3BlockCode::openSet{
-    [](std::pair<Cell3DPosition, double> a, std::pair<Cell3DPosition, double> b) { return a.second > b.second; } // Assuming this comparator logic
+    [](std::pair<Cell3DPosition, double> a, std::pair<Cell3DPosition, double> b) {             return a.second > b.second;
+ } // Assuming this comparator logic
 };
 
 
@@ -31,7 +32,25 @@ std::map<Cell3DPosition, double> CatomsTest3BlockCode::fScore;
 map<Cell3DPosition, Cell3DPosition> CatomsTest3BlockCode::cameFrom;
 set<Cell3DPosition> CatomsTest3BlockCode::closedSet;
 
-const Cell3DPosition CatomsTest3BlockCode::goalPosition = Cell3DPosition(9, 4, 6);
+std::queue<Cell3DPosition> CatomsTest3BlockCode::startQueue(
+    std::deque{
+        Cell3DPosition(20, 6, 7),
+        Cell3DPosition(20, 6, 5)
+
+    }
+);
+
+std::queue<Cell3DPosition> CatomsTest3BlockCode::targetQueue(
+    std::deque{
+        Cell3DPosition(9, 4, 6),
+        Cell3DPosition(9, 4, 7)
+
+    }
+);
+
+
+
+//const Cell3DPosition CatomsTest3BlockCode::goalPosition = Cell3DPosition(9, 4, 6);
 
 
 CatomsTest3BlockCode::CatomsTest3BlockCode(Catoms3DBlock *host) : Catoms3DBlockCode(host) {
@@ -41,43 +60,62 @@ CatomsTest3BlockCode::CatomsTest3BlockCode(Catoms3DBlock *host) : Catoms3DBlockC
     module = static_cast<Catoms3DBlock*>(hostBlock);
 }
 
+
 void CatomsTest3BlockCode::startup() {
     console << "start\n";
-    if (module->blockId == 34) {
+    static bool hasStarted = false;
+    if (hasStarted) {
+
+        distance = -1;
+        hostBlock->setColor(LIGHTGREY);
+        return;
+    }
+
+    if (!startQueue.empty() && (module->position == startQueue.front())) {
+        // Mark that the starting module has been activated.
+        hasStarted = true;
+
+        Cell3DPosition startTarget = startQueue.front();
+        startQueue.pop();
+
         module->setColor(RED);
         distance = 0;
 
-        Cell3DPosition currentPosition = module->position;
+        Cell3DPosition currentPosition = startTarget;
         cells[currentPosition].clear();  // Clear any previous data
         teleportedPositions.push_back(currentPosition);
 
-        // Initialize for A* pathfinding
-        gScore[currentPosition] = 0;  // Cost start is zero
-        fScore[currentPosition] = heuristic(currentPosition, goalPosition); // Estimate cost from start to goal
+        // Initialize for A* pathfinding with targetQueue.front() as goal.
+        gScore[currentPosition] = 0;
+        fScore[currentPosition] = heuristic(currentPosition, targetQueue.front());
 
-        //  initial visited nodes
-        for(auto &pos: module->getAllMotions()) {
+        // Record initial visited nodes.
+        for (auto &pos: module->getAllMotions()) {
             cells[currentPosition].push_back(pos.first);
-            visited.push_back(pos.first);  // Might be used to prevent re-visiting during initial discovery
+            visited.push_back(pos.first);
         }
 
-        // Push current position to open set with its f score
+        // Push current position to open set with its f score.
         openSet.push({currentPosition, fScore[currentPosition]});
 
-        // This part should be handled after the openSet is populated with initial valid moves
+        // Schedule the next move.
         if (!openSet.empty()) {
             auto nextStep = openSet.top();
             openSet.pop();
             getScheduler()->schedule(new TeleportationStartEvent(getScheduler()->now() + 1000, module, nextStep.first));
         }
     } else {
+        // Either this module is not on the startQueue front or another module has already started.
         distance = -1;
         hostBlock->setColor(LIGHTGREY);
     }
 }
 
+
+
 void CatomsTest3BlockCode::onMotionEnd() {
     console << " has reached its destination\n";
+
 }
 
 void CatomsTest3BlockCode::processLocalEvent(EventPtr pev) {
@@ -95,7 +133,6 @@ void CatomsTest3BlockCode::processLocalEvent(EventPtr pev) {
 
     switch (pev->eventType) {
         case EVENT_TELEPORTATION_END:
-            // Return handling
             if (isReturning) {
                 if (!discoveredPath.empty()) {
                     Cell3DPosition nextPosition = discoveredPath.back();
@@ -105,10 +142,12 @@ void CatomsTest3BlockCode::processLocalEvent(EventPtr pev) {
                 } else {
                     console << "Return journey complete. Back at the initial position.\n";
                     isReturning = false;
+                    // Reset the active module flag so that the next waiting module can start.
                 }
             } else {
                 // Check if the current position is the goal.
-                if (currentPosition == goalPosition) {
+                if ( !targetQueue.empty() && currentPosition == targetQueue.front() ) {
+                    targetQueue.pop();
                     console << "Goal reached. Reconstructing optimal path...\n";
                     isReturning = true;
                     discoveredPath.clear();
@@ -152,7 +191,7 @@ void CatomsTest3BlockCode::processLocalEvent(EventPtr pev) {
                         if (gScore.find(neighbor) == gScore.end() || tentative_gScore < gScore[neighbor]) {
                             cameFrom[neighbor] = currentPosition;
                             gScore[neighbor] = tentative_gScore;
-                            fScore[neighbor] = tentative_gScore + heuristic(neighbor, goalPosition);
+                            fScore[neighbor] = tentative_gScore + heuristic(neighbor, targetQueue.front());
 
                             // Add the neighbor to the open set for further exploration.
                             openSet.push({neighbor, fScore[neighbor]});

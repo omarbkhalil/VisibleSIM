@@ -60,6 +60,14 @@ public:
     CatomsTest3BlockCode(Catoms3DBlock *host);
     ~CatomsTest3BlockCode() {};
 
+
+
+    //static bool activeModuleRunning;
+
+    static std::queue<Cell3DPosition> startQueue;
+    static std::queue<Cell3DPosition> targetQueue;
+
+
     void startup() override;
     void processLocalEvent(EventPtr pev) override;
     void onMotionEnd() override;
