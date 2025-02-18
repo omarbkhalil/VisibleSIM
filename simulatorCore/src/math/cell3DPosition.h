@@ -18,12 +18,13 @@ using namespace std;
 class Cell3DPosition {
 public:
     short pt[3]; //!< (x,y,z) values of the vector
-    Cell3DPosition();
-    constexpr Cell3DPosition(short x,short y,short z) : pt{x,y,z} { }
-    Cell3DPosition(const Vector3D& v);
-    constexpr Cell3DPosition(const Cell3DPosition& c):pt{ c.pt[0], c.pt[1], c.pt[2] } {};
 
-    void set(short x,short y,short z);
+    Cell3DPosition();
+    constexpr Cell3DPosition(short x, short y, short z) : pt{x, y, z} { }
+    Cell3DPosition(const Vector3D& v);
+    constexpr Cell3DPosition(const Cell3DPosition& c) : pt{ c.pt[0], c.pt[1], c.pt[2] } { };
+
+    void set(short x, short y, short z);
     int dist_taxi(const Cell3DPosition& p) const;
     double dist_euclid(const Cell3DPosition& p) const;
     double l2_norm() const;
@@ -36,41 +37,57 @@ public:
 
     inline const short operator[](const int i) const { return pt[i]; };
     bool operator<(const Cell3DPosition &o) const;
-    bool operator==(const Cell3DPosition &o) const
-        { return (pt[0] == o.pt[0]) && (pt[1] == o.pt[1]) && (pt[2] == o.pt[2]); };
+    bool operator==(const Cell3DPosition &o) const {
+        return (pt[0] == o.pt[0]) && (pt[1] == o.pt[1]) && (pt[2] == o.pt[2]);
+    };
 
     /**
-     * @brief Compares two position by considering first the Z component, then Y, and X, and returns true if first is smaller than second
-     **/
+     * Compares two positions by considering first the Z component, then Y, then X.
+     */
     static bool compare_ZYX(const Cell3DPosition& first, const Cell3DPosition& second);
 
     bool operator!=(const Cell3DPosition &o) const { return !(operator==(o)); }
     const Cell3DPosition& operator+=(const Cell3DPosition&p);
     operator Vector3D() const { return Vector3D(pt[0], pt[1], pt[2], 1.0); };
 
-    friend ostream& operator<<(ostream& f,const Cell3DPosition&p);
-    friend const Cell3DPosition operator +(const Cell3DPosition&,const Cell3DPosition&);
-    friend const Cell3DPosition operator -(const Cell3DPosition&,const Cell3DPosition&);
-    friend const Cell3DPosition operator *(const Cell3DPosition&,const Cell3DPosition&);
-    friend const Cell3DPosition operator *(int,const Cell3DPosition&);
+    friend ostream& operator<<(ostream& f, const Cell3DPosition&p);
+    friend const Cell3DPosition operator +(const Cell3DPosition&, const Cell3DPosition&);
+    friend const Cell3DPosition operator -(const Cell3DPosition&, const Cell3DPosition&);
+    friend const Cell3DPosition operator *(const Cell3DPosition&, const Cell3DPosition&);
+    friend const Cell3DPosition operator *(int, const Cell3DPosition&);
 
     /**
-     * Serializes (converts to a stream of bits) the Cell3DPosition
-     *  for the purpose of simulation replay
-     *
-     *  By default, serializes as: <x><y><z>
+     * Serializes the Cell3DPosition to a binary stream.
      *
      * @param bStream output binary stream
      */
-    void serialize(std::ofstream &bStream);
+    void serialize(std::ofstream &bStream) const;
 
     /**
-     * Clear-text equivalent of the Cell3DPosition::serialize function, for debugging purpose
-     * @see Cell3DPosition::serialize
-     * @param dbStream output binary stream
+     * Writes a clear-text version of the Cell3DPosition to a stream.
+     *
+     * @param dbStream output text stream
      */
-    void serialize_cleartext(std::ofstream &dbStream);
+    void serialize_cleartext(std::ofstream &dbStream) const;
 
+    /**
+     * Deserializes a Cell3DPosition from a binary stream.
+     *
+     * @param bStream input binary stream
+     */
+    void deserialize(std::ifstream &bStream);
 };
+
+inline void Cell3DPosition::serialize(std::ofstream &bStream) const {
+    bStream.write(reinterpret_cast<const char*>(this->pt), sizeof(this->pt));
+}
+
+inline void Cell3DPosition::serialize_cleartext(std::ofstream &dbStream) const {
+    dbStream << this->pt[0] << " " << this->pt[1] << " " << this->pt[2];
+}
+
+inline void Cell3DPosition::deserialize(std::ifstream &bStream) {
+    bStream.read(reinterpret_cast<char*>(this->pt), sizeof(this->pt));
+}
 
 #endif // CELL3DPOSITION_H

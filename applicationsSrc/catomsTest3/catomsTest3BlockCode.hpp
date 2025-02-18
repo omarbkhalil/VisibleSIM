@@ -54,7 +54,7 @@ static std::map<Cell3DPosition, double> gScore, fScore;
     static int currentMovingModuleId;
     bool isReturning = false;
     static const Cell3DPosition goalPosition;
-
+    bool restoredMode = false;
 
 public:
     CatomsTest3BlockCode(Catoms3DBlock *host);

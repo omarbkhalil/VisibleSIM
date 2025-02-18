@@ -142,10 +142,14 @@ const Cell3DPosition operator *(int n, const Cell3DPosition& p)
     return r;
 }
 
+/*
 void Cell3DPosition::serialize(std::ofstream &bStream) {
-    throw BaseSimulator::NotImplementedException(); // @TODO BP
+    // Write the binary representation of the pt array.
+    bStream.write(reinterpret_cast<const char*>(this->pt), sizeof(this->pt));
 }
 
 void Cell3DPosition::serialize_cleartext(std::ofstream &dbStream) {
-    throw BaseSimulator::NotImplementedException(); // @TODO BP
+    // Write a clear-text version of the pt array.
+    dbStream << this->pt[0] << " " << this->pt[1] << " " << this->pt[2];
 }
+*/
