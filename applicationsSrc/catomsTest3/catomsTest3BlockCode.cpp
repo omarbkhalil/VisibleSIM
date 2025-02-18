@@ -52,7 +52,6 @@ std::queue<Cell3DPosition> CatomsTest3BlockCode::targetQueue(
     }
 );
 
-// Constructor.
 CatomsTest3BlockCode::CatomsTest3BlockCode(Catoms3DBlock *host) : Catoms3DBlockCode(host) {
     if (!host) return;
     module = static_cast<Catoms3DBlock*>(hostBlock);
@@ -62,10 +61,8 @@ void CatomsTest3BlockCode::startup() {
     console << "start\n";
     std::cout << "Working directory: " << std::filesystem::current_path() << std::endl;
 
-    // Only the designated module (at the start cell) should use restored mode.
     if(module->position != startQueue.front()){
-        // For modules not at the designated starting cell, use normal initialization.
-        // (You may decide to do nothing or run a different branch.)
+
         return;
     }
 
@@ -99,7 +96,7 @@ void CatomsTest3BlockCode::startup() {
                 }
             }
         }
-        return; // Skip normal A* initialization if restored mode.
+        return;
     }
 
     // Normal A* initialization.
