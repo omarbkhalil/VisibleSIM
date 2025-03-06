@@ -28,6 +28,10 @@ private:
 
     // Declare A* related functions only once
     static double heuristic(const Cell3DPosition& current, const Cell3DPosition& goal);
+
+    void initiateNextModulePathfinding();
+
+
     static map<Cell3DPosition, vector<Cell3DPosition>> cells;
     static vector<Cell3DPosition> visited;
     static vector<Cell3DPosition> teleportedPositions;

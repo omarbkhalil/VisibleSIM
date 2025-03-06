@@ -188,6 +188,8 @@ void CatomsTest3BlockCode::processLocalEvent(EventPtr pev) {
                 } else {
                     console << "Return journey complete. Back at the initial position.\n";
                     isReturning = false;
+                    initiateNextModulePathfinding();
+
                 }
             } else {
                 if (!targetQueue.empty() && currentPosition == targetQueue.front()) {
@@ -325,4 +327,59 @@ std::vector<Cell3DPosition> loadOptimalPath(const std::string& filename) {
     }
     ifs.close();
     return path;
+}
+
+void CatomsTest3BlockCode::initiateNextModulePathfinding() {
+    if (startQueue.empty()) {
+        console << "No more modules in startQueue.\n";
+        return;
+    }
+
+    // Retrieve the next starting position.
+    Cell3DPosition nextStart = startQueue.front();
+    startQueue.pop();
+
+    cells.clear();
+    visited.clear();
+    teleportedPositions.clear();
+    while (!openSet.empty()) {
+        openSet.pop();
+    }
+    gScore.clear();
+    fScore.clear();
+    cameFrom.clear();
+    closedSet.clear();
+
+    // Assume the module calling this function should match the nextStart position.
+    if (module->position != nextStart) {
+        console << "Error: current module position (" << module->position
+                << ") does not match expected start position " << nextStart << "\n";
+        return;
+    }
+
+    // Begin minimal initialization for A* pathfinding.
+    console << "Initiating pathfinding for module at " << nextStart << "\n";
+    module->setColor(RED);
+    distance = 0;
+    Cell3DPosition currentPosition = nextStart;
+    cells[currentPosition].clear();
+    teleportedPositions.push_back(currentPosition);
+    gScore[currentPosition] = 0;
+    // Use targetQueue.front() as the current target.
+    fScore[currentPosition] = heuristic(currentPosition, targetQueue.front());
+
+    // Expand neighbors.
+    for (auto &motion : module->getAllMotions()) {
+        cells[currentPosition].push_back(motion.first);
+        visited.push_back(motion.first);
+    }
+
+    openSet.push({currentPosition, fScore[currentPosition]});
+
+    // Schedule the first teleportation event.
+    if (!openSet.empty()) {
+        auto nextStep = openSet.top();
+        openSet.pop();
+        getScheduler()->schedule(new TeleportationStartEvent(getScheduler()->now() + 1000, module, nextStep.first));
+    }
 }
