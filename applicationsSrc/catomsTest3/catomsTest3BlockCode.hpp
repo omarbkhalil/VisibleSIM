@@ -62,6 +62,8 @@ private:
     static std::map<Cell3DPosition, std::vector<Cell3DPosition>> cells;
     static std::vector<Cell3DPosition> visited;
     static std::vector<Cell3DPosition> teleportedPositions;
+    static std::vector<std::vector<Cell3DPosition>> globalOptimalPaths;
+
 
     static std::priority_queue<std::pair<Cell3DPosition, double>,
                                std::vector<std::pair<Cell3DPosition, double>>,
@@ -71,6 +73,10 @@ private:
     static std::set<Cell3DPosition> closedSet;
     static bool teleportationInProgress;
     static bool savingEnabled;
+
+    bool useGlobalPath = false;
+    int pathIndex = 0;
+    std::vector<Cell3DPosition> savedPath;
 
     int currentModuleId = 1;
     int motionCount = 0;

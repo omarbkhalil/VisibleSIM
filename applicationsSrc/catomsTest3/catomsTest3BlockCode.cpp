@@ -36,6 +36,8 @@ std::map<Cell3DPosition, double> CatomsTest3BlockCode::fScore;
 std::map<Cell3DPosition, Cell3DPosition> CatomsTest3BlockCode::cameFrom;
 std::set<Cell3DPosition> CatomsTest3BlockCode::closedSet;
 
+std::vector<std::vector<Cell3DPosition>> CatomsTest3BlockCode::globalOptimalPaths;
+
 // Queues for start and target positions.
 std::queue<Cell3DPosition> CatomsTest3BlockCode::startQueue(
     std::deque{
@@ -63,6 +65,7 @@ std::queue<Cell3DPosition> CatomsTest3BlockCode::startQueue(
     }
 );
 
+//state 1
 std::queue<Cell3DPosition> CatomsTest3BlockCode::targetQueue(
     std::deque{
         Cell3DPosition(8, 5, 7),
@@ -88,6 +91,38 @@ std::queue<Cell3DPosition> CatomsTest3BlockCode::targetQueue(
         Cell3DPosition(2, 6, 4)
     }
 );
+
+
+
+// sstate 2
+/*
+std::queue<Cell3DPosition> CatomsTest3BlockCode::targetQueue(
+    std::deque{
+        Cell3DPosition(8, 6, 7),
+        Cell3DPosition(8, 6, 5),
+        Cell3DPosition(8, 7, 6),
+        Cell3DPosition(7, 7, 6),
+        Cell3DPosition(7, 6, 7),
+        Cell3DPosition(6, 6, 4),
+        Cell3DPosition(7, 6, 5),
+        Cell3DPosition(6, 6, 5),
+        Cell3DPosition(6, 4, 6),
+        Cell3DPosition(6, 6, 8),
+        Cell3DPosition(5, 6, 4),
+        Cell3DPosition(5, 6, 8),
+        Cell3DPosition(4, 6, 7),
+        Cell3DPosition(4, 6, 5),
+        Cell3DPosition(4, 7, 6),
+        Cell3DPosition(3, 7, 6),
+        Cell3DPosition(3, 6, 5),
+        Cell3DPosition(3, 6, 7),
+        Cell3DPosition(2, 6, 7),
+        Cell3DPosition(2, 6, 5),
+        Cell3DPosition(2, 6, 4)
+    }
+);
+
+*/
 
 // Flag to enable saving. If the file exists, this flag will be disabled.
 bool CatomsTest3BlockCode::savingEnabled = true;
@@ -154,33 +189,64 @@ void CatomsTest3BlockCode::startup() {
         return;
     }
 
-    // If an optimal path file exists, disable saving and load all saved paths.
-    if (std::filesystem::exists("optimal_paths.txt")) {
-        savingEnabled = false;
-        console << "Optimal path file exists. Loading all saved paths...\n";
-        std::vector<std::vector<Cell3DPosition>> allPaths = loadAllOptimalPaths();
-        if (!allPaths.empty()) {
-            console << "Displaying all saved optimal paths:\n";
-            int pathNum = 1;
-            for (auto &path : allPaths) {
-                console << "Path " << pathNum++ << ":\n";
-                for (auto &pos : path) {
-                    console << pos << "\n";
-                }
-                console << "\n";
+   if (std::filesystem::exists("optimal_paths.txt")) {
+    savingEnabled = false;
+    console << "Optimal path file exists. Loading all saved paths...\n";
+    std::vector<std::vector<Cell3DPosition>> allPaths = loadAllOptimalPaths();
+    // Assign loaded paths to the global variable.
+    globalOptimalPaths = allPaths;
+
+    // Display the loaded paths for debugging.
+    if (!allPaths.empty()) {
+        console << "Displaying all saved optimal paths (global structure):\n";
+        for (size_t i = 0; i < globalOptimalPaths.size(); ++i) {
+            console << "Path " << i + 1 << ":\n";
+            for (auto &pos : globalOptimalPaths[i]) {
+                console << pos << "\n";
             }
-        } else {
-            console << "No paths found in optimal_paths.txt\n";
+            console << "\n";
         }
-        // Skip normal A* initialization.
-        return;
+    } else {
+        console << "globalOptimalPaths is empty.\n";
     }
 
-    // Normal startup initialization using A* if no saved optimal path is loaded.
-    if (module->position != startQueue.front()) {
-        return;
+    // Ensure that modules move one by one by checking the startQueue.
+    if (!startQueue.empty() && (module->position == startQueue.front())) {
+        // Pop this module's position off the startQueue.
+        startQueue.pop();
+        bool matchingPathFound = false;
+        for (const auto &path : globalOptimalPaths) {
+            if (!path.empty() && module->position == path.front()) {
+                matchingPathFound = true;
+                console << "Module position " << module->position
+                        << " matches the starting cell of a saved optimal path.\n";
+                // If the saved path has more cells, schedule teleportation to the next cell.
+                if (path.size() > 1) {
+                    Cell3DPosition nextPos = path[1];
+                    double nextFScore = heuristic(nextPos, targetQueue.empty() ? nextPos : targetQueue.front());
+                    openSet.push({nextPos, nextFScore});
+                    console << "Pushed next position " << nextPos
+                            << " into openSet for automatic teleportation.\n";
+                    getScheduler()->schedule(new TeleportationStartEvent(getScheduler()->now() + 1000, module, nextPos));
+                } else {
+                    console << "Saved path for module " << module->position << " has no next cell.\n";
+                }
+                break; // One matching path is enough.
+            }
+        }
+        if (!matchingPathFound) {
+            console << "No saved optimal path starts at module position " << module->position << ".\n";
+        }
+    } else {
+        console << "It's not this module's turn yet. Module position " << module->position
+                << " does not match the front of startQueue.\n";
     }
+    // Skip normal A* initialization.
+    return;
+}
 
+
+    // Normal A* initialization when no saved optimal paths exist.
     static bool hasStarted = false;
     if (hasStarted) {
         distance = -1;
@@ -220,6 +286,7 @@ void CatomsTest3BlockCode::startup() {
         hostBlock->setColor(LIGHTGREY);
     }
 }
+
 
 void CatomsTest3BlockCode::onMotionEnd() {
     console << " has reached its destination\n";
