@@ -10,8 +10,9 @@
 #include <string>
 #include <queue>
 #include <set>
+using namespace std;
 
-
+// Message IDs
 static const int SAMPLE_MSG_ID = 1000;
 static const int BACK_MSG_ID = 1001;
 static const int REPORT_MSG_ID = 1002;
@@ -24,23 +25,52 @@ private:
     int distance;
     Catoms3DBlock *module;
 
-
-
-    // Declare A* related functions only once
+    // A* heuristic function (declared as static)
     static double heuristic(const Cell3DPosition& current, const Cell3DPosition& goal);
 
+    void saveOptimalPath(const vector<Cell3DPosition> &path);
+
+    void pushOptimalPath(const std::vector<Cell3DPosition> &path, const std::string &filename);
+
+    std::vector<Cell3DPosition> popOptimalPath(const std::string &filename);
+
+    // New helper functions to centralize the A* initialization logic.
+    void initializeAStar();
+    void initiatePathfinding();
+
+    // Already declared function to initiate pathfinding for the next module.
     void initiateNextModulePathfinding();
 
+    void serializePath(const std::vector<Cell3DPosition> &path, const std::string &filename);
 
-    static map<Cell3DPosition, vector<Cell3DPosition>> cells;
-    static vector<Cell3DPosition> visited;
-    static vector<Cell3DPosition> teleportedPositions;
+    bool deserializePath(std::vector<Cell3DPosition> &path, const std::string &filename);
 
+    void savePathToAllFile(int moduleId, const std::vector<Cell3DPosition> &path, const Cell3DPosition &startPos,
+                           const Cell3DPosition &goalPos);
 
-    static std::priority_queue<std::pair<Cell3DPosition, double>, std::vector<std::pair<Cell3DPosition, double>>, std::function<bool(std::pair<Cell3DPosition, double>, std::pair<Cell3DPosition, double>)>> openSet;
-static std::map<Cell3DPosition, double> gScore, fScore;
+    void restoreAllPathsFromFile();
+
+    bool restorePathForThisModule();
+
+    void savePathToFile(const vector<Cell3DPosition> &path);
+
+    bool restorePathFromFile();
+
+    bool hasStartedPathfinding;
+    static std::vector<std::vector<Cell3DPosition>> savedPaths;
+
+    static std::map<Cell3DPosition, std::vector<Cell3DPosition>> cells;
+    static std::vector<Cell3DPosition> visited;
+    static std::vector<Cell3DPosition> teleportedPositions;
+
+    static std::priority_queue<std::pair<Cell3DPosition, double>,
+                               std::vector<std::pair<Cell3DPosition, double>>,
+                               std::function<bool(std::pair<Cell3DPosition, double>, std::pair<Cell3DPosition, double>)>> openSet;
+    static std::map<Cell3DPosition, double> gScore, fScore;
     static std::map<Cell3DPosition, Cell3DPosition> cameFrom;
     static std::set<Cell3DPosition> closedSet;
+    static bool teleportationInProgress;
+    static bool savingEnabled;
 
     int currentModuleId = 1;
     int motionCount = 0;
@@ -59,18 +89,44 @@ static std::map<Cell3DPosition, double> gScore, fScore;
     bool isReturning = false;
     static const Cell3DPosition goalPosition;
     bool restoredMode = false;
-
+    Cell3DPosition initialPosition;
 public:
+    std::vector<Cell3DPosition> savedPathForCurrentModule;
+
+    static vector<Cell3DPosition> optimalPath;
+    bool loadedFromFile;
+    bool usingSavedPath;
+    static int pathCount;
+
+    static std::map<int, std::vector<Cell3DPosition>> allRestoredPaths;
+
+    static bool haveRestoredAll;
+
+    static int currentPathIndex;
+
+    static bool fileParsed;
+
     CatomsTest3BlockCode(Catoms3DBlock *host);
+
+    std::vector<std::vector<Cell3DPosition>> loadAllOptimalPaths();
+
+    std::vector<Cell3DPosition> loadOptimalPath();
+
+    void parseSavedPathsFile(const std::string &filename);
+
+    vector<Cell3DPosition> loadSavedPath();
+
+    void followSavedPath(const vector<Cell3DPosition> &savedPath);
+
+    void loadOptimalPaths();
+
+    void moveModuleAlongSavedPath();
+
     ~CatomsTest3BlockCode() {};
 
-
-
-    //static bool activeModuleRunning;
-
+    // Queues for start and target positions.
     static std::queue<Cell3DPosition> startQueue;
     static std::queue<Cell3DPosition> targetQueue;
-
 
     void startup() override;
     void processLocalEvent(EventPtr pev) override;
@@ -82,14 +138,10 @@ public:
     void handleReportMessage(std::shared_ptr<Message> _msg, P2PNetworkInterface *sender);
     void handleReportbckMessage(std::shared_ptr<Message> _msg, P2PNetworkInterface *sender);
 
-
-    bool runBFS(const Cell3DPosition &startPos,
-                                  const Cell3DPosition &goalPos);
-
-    void reconstructPath(const Cell3DPosition &startPos,
-                                               const Cell3DPosition &goalPos);
+    bool runBFS(const Cell3DPosition &startPos, const Cell3DPosition &goalPos);
+    void reconstructPath(const Cell3DPosition &startPos, const Cell3DPosition &goalPos);
     void scheduleNextTeleport();
-    std::vector<Cell3DPosition> getAdjacentCells(const Cell3DPosition &cell) ;
+    std::vector<Cell3DPosition> getAdjacentCells(const Cell3DPosition &cell);
     void parseUserElements(TiXmlDocument *config) override {}
     void parseUserBlockElements(TiXmlElement *config) override {}
 
@@ -106,7 +158,5 @@ public:
         return (new CatomsTest3BlockCode((Catoms3DBlock*)host));
     };
 };
-
-
 
 #endif /* CatomsTest1BlockCode_H_ */
