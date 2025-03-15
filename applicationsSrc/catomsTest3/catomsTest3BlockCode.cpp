@@ -97,11 +97,7 @@ CatomsTest3BlockCode::CatomsTest3BlockCode(Catoms3DBlock *host) : Catoms3DBlockC
     module = static_cast<Catoms3DBlock*>(hostBlock);
 }
 
-//
-// New helper function to load all optimal paths from file.
-// Each entry is expected to be preceded by the header:
-// "Optimal path from start to goal:"
-// and ended with a blank line.
+
 std::vector<std::vector<Cell3DPosition>> CatomsTest3BlockCode::loadAllOptimalPaths() {
     std::vector<std::vector<Cell3DPosition>> allPaths;
     std::ifstream inFile("optimal_paths.txt");
