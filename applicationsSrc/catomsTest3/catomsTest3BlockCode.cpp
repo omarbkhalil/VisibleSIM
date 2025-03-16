@@ -43,25 +43,47 @@ std::queue<Cell3DPosition> CatomsTest3BlockCode::startQueue(
     std::deque{
         Cell3DPosition(20, 6, 7),
         Cell3DPosition(20, 6, 5),
+
         Cell3DPosition(20, 7, 6),
-        Cell3DPosition(19, 6, 7),
+      //  Cell3DPosition(19, 6, 7),
         Cell3DPosition(19, 6, 5),
-        Cell3DPosition(19, 6, 8),
+
+      //  Cell3DPosition(19, 6, 8),
         Cell3DPosition(19, 6, 4),
+        Cell3DPosition(19, 6, 7),
+
+        Cell3DPosition(19, 6, 8),
         Cell3DPosition(18, 6, 8),
+
         Cell3DPosition(18, 6, 4),
         Cell3DPosition(17, 5, 7),
+
         Cell3DPosition(17, 5, 5),
         Cell3DPosition(17, 5, 6),
+
         Cell3DPosition(16, 5, 7),
         Cell3DPosition(16, 5, 5),
+
         Cell3DPosition(16, 5, 6),
         Cell3DPosition(15, 5, 7),
+
         Cell3DPosition(15, 5, 5),
         Cell3DPosition(15, 6, 8),
-        Cell3DPosition(14, 6, 8),
         Cell3DPosition(15, 6, 4),
-        Cell3DPosition(14, 6, 4)
+
+        Cell3DPosition(14, 6, 8),
+
+        Cell3DPosition(14, 6, 4),
+
+        Cell3DPosition(13, 6, 7),
+        Cell3DPosition(13, 6, 5),
+
+        Cell3DPosition(13, 7, 6)
+
+        //Cell3DPosition(12, 6, 7)
+
+
+
     }
 );
 
@@ -70,31 +92,53 @@ std::queue<Cell3DPosition> CatomsTest3BlockCode::targetQueue(
     std::deque{
         Cell3DPosition(8, 5, 7),
         Cell3DPosition(8, 5, 5),
+
         Cell3DPosition(8, 5, 6),
-        Cell3DPosition(7, 5, 6),
+      //  Cell3DPosition(7, 5, 6),
         Cell3DPosition(7, 5, 7),
-        Cell3DPosition(6, 5, 7),
+
+       // Cell3DPosition(6, 5, 7),
         Cell3DPosition(7, 5, 5),
-        Cell3DPosition(6, 5, 5),
-        Cell3DPosition(6, 6, 4),
+      //  Cell3DPosition(6, 5, 5),
+        Cell3DPosition(7, 6, 4),
+
+        Cell3DPosition(7, 6, 8),
         Cell3DPosition(6, 6, 8),
-        Cell3DPosition(5, 6, 4),
-        Cell3DPosition(5, 6, 8),
-        Cell3DPosition(4, 6, 7),
-        Cell3DPosition(4, 6, 5),
+
+        Cell3DPosition(6, 6, 4),
+
+        Cell3DPosition(5, 6, 7),
+
+        Cell3DPosition(5, 6, 5),
+        Cell3DPosition(5, 7, 6),
+
         Cell3DPosition(4, 7, 6),
-        Cell3DPosition(3, 7, 6),
-        Cell3DPosition(3, 6, 5),
+        Cell3DPosition(4, 6, 5),
+
+        Cell3DPosition(4, 6, 7),
         Cell3DPosition(3, 6, 7),
-        Cell3DPosition(2, 6, 7),
-        Cell3DPosition(2, 6, 5),
-        Cell3DPosition(2, 6, 4)
+
+        Cell3DPosition(3, 6, 5),
+        Cell3DPosition(3, 6, 4),
+
+        Cell3DPosition(3, 6, 8),
+        Cell3DPosition(2, 6, 8),
+
+        Cell3DPosition(2, 6, 4),
+
+        Cell3DPosition(1, 5, 5),
+        Cell3DPosition(1, 5, 6),
+
+        Cell3DPosition(1, 5, 7)
+
+
+
     }
 );
 
 
 
-// sstate 2
+// state 2
 /*
 std::queue<Cell3DPosition> CatomsTest3BlockCode::targetQueue(
     std::deque{
@@ -177,6 +221,7 @@ std::vector<std::vector<Cell3DPosition>> CatomsTest3BlockCode::loadAllOptimalPat
     }
     inFile.close();
     return allPaths;
+
 }
 
 void CatomsTest3BlockCode::startup() {
@@ -192,12 +237,12 @@ void CatomsTest3BlockCode::startup() {
    if (std::filesystem::exists("optimal_paths.txt")) {
     savingEnabled = false;
     console << "Optimal path file exists. Loading all saved paths...\n";
-    std::vector<std::vector<Cell3DPosition>> allPaths = loadAllOptimalPaths();
+    std::vector<std::vector<Cell3DPosition>> globalOptimalPaths = loadAllOptimalPaths();
     // Assign loaded paths to the global variable.
-    globalOptimalPaths = allPaths;
+
 
     // Display the loaded paths for debugging.
-    if (!allPaths.empty()) {
+    if (!globalOptimalPaths.empty()) {
         console << "Displaying all saved optimal paths (global structure):\n";
         for (size_t i = 0; i < globalOptimalPaths.size(); ++i) {
             console << "Path " << i + 1 << ":\n";
@@ -210,7 +255,7 @@ void CatomsTest3BlockCode::startup() {
         console << "globalOptimalPaths is empty.\n";
     }
 
-    // Ensure that modules move one by one by checking the startQueue.
+    // Ensure that modules move one by one
     if (!startQueue.empty() && (module->position == startQueue.front())) {
         // Pop this module's position off the startQueue.
         startQueue.pop();
@@ -220,13 +265,12 @@ void CatomsTest3BlockCode::startup() {
                 matchingPathFound = true;
                 console << "Module position " << module->position
                         << " matches the starting cell of a saved optimal path.\n";
-                // If the saved path has more cells, schedule teleportation to the next cell.
+
                 if (path.size() > 1) {
                     Cell3DPosition nextPos = path[1];
                     double nextFScore = heuristic(nextPos, targetQueue.empty() ? nextPos : targetQueue.front());
                     openSet.push({nextPos, nextFScore});
-                    console << "Pushed next position " << nextPos
-                            << " into openSet for automatic teleportation.\n";
+
                     getScheduler()->schedule(new TeleportationStartEvent(getScheduler()->now() + 1000, module, nextPos));
                 } else {
                     console << "Saved path for module " << module->position << " has no next cell.\n";
@@ -443,10 +487,12 @@ void CatomsTest3BlockCode::initiateNextModulePathfinding() {
         console << "No more modules in startQueue.\n";
         return;
     }
-    // Retrieve the next starting position.
+
+    // Retrieve the next starting position
     Cell3DPosition nextStart = startQueue.front();
     startQueue.pop();
-    // Verify that the block exists and has a valid blockCode.
+
+    // Verify that the block exists
     BuildingBlock *nextBlock = BaseSimulator::getWorld()->getBlockByPosition(nextStart);
     if (!nextBlock || !nextBlock->blockCode) {
         console << "Error: Block at position " << nextStart << " is null or has no blockCode.\n";
@@ -454,41 +500,76 @@ void CatomsTest3BlockCode::initiateNextModulePathfinding() {
     }
     Catoms3DBlockCode* nextModule = static_cast<Catoms3DBlockCode*>(nextBlock->blockCode);
 
-    // Clear shared A* state.
-    cells.clear();
-    visited.clear();
-    teleportedPositions.clear();
-    while (!openSet.empty()) {
-        openSet.pop();
-    }
-    gScore.clear();
-    fScore.clear();
-    cameFrom.clear();
-    closedSet.clear();
 
-    console << "Initiating pathfinding for module at " << nextStart << "\n";
-    nextModule->setColor(RED);
-    distance = 0;
-    Cell3DPosition currentPosition = nextStart;
-    cells[currentPosition].clear();
-    teleportedPositions.push_back(currentPosition);
-    gScore[currentPosition] = 0;
-    // Ensure targetQueue is not empty.
-    if (targetQueue.empty()) {
-        console << "Error: targetQueue is empty in initiateNextModulePathfinding().\n";
-        return;
-    }
-    fScore[currentPosition] = heuristic(currentPosition, targetQueue.front());
+    bool usedPrecomputed = false;
+    if (!globalOptimalPaths.empty()) {
+        // Attempt to match a path
+        for (const auto &path : globalOptimalPaths) {
+            if (!path.empty() && path.front() == nextStart) {
+                console << "Using precomputed path for module at " << nextStart << "\n";
+                nextModule->setColor(RED);
 
-    for (auto &motion : nextModule->hostBlock->getAllMotions()) {
-        cells[currentPosition].push_back(motion.first);
-        visited.push_back(motion.first);
+                if (path.size() > 1) {
+                    Cell3DPosition nextPos = path[1];
+
+                    double nextFScore = heuristic(nextPos, targetQueue.empty() ? nextPos : targetQueue.front());
+                    openSet.push({nextPos, nextFScore});
+
+                    getScheduler()->schedule(new TeleportationStartEvent(
+                        getScheduler()->now() + 1000, nextModule->hostBlock, nextPos
+                    ));
+                } else {
+                    console << "Precomputed path has no additional cells to move to.\n";
+                }
+
+                usedPrecomputed = true;
+                break; // Found a matching path, so stop searching.
+            }
+        }
     }
 
-    openSet.push({currentPosition, fScore[currentPosition]});
-    if (!openSet.empty()) {
-        auto nextStep = openSet.top();
-        openSet.pop();
-        getScheduler()->schedule(new TeleportationStartEvent(getScheduler()->now() + 1000, nextModule->hostBlock, nextStep.first));
+
+    if (!usedPrecomputed) {
+        cells.clear();
+        visited.clear();
+        teleportedPositions.clear();
+        while (!openSet.empty()) {
+            openSet.pop();
+        }
+        gScore.clear();
+        fScore.clear();
+        cameFrom.clear();
+        closedSet.clear();
+
+        console << "Initiating *A* pathfinding* for module at " << nextStart << "\n";
+        nextModule->setColor(RED);
+        distance = 0;
+
+        Cell3DPosition currentPosition = nextStart;
+        cells[currentPosition].clear();
+        teleportedPositions.push_back(currentPosition);
+
+        gScore[currentPosition] = 0;
+
+        if (targetQueue.empty()) {
+            console << "Error: targetQueue is empty in initiateNextModulePathfinding().\n";
+            return;
+        }
+        fScore[currentPosition] = heuristic(currentPosition, targetQueue.front());
+
+        for (auto &motion : nextModule->hostBlock->getAllMotions()) {
+            cells[currentPosition].push_back(motion.first);
+            visited.push_back(motion.first);
+        }
+
+        openSet.push({currentPosition, fScore[currentPosition]});
+
+        if (!openSet.empty()) {
+            auto nextStep = openSet.top();
+            openSet.pop();
+            getScheduler()->schedule(new TeleportationStartEvent(
+                getScheduler()->now() + 1000, nextModule->hostBlock, nextStep.first));
+        }
     }
 }
+

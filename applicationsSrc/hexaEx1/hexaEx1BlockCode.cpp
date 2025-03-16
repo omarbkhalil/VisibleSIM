@@ -78,6 +78,7 @@ void HexaEx1BlockCode::onMotionEnd() {
         }
         if (ci != tab.end() && nMotions <= 500) {
             moveTo(CW);
+
         }
     } else {
         Check = true;
