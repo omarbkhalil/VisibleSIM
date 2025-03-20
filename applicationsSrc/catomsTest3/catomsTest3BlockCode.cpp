@@ -78,9 +78,9 @@ std::queue<Cell3DPosition> CatomsTest3BlockCode::startQueue(
         Cell3DPosition(13, 6, 7),
         Cell3DPosition(13, 6, 5),
 
-        Cell3DPosition(13, 7, 6)
+        Cell3DPosition(13, 7, 6),
 
-        //Cell3DPosition(12, 6, 7)
+     //   Cell3DPosition(12, 6, 7)
 
 
 
@@ -129,7 +129,8 @@ std::queue<Cell3DPosition> CatomsTest3BlockCode::targetQueue(
         Cell3DPosition(1, 5, 5),
         Cell3DPosition(1, 5, 6),
 
-        Cell3DPosition(1, 5, 7)
+        Cell3DPosition(1, 5, 7),
+        // Cell3DPosition(1, 6, 7)
 
 
 
@@ -228,67 +229,35 @@ void CatomsTest3BlockCode::startup() {
     console << "start\n";
     std::cout << "Working directory: " << std::filesystem::current_path() << std::endl;
 
-    // Check that module is valid.
+    // Check that the module pointer is valid.
     if (!module) {
         console << "Error: module pointer is null in startup().\n";
         return;
     }
 
-   if (std::filesystem::exists("optimal_paths.txt")) {
-    savingEnabled = false;
-    console << "Optimal path file exists. Loading all saved paths...\n";
-    std::vector<std::vector<Cell3DPosition>> globalOptimalPaths = loadAllOptimalPaths();
-    // Assign loaded paths to the global variable.
-
-
-    // Display the loaded paths for debugging.
-    if (!globalOptimalPaths.empty()) {
-        console << "Displaying all saved optimal paths (global structure):\n";
-        for (size_t i = 0; i < globalOptimalPaths.size(); ++i) {
-            console << "Path " << i + 1 << ":\n";
-            for (auto &pos : globalOptimalPaths[i]) {
+    // Load all saved optimal paths and print them.
+    std::vector<std::vector<Cell3DPosition>> loadedPaths = loadAllOptimalPaths();
+    if (loadedPaths.empty()) {
+        console << "No optimal paths loaded.\n";
+    } else {
+        console << "Loaded optimal paths:\n";
+        for (size_t i = 0; i < loadedPaths.size(); ++i) {
+            console << "Path " << (i + 1) << ":\n";
+            for (const auto &pos : loadedPaths[i]) {
                 console << pos << "\n";
             }
             console << "\n";
         }
-    } else {
-        console << "globalOptimalPaths is empty.\n";
-    }
-
-    // Ensure that modules move one by one
-    if (!startQueue.empty() && (module->position == startQueue.front())) {
-        // Pop this module's position off the startQueue.
-        startQueue.pop();
-        bool matchingPathFound = false;
-        for (const auto &path : globalOptimalPaths) {
-            if (!path.empty() && module->position == path.front()) {
-                matchingPathFound = true;
-                console << "Module position " << module->position
-                        << " matches the starting cell of a saved optimal path.\n";
-
-                if (path.size() > 1) {
-                    Cell3DPosition nextPos = path[1];
-                    double nextFScore = heuristic(nextPos, targetQueue.empty() ? nextPos : targetQueue.front());
-                    openSet.push({nextPos, nextFScore});
-
-                    getScheduler()->schedule(new TeleportationStartEvent(getScheduler()->now() + 1000, module, nextPos));
-                } else {
-                    console << "Saved path for module " << module->position << " has no next cell.\n";
-                }
-                break; // One matching path is enough.
+        // If there is a saved file, search for a matching path.
+        for (const auto &path : loadedPaths) {
+            // Check that the path is not empty and its first position matches the module's current position.
+            if (!path.empty() && path.front() == module->position) {
+                matchingPath = path;  // assuming matchingPath is declared as a member variable
+                console << "Matching path found for module's current position.\n";
+                break;
             }
         }
-        if (!matchingPathFound) {
-            console << "No saved optimal path starts at module position " << module->position << ".\n";
-        }
-    } else {
-        console << "It's not this module's turn yet. Module position " << module->position
-                << " does not match the front of startQueue.\n";
     }
-    // Skip normal A* initialization.
-    return;
-}
-
 
     // Normal A* initialization when no saved optimal paths exist.
     static bool hasStarted = false;
@@ -323,7 +292,8 @@ void CatomsTest3BlockCode::startup() {
         if (!openSet.empty()) {
             auto nextStep = openSet.top();
             openSet.pop();
-            getScheduler()->schedule(new TeleportationStartEvent(getScheduler()->now() + 1000, module, nextStep.first));
+          getScheduler()->schedule(new TeleportationStartEvent(getScheduler()->now() + 1000, module, nextStep.first));
+            //module->moveTo(nextStep.first);
         }
     } else {
         distance = -1;
@@ -332,13 +302,13 @@ void CatomsTest3BlockCode::startup() {
 }
 
 
+
 void CatomsTest3BlockCode::onMotionEnd() {
     console << " has reached its destination\n";
 }
 
 void CatomsTest3BlockCode::processLocalEvent(EventPtr pev) {
-    // Call the base implementation.
-    Catoms3DBlockCode::processLocalEvent(pev);
+
 
     // Normal A* processing.
     Cell3DPosition currentPosition = module->position;
@@ -371,8 +341,26 @@ void CatomsTest3BlockCode::processLocalEvent(EventPtr pev) {
                     for (auto &pos : discoveredPath) {
                         console << pos << "\n";
                     }
-                    // Save the optimal path using serialization.
-                    saveOptimalPath(discoveredPath);
+
+
+//save
+
+                    auto savedPaths = loadAllOptimalPaths();
+
+                    bool alreadySaved = false;
+                    for (const auto &savedPath : savedPaths) {
+                        if (savedPath == discoveredPath) { // Assumes operator== is defined for Cell3DPosition
+                            alreadySaved = true;
+                            break;
+                        }
+                    }
+
+                    if (!alreadySaved) {
+                        saveOptimalPath(discoveredPath);
+                    }
+
+
+
                     // Initiate next module's pathfinding so that subsequent modules move.
                     initiateNextModulePathfinding();
                 } else {
@@ -394,14 +382,28 @@ void CatomsTest3BlockCode::processLocalEvent(EventPtr pev) {
                             openSet.push({neighbor, fScore[neighbor]});
                         }
                     }
-                    if (!openSet.empty()) {
+
+                    //Move on Loaded
+                    if (!matchingPath.empty() && matchingPath.size() > 1) {
+
+                        Cell3DPosition nextStep = matchingPath[1];
+                        console << "Matching Path: Teleporting to " << nextStep << "\n";
+                        getScheduler()->schedule(new TeleportationStartEvent(getScheduler()->now() + 1000, module, nextStep));
+                      //  module->moveTo(nextStep);
+
+                        matchingPath.erase(matchingPath.begin());
+                    } else if (!openSet.empty()) {
                         auto nextStep = openSet.top();
                         openSet.pop();
                         console << "A*: Teleporting to " << nextStep.first << "\n";
-                        getScheduler()->schedule(new TeleportationStartEvent(getScheduler()->now() + 1000, module, nextStep.first));
+                       getScheduler()->schedule(new TeleportationStartEvent(getScheduler()->now() + 1000, module, nextStep.first));
+                       // module->moveTo(nextStep.first);
+
                     } else {
                         console << "A*: No more nodes to explore. Path not found.\n";
                     }
+
+
                 }
             }
             break;
@@ -502,31 +504,7 @@ void CatomsTest3BlockCode::initiateNextModulePathfinding() {
 
 
     bool usedPrecomputed = false;
-    if (!globalOptimalPaths.empty()) {
-        // Attempt to match a path
-        for (const auto &path : globalOptimalPaths) {
-            if (!path.empty() && path.front() == nextStart) {
-                console << "Using precomputed path for module at " << nextStart << "\n";
-                nextModule->setColor(RED);
 
-                if (path.size() > 1) {
-                    Cell3DPosition nextPos = path[1];
-
-                    double nextFScore = heuristic(nextPos, targetQueue.empty() ? nextPos : targetQueue.front());
-                    openSet.push({nextPos, nextFScore});
-
-                    getScheduler()->schedule(new TeleportationStartEvent(
-                        getScheduler()->now() + 1000, nextModule->hostBlock, nextPos
-                    ));
-                } else {
-                    console << "Precomputed path has no additional cells to move to.\n";
-                }
-
-                usedPrecomputed = true;
-                break; // Found a matching path, so stop searching.
-            }
-        }
-    }
 
 
     if (!usedPrecomputed) {
@@ -569,7 +547,9 @@ void CatomsTest3BlockCode::initiateNextModulePathfinding() {
             openSet.pop();
             getScheduler()->schedule(new TeleportationStartEvent(
                 getScheduler()->now() + 1000, nextModule->hostBlock, nextStep.first));
+
+           // nextModule->hostBlock->moveTo(nextStep.first);
+
         }
     }
 }
-

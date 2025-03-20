@@ -64,6 +64,8 @@ private:
     static std::vector<Cell3DPosition> teleportedPositions;
     static std::vector<std::vector<Cell3DPosition>> globalOptimalPaths;
 
+    std::vector<Cell3DPosition> matchingPath;
+
 
     static std::priority_queue<std::pair<Cell3DPosition, double>,
                                std::vector<std::pair<Cell3DPosition, double>>,
@@ -111,6 +113,8 @@ public:
     static int currentPathIndex;
 
     static bool fileParsed;
+
+    static std::vector<Cell3DPosition> currentOptimalPath;
 
     CatomsTest3BlockCode(Catoms3DBlock *host);
 
