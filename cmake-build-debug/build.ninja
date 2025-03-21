@@ -3387,6 +3387,50 @@ build catomsTest3.exe: CXX_EXECUTABLE_LINKER__catomsTest3_Debug CMakeFiles/catom
   TARGET_PDB = catomsTest3.exe.dbg
 
 # =============================================================================
+# Object build statements for EXECUTABLE target catomsTest4
+
+
+#############################################
+# Order-only phony target for catomsTest4
+
+build cmake_object_order_depends_target_catomsTest4: phony || .
+
+build CMakeFiles/catomsTest4.dir/applicationsSrc/catomsTest4/catomsTest4.cpp.obj: CXX_COMPILER__catomsTest4_unscanned_Debug C$:/VisibleSim/VisibleSim/applicationsSrc/catomsTest4/catomsTest4.cpp || cmake_object_order_depends_target_catomsTest4
+  DEFINES = -DDEBUG_CONF_PARSING -DDEBUG_CSG -DGLEW_STATIC -DROOT_DIR=\"C:/VisibleSim/VisibleSim\" -DUSE_FREEGLUT
+  DEP_FILE = CMakeFiles\catomsTest4.dir\applicationsSrc\catomsTest4\catomsTest4.cpp.obj.d
+  FLAGS = -Wno-long-long -Wpedantic -g -std=gnu++17 -fdiagnostics-color=always
+  INCLUDES = -IC:/VisibleSim/VisibleSim/simulatorCore/src -IC:/VisibleSim/freeglut-3.6.0/include -IC:/VisibleSim/glew-2.1.0/include -IC:/VisibleSim/muparser-2.3.3-1/include
+  OBJECT_DIR = CMakeFiles\catomsTest4.dir
+  OBJECT_FILE_DIR = CMakeFiles\catomsTest4.dir\applicationsSrc\catomsTest4
+
+build CMakeFiles/catomsTest4.dir/applicationsSrc/catomsTest4/catomsTest4BlockCode.cpp.obj: CXX_COMPILER__catomsTest4_unscanned_Debug C$:/VisibleSim/VisibleSim/applicationsSrc/catomsTest4/catomsTest4BlockCode.cpp || cmake_object_order_depends_target_catomsTest4
+  DEFINES = -DDEBUG_CONF_PARSING -DDEBUG_CSG -DGLEW_STATIC -DROOT_DIR=\"C:/VisibleSim/VisibleSim\" -DUSE_FREEGLUT
+  DEP_FILE = CMakeFiles\catomsTest4.dir\applicationsSrc\catomsTest4\catomsTest4BlockCode.cpp.obj.d
+  FLAGS = -Wno-long-long -Wpedantic -g -std=gnu++17 -fdiagnostics-color=always
+  INCLUDES = -IC:/VisibleSim/VisibleSim/simulatorCore/src -IC:/VisibleSim/freeglut-3.6.0/include -IC:/VisibleSim/glew-2.1.0/include -IC:/VisibleSim/muparser-2.3.3-1/include
+  OBJECT_DIR = CMakeFiles\catomsTest4.dir
+  OBJECT_FILE_DIR = CMakeFiles\catomsTest4.dir\applicationsSrc\catomsTest4
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target catomsTest4
+
+
+#############################################
+# Link the executable catomsTest4.exe
+
+build catomsTest4.exe: CXX_EXECUTABLE_LINKER__catomsTest4_Debug CMakeFiles/catomsTest4.dir/applicationsSrc/catomsTest4/catomsTest4.cpp.obj CMakeFiles/catomsTest4.dir/applicationsSrc/catomsTest4/catomsTest4BlockCode.cpp.obj
+  FLAGS = -Wno-long-long -Wpedantic -g
+  LINK_LIBRARIES = -lCatoms3D  -lfreeglut  -lmuparser  -lOpenGL32  -lglu32  -lglew32d  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  LINK_PATH = -LC:/VisibleSim/VisibleSim/./simulatorCore/lib   -LC:/VisibleSim/freeglut-3.6.0/cmake-build-debug/lib   -LC:/VisibleSim/glew-2.1.0/build/cmake/cmake-build-debug/lib   -LC:/VisibleSim/muparser-2.3.3-1/cmake-build-debug
+  OBJECT_DIR = CMakeFiles\catomsTest4.dir
+  POST_BUILD = cd .
+  PRE_LINK = cd .
+  TARGET_FILE = catomsTest4.exe
+  TARGET_IMPLIB = C:\VisibleSim\VisibleSim\simulatorCore\lib\libcatomsTest4.dll.a
+  TARGET_PDB = catomsTest4.exe.dbg
+
+# =============================================================================
 # Object build statements for EXECUTABLE target new_target
 
 
@@ -3510,6 +3554,8 @@ build catomsTest2: phony catomsTest2.exe
 
 build catomsTest3: phony catomsTest3.exe
 
+build catomsTest4: phony catomsTest4.exe
+
 build demo01_SC: phony demo01_SC.exe
 
 build demoMotionsC3D: phony demoMotionsC3D.exe
@@ -3550,7 +3596,7 @@ build test1: phony test1.exe
 #############################################
 # Folder: C:/VisibleSim/VisibleSim/cmake-build-debug
 
-build all: phony libBlinkyBlocks.dll libCatoms3D.dll libSmartBlocks.dll libHexanodes.dll libDatoms.dll libSlidingCubes.dll stressTestSB.exe simpleColorBB.exe demoMotionsC3D.exe myMotionTest.exe hexanodes_demo.exe hexaEx1.exe myAppSC.exe demo01_SC.exe catoms3DRotate.exe e1_flooding.exe e2_goback.exe test1.exe myApp.exe myApp2.exe myApp2plus.exe e3_lightpath.exe catomsTest1.exe catomsTest2.exe catomsTest3.exe new_target.exe
+build all: phony libBlinkyBlocks.dll libCatoms3D.dll libSmartBlocks.dll libHexanodes.dll libDatoms.dll libSlidingCubes.dll stressTestSB.exe simpleColorBB.exe demoMotionsC3D.exe myMotionTest.exe hexanodes_demo.exe hexaEx1.exe myAppSC.exe demo01_SC.exe catoms3DRotate.exe e1_flooding.exe e2_goback.exe test1.exe myApp.exe myApp2.exe myApp2plus.exe e3_lightpath.exe catomsTest1.exe catomsTest2.exe catomsTest3.exe catomsTest4.exe new_target.exe
 
 # =============================================================================
 # Built-in targets

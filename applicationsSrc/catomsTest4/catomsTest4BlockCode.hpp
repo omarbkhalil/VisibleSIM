@@ -1,5 +1,5 @@
-#ifndef CatomsTest3BlockCode_H_
-#define CatomsTest3BlockCode_H_
+#ifndef CatomsTest4BlockCode_H_
+#define CatomsTest4BlockCode_H_
 
 #include "events/events.h"
 #include "robots/catoms3D/catoms3DWorld.h"
@@ -20,7 +20,7 @@ static const int REPORTbck_MSG_ID = 1003;
 
 using namespace Catoms3D;
 
-class CatomsTest3BlockCode : public Catoms3DBlockCode {
+class CatomsTest4BlockCode : public Catoms3DBlockCode {
 private:
     int distance;
     Catoms3DBlock *module;
@@ -117,7 +117,7 @@ public:
 
     static std::vector<Cell3DPosition> currentOptimalPath;
 
-    CatomsTest3BlockCode(Catoms3DBlock *host);
+    CatomsTest4BlockCode(Catoms3DBlock *host);
 
     std::vector<std::vector<Cell3DPosition>> loadAllOptimalPaths();
 
@@ -133,7 +133,7 @@ public:
 
     void moveModuleAlongSavedPath();
 
-    ~CatomsTest3BlockCode() {};
+    ~CatomsTest4BlockCode() {};
 
     // Queues for start and target positions.
     static std::queue<Cell3DPosition> startQueue;
@@ -170,8 +170,8 @@ public:
     std::string onInterfaceDraw() override;
 
     static BlockCode *buildNewBlockCode(BuildingBlock *host) {
-        return (new CatomsTest3BlockCode((Catoms3DBlock*)host));
+        return (new CatomsTest4BlockCode((Catoms3DBlock*)host));
     };
 };
 
-#endif /* CatomsTest3BlockCode_H_ */
+#endif /* CatomsTest4BlockCode_H_ */

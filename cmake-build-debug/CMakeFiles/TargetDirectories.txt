@@ -23,6 +23,7 @@ C:/VisibleSim/VisibleSim/cmake-build-debug/CMakeFiles/e3_lightpath.dir
 C:/VisibleSim/VisibleSim/cmake-build-debug/CMakeFiles/catomsTest1.dir
 C:/VisibleSim/VisibleSim/cmake-build-debug/CMakeFiles/catomsTest2.dir
 C:/VisibleSim/VisibleSim/cmake-build-debug/CMakeFiles/catomsTest3.dir
+C:/VisibleSim/VisibleSim/cmake-build-debug/CMakeFiles/catomsTest4.dir
 C:/VisibleSim/VisibleSim/cmake-build-debug/CMakeFiles/new_target.dir
 C:/VisibleSim/VisibleSim/cmake-build-debug/CMakeFiles/edit_cache.dir
 C:/VisibleSim/VisibleSim/cmake-build-debug/CMakeFiles/rebuild_cache.dir

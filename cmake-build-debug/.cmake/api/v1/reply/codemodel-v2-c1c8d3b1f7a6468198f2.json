@@ -7,7 +7,7 @@
 				{
 					"build" : ".",
 					"hasInstallRule" : true,
-					"jsonFile" : "directory-.-Debug-df2df28ea2125ea89122.json",
+					"jsonFile" : "directory-.-Debug-b5ee82f5691b06ee70d7.json",
 					"minimumCMakeVersion" : 
 					{
 						"string" : "3.15"
@@ -41,7 +41,8 @@
 						22,
 						23,
 						24,
-						25
+						25,
+						26
 					]
 				}
 			],
@@ -81,7 +82,8 @@
 						22,
 						23,
 						24,
-						25
+						25,
+						26
 					]
 				}
 			],
@@ -155,6 +157,13 @@
 					"id" : "catomsTest3::@6890427a1f51a3e7e1df",
 					"jsonFile" : "target-catomsTest3-Debug-5d0c69803dbfa4e511cc.json",
 					"name" : "catomsTest3",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "catomsTest4::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-catomsTest4-Debug-677d39e5783efe8a63f4.json",
+					"name" : "catomsTest4",
 					"projectIndex" : 0
 				},
 				{
@@ -244,7 +253,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "new_target::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-new_target-Debug-f70dc39a408b4d7b6a5f.json",
+					"jsonFile" : "target-new_target-Debug-d1d988c84a355c5b400e.json",
 					"name" : "new_target",
 					"projectIndex" : 0
 				},

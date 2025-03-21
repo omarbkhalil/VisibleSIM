@@ -1,4 +1,4 @@
-#include "catomsTest3BlockCode.hpp"
+#include "catomsTest4BlockCode.hpp"
 
 #include <queue>
 #include <unordered_map>
@@ -17,34 +17,34 @@
 using namespace Catoms3D;
 
 // Global static variables for the A* state.
-std::map<Cell3DPosition, std::vector<Cell3DPosition>> CatomsTest3BlockCode::cells;
-std::vector<Cell3DPosition> CatomsTest3BlockCode::visited;
-std::vector<Cell3DPosition> CatomsTest3BlockCode::teleportedPositions;
+std::map<Cell3DPosition, std::vector<Cell3DPosition>> CatomsTest4BlockCode::cells;
+std::vector<Cell3DPosition> CatomsTest4BlockCode::visited;
+std::vector<Cell3DPosition> CatomsTest4BlockCode::teleportedPositions;
 
 std::priority_queue<
     std::pair<Cell3DPosition, double>,
     std::vector<std::pair<Cell3DPosition, double>>,
     std::function<bool(std::pair<Cell3DPosition, double>, std::pair<Cell3DPosition, double>)>
-> CatomsTest3BlockCode::openSet{
+> CatomsTest4BlockCode::openSet{
     [](std::pair<Cell3DPosition, double> a, std::pair<Cell3DPosition, double> b) {
         return a.second > b.second;
     }
 };
 
-std::map<Cell3DPosition, double> CatomsTest3BlockCode::gScore;
-std::map<Cell3DPosition, double> CatomsTest3BlockCode::fScore;
-std::map<Cell3DPosition, Cell3DPosition> CatomsTest3BlockCode::cameFrom;
-std::set<Cell3DPosition> CatomsTest3BlockCode::closedSet;
+std::map<Cell3DPosition, double> CatomsTest4BlockCode::gScore;
+std::map<Cell3DPosition, double> CatomsTest4BlockCode::fScore;
+std::map<Cell3DPosition, Cell3DPosition> CatomsTest4BlockCode::cameFrom;
+std::set<Cell3DPosition> CatomsTest4BlockCode::closedSet;
 
-std::vector<std::vector<Cell3DPosition>> CatomsTest3BlockCode::globalOptimalPaths;
+std::vector<std::vector<Cell3DPosition>> CatomsTest4BlockCode::globalOptimalPaths;
 
 //Origin/Relative pos
-Cell3DPosition CatomsTest3BlockCode::Origin = Cell3DPosition(17+18, 5, 6);
+Cell3DPosition CatomsTest4BlockCode::Origin = Cell3DPosition(17+18, 5, 6);
 
 
 
 // Queues for start and target positions.
-std::queue<Cell3DPosition> CatomsTest3BlockCode::startQueue(
+std::queue<Cell3DPosition> CatomsTest4BlockCode::startQueue(
     std::deque{
         Cell3DPosition(Origin[0]+3,Origin[1]+1 , Origin[2]+1),
         Cell3DPosition(Origin[0]+3,Origin[1]+1 , Origin[2]-1),
@@ -83,7 +83,7 @@ std::queue<Cell3DPosition> CatomsTest3BlockCode::startQueue(
 );
 
 //state 1
-std::queue<Cell3DPosition> CatomsTest3BlockCode::targetQueue(
+std::queue<Cell3DPosition> CatomsTest4BlockCode::targetQueue(
     std::deque{
         Cell3DPosition(Origin[0] - 9, Origin[1],     Origin[2] + 1), // (8,5,7)
 Cell3DPosition(Origin[0] - 9, Origin[1],     Origin[2] - 1), // (8,5,5)
@@ -166,15 +166,15 @@ std::queue<Cell3DPosition> CatomsTest3BlockCode::targetQueue(
 */
 
 // Flag to enable saving. If the file exists, this flag will be disabled.
-bool CatomsTest3BlockCode::savingEnabled = true;
+bool CatomsTest4BlockCode::savingEnabled = true;
 
-CatomsTest3BlockCode::CatomsTest3BlockCode(Catoms3DBlock *host) : Catoms3DBlockCode(host) {
+CatomsTest4BlockCode::CatomsTest4BlockCode(Catoms3DBlock *host) : Catoms3DBlockCode(host) {
     if (!host) return;
     module = static_cast<Catoms3DBlock*>(hostBlock);
 }
 
 
-std::vector<std::vector<Cell3DPosition>> CatomsTest3BlockCode::loadAllOptimalPaths() {
+std::vector<std::vector<Cell3DPosition>> CatomsTest4BlockCode::loadAllOptimalPaths() {
     std::vector<std::vector<Cell3DPosition>> allPaths;
     std::ifstream inFile("optimal_paths.txt");
     if (!inFile.is_open()) {
@@ -221,7 +221,7 @@ std::vector<std::vector<Cell3DPosition>> CatomsTest3BlockCode::loadAllOptimalPat
 
 }
 
-void CatomsTest3BlockCode::startup() {
+void CatomsTest4BlockCode::startup() {
     console << "start\n";
     std::cout << "Working directory: " << std::filesystem::current_path() << std::endl;
 
@@ -231,14 +231,33 @@ void CatomsTest3BlockCode::startup() {
         return;
     }
 
+    // Load all saved optimal paths and print them.
+    std::vector<std::vector<Cell3DPosition>> loadedPaths = loadAllOptimalPaths();
+    if (loadedPaths.empty()) {
+        console << "No optimal paths loaded.\n";
+    } else {
+        console << "Loaded optimal paths:\n";
+        for (size_t i = 0; i < loadedPaths.size(); ++i) {
+            console << "Path " << (i + 1) << ":\n";
+            for (const auto &pos : loadedPaths[i]) {
+                console << pos << "\n";
+            }
+            console << "\n";
+        }
+        // If there is a saved file, search for a matching path.
+        for (const auto &path : loadedPaths) {
+            // Check that the path is not empty and its first position matches the module's current position.
+            if (!path.empty() && path.front() == module->position) {
+                matchingPath = path;  // assuming matchingPath is declared as a member variable
+                console << "Matching path found for module's current position.\n";
+                break;
+            }
+        }
+    }
 
-
-
-    // Normal A* initialization
     static bool hasStarted = false;
     if (hasStarted) {
         distance = -1;
-        hostBlock->setColor(LIGHTGREY);
         return;
     }
 
@@ -247,117 +266,63 @@ void CatomsTest3BlockCode::startup() {
         Cell3DPosition startTarget = startQueue.front();
         startQueue.pop();
         module->setColor(RED);
-        distance = 0;
-        Cell3DPosition currentPosition = startTarget;
-        cells[currentPosition].clear();
-        teleportedPositions.push_back(currentPosition);
-        gScore[currentPosition] = 0;
-        // Ensure targetQueue is not empty before using front()
-        if (targetQueue.empty()) {
-            console << "Error: targetQueue is empty in startup().\n";
-            return;
-        }
-        fScore[currentPosition] = heuristic(currentPosition, targetQueue.front());
 
-        for (auto &pos : module->getAllMotions()) {
-            cells[currentPosition].push_back(pos.first);
-            visited.push_back(pos.first);
+        Cell3DPosition nextStep = matchingPath.front();
+
+
+         getScheduler()->schedule(new TeleportationStartEvent(getScheduler()->now() + 1000, module, nextStep));
+          // module->moveTo(nextStep);
         }
-        openSet.push({currentPosition, fScore[currentPosition]});
-        if (!openSet.empty()) {
-            auto nextStep = openSet.top();
-            openSet.pop();
-          getScheduler()->schedule(new TeleportationStartEvent(getScheduler()->now() + 1000, module, nextStep.first));
-         // module->moveTo(nextStep.first);
-        }
-    } else {
-        distance = -1;
-        hostBlock->setColor(LIGHTGREY);
-    }
+
 }
 
 
 
-void CatomsTest3BlockCode::onMotionEnd() {
-    console << " has reached its destination\n";
+void CatomsTest4BlockCode::onMotionEnd() {
+        console << "Motion DONE.\n";
 }
 
-void CatomsTest3BlockCode::processLocalEvent(EventPtr pev) {
+void CatomsTest4BlockCode::processLocalEvent(EventPtr pev) {
 
 
     // Normal A* processing.
     Cell3DPosition currentPosition = module->position;
-    if (cells.find(currentPosition) == cells.end()) {
-        std::vector<Cell3DPosition> neighbors;
-        for (auto &motion : module->getAllMotions()) {
-            neighbors.push_back(motion.first);
-        }
-        cells[currentPosition] = neighbors;
-    }
+
 
     switch (pev->eventType) {
         //change this to rotaton event in new class
-        //bare in mind every module in real life cant have static maybe configure that later
         case EVENT_TELEPORTATION_END:
 
 
                 if (!targetQueue.empty() && currentPosition == targetQueue.front()) {
                     targetQueue.pop();
-                    console << "Goal reached. Reconstructing optimal path...\n";
-                    discoveredPath.clear();
-                    while (cameFrom.find(currentPosition) != cameFrom.end()) {
-                        discoveredPath.push_back(currentPosition);
-                        currentPosition = cameFrom[currentPosition];
-                    }
-                    discoveredPath.push_back(currentPosition);
-                    std::reverse(discoveredPath.begin(), discoveredPath.end());
-                    console << "Optimal path from start to goal:\n";
+
                     for (auto &pos : discoveredPath) {
                         console << pos << "\n";
                     }
 
-
 //save
 
-                    auto savedPaths = loadAllOptimalPaths();
 
-                    bool alreadySaved = false;
-                    for (const auto &savedPath : savedPaths) {
-                        if (savedPath == discoveredPath) { // Assumes operator== is defined for Cell3DPosition
-                            alreadySaved = true;
-                            break;
-                        }
-                    }
 
-                    if (!alreadySaved) {
-                        saveOptimalPath(discoveredPath);
-                    }
 
 
 
                     // Initiate next module's pathfinding so that subsequent modules move.
                     initiateNextModulePathfinding();
                 } else {
-                    closedSet.insert(currentPosition);
-                    for (auto &motion : module->getAllMotions()) {
-                        Cell3DPosition neighbor = motion.first;
-                        if (closedSet.find(neighbor) != closedSet.end())
-                            continue;
-                        double tentative_gScore = gScore[currentPosition] + 1;
-                        if (gScore.find(neighbor) == gScore.end() || tentative_gScore < gScore[neighbor]) {
-                            cameFrom[neighbor] = currentPosition;
-                            gScore[neighbor] = tentative_gScore;
-                            // Ensure targetQueue is not empty before using front()
-                            if (targetQueue.empty()) {
-                                console << "Error: targetQueue is empty during A* processing.\n";
-                                return;
-                            }
-                            fScore[neighbor] = tentative_gScore + heuristic(neighbor, targetQueue.front());
-                            openSet.push({neighbor, fScore[neighbor]});
-                        }
-                    }
 
-                    if (!openSet.empty()) {
+
+                    //Move on Loaded
+                    if (!matchingPath.empty() && matchingPath.size() > 1) {
+
+                        Cell3DPosition nextStep = matchingPath[1];
+                        console << "Matching Path: Teleporting to " << nextStep << "\n";
+                        getScheduler()->schedule(new TeleportationStartEvent(getScheduler()->now() + 1000, module, nextStep));
+                       //module->moveTo(nextStep);
+
+                        matchingPath.erase(matchingPath.begin());
+                    } else if (!openSet.empty()) {
                         auto nextStep = openSet.top();
                         openSet.pop();
                         console << "A*: Teleporting to " << nextStep.first << "\n";
@@ -377,15 +342,16 @@ void CatomsTest3BlockCode::processLocalEvent(EventPtr pev) {
     }
 }
 
-void CatomsTest3BlockCode::onBlockSelected() {
+
+void CatomsTest4BlockCode::onBlockSelected() {
     std::cerr << std::endl << "--- PRINT MODULE " << *module << " ---" << std::endl;
 }
 
-void CatomsTest3BlockCode::onAssertTriggered() {
+void CatomsTest4BlockCode::onAssertTriggered() {
     console << " has triggered an assert\n";
 }
 
-bool CatomsTest3BlockCode::parseUserCommandLineArgument(int &argc, char **argv[]) {
+bool CatomsTest4BlockCode::parseUserCommandLineArgument(int &argc, char **argv[]) {
     if ((argc > 0) && ((*argv)[0][0] == '-')) {
         switch((*argv)[0][1]) {
             case 'b': {
@@ -416,46 +382,26 @@ bool CatomsTest3BlockCode::parseUserCommandLineArgument(int &argc, char **argv[]
     return false;
 }
 
-std::string CatomsTest3BlockCode::onInterfaceDraw() {
+std::string CatomsTest4BlockCode::onInterfaceDraw() {
     std::stringstream trace;
     trace << "Distance: " << distance;
     return trace.str();
 }
 
-double CatomsTest3BlockCode::heuristic(const Cell3DPosition& current, const Cell3DPosition& goal) {
+double CatomsTest4BlockCode::heuristic(const Cell3DPosition& current, const Cell3DPosition& goal) {
     return std::abs(current[0] - goal[0]) +
            std::abs(current[1] - goal[1]) +
            std::abs(current[2] - goal[2]);
 }
 
-void CatomsTest3BlockCode::saveOptimalPath(const std::vector<Cell3DPosition>& path) {
-    // If saving is disabled, do nothing.
-    if (!savingEnabled) {
-        console << "Optimal path saving disabled. Not saving new path.\n";
-        return;
-    }
 
-    std::ofstream outFile("optimal_paths.txt", std::ios::app);
-    if (outFile.is_open()) {
-        outFile << "Optimal path from start to goal:\n";
-        for (const auto &pos : path) {
-            outFile << pos << "\n";
-        }
-        outFile << "\n"; // Separate entries with a blank line.
-        outFile.close();
-        console << "Optimal path saved to optimal_paths.txt\n";
-    } else {
-        console << "Error: Unable to open file for writing optimal path.\n";
-    }
-}
 
-void CatomsTest3BlockCode::initiateNextModulePathfinding() {
+void CatomsTest4BlockCode::initiateNextModulePathfinding() {
     if (startQueue.empty()) {
         console << "No more modules in startQueue.\n";
         return;
     }
 
-    // Retrieve the next starting position
     Cell3DPosition nextStart = startQueue.front();
     startQueue.pop();
 
@@ -473,37 +419,22 @@ void CatomsTest3BlockCode::initiateNextModulePathfinding() {
 
 
     if (!usedPrecomputed) {
-        cells.clear();
-        visited.clear();
-        teleportedPositions.clear();
-        while (!openSet.empty()) {
-            openSet.pop();
+
         }
-        gScore.clear();
-        fScore.clear();
-        cameFrom.clear();
-        closedSet.clear();
+
 
         console << "Initiating *A* pathfinding* for module at " << nextStart << "\n";
         nextModule->setColor(RED);
-        distance = 0;
 
         Cell3DPosition currentPosition = nextStart;
-        cells[currentPosition].clear();
-        teleportedPositions.push_back(currentPosition);
 
-        gScore[currentPosition] = 0;
 
         if (targetQueue.empty()) {
             console << "Error: targetQueue is empty in initiateNextModulePathfinding().\n";
             return;
         }
-        fScore[currentPosition] = heuristic(currentPosition, targetQueue.front());
 
-        for (auto &motion : nextModule->hostBlock->getAllMotions()) {
-            cells[currentPosition].push_back(motion.first);
-            visited.push_back(motion.first);
-        }
+
 
         openSet.push({currentPosition, fScore[currentPosition]});
 
@@ -517,4 +448,3 @@ void CatomsTest3BlockCode::initiateNextModulePathfinding() {
 
         }
     }
-}

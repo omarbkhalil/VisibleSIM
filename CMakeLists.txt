@@ -661,6 +661,12 @@ add_executable(catomsTest3 applicationsSrc/catomsTest3/catomsTest3.cpp applicati
 target_link_libraries(catomsTest3 -lCatoms3D -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
 install(TARGETS catomsTest3 RUNTIME DESTINATION applicationsBin/catomsTest3)
 
+add_executable(catomsTest4 applicationsSrc/catomsTest4/catomsTest4.cpp applicationsSrc/catomsTest4/catomsTest4BlockCode.cpp)
+target_link_libraries(catomsTest4 -lCatoms3D -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
+install(TARGETS catomsTest4 RUNTIME DESTINATION applicationsBin/catomsTest4)
+
+
+
 
 #################################################################################
 ############################ REPLAYER ###########################################
