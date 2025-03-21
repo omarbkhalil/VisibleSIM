@@ -16,10 +16,6 @@
 
 using namespace Catoms3D;
 
-// Global static variables for the A* state.
-std::map<Cell3DPosition, std::vector<Cell3DPosition>> CatomsTest4BlockCode::cells;
-std::vector<Cell3DPosition> CatomsTest4BlockCode::visited;
-std::vector<Cell3DPosition> CatomsTest4BlockCode::teleportedPositions;
 
 std::priority_queue<
     std::pair<Cell3DPosition, double>,
@@ -33,8 +29,6 @@ std::priority_queue<
 
 std::map<Cell3DPosition, double> CatomsTest4BlockCode::gScore;
 std::map<Cell3DPosition, double> CatomsTest4BlockCode::fScore;
-std::map<Cell3DPosition, Cell3DPosition> CatomsTest4BlockCode::cameFrom;
-std::set<Cell3DPosition> CatomsTest4BlockCode::closedSet;
 
 std::vector<std::vector<Cell3DPosition>> CatomsTest4BlockCode::globalOptimalPaths;
 
