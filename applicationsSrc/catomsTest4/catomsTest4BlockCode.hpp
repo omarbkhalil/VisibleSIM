@@ -65,6 +65,7 @@ private:
     static std::vector<std::vector<Cell3DPosition>> globalOptimalPaths;
 
     std::vector<Cell3DPosition> matchingPath;
+    std::vector<Cell3DPosition> reversedPath ;
 
 
     static std::priority_queue<std::pair<Cell3DPosition, double>,
@@ -116,6 +117,10 @@ public:
     static bool fileParsed;
 
     static std::vector<Cell3DPosition> currentOptimalPath;
+
+    static std::queue<Cell3DPosition> targetQueueBack;
+
+    static std::queue<Cell3DPosition> startQueueBack;
 
     CatomsTest4BlockCode(Catoms3DBlock *host);
 

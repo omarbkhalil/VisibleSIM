@@ -67,6 +67,8 @@ std::queue<Cell3DPosition> CatomsTest4BlockCode::startQueue(
         Cell3DPosition(Origin[0] - 4, Origin[1] + 1, Origin[2] - 1),
 
         Cell3DPosition(Origin[0] - 4, Origin[1] + 2, Origin[2]),
+        Cell3DPosition(Origin[0]-5,Origin[1]+1 , Origin[2]+1),
+        Cell3DPosition(Origin[0]-5,Origin[1]+1 , Origin[2]-1),
 
 
      //   Cell3DPosition(12, 6, 7)
@@ -75,6 +77,42 @@ std::queue<Cell3DPosition> CatomsTest4BlockCode::startQueue(
 
     }
 );
+
+
+
+std::queue<Cell3DPosition> CatomsTest4BlockCode::targetQueueBack(
+    std::deque{
+
+        Cell3DPosition(Origin[0] - 4, Origin[1] + 2, Origin[2]),
+        Cell3DPosition(Origin[0] - 4, Origin[1] + 1, Origin[2] - 1),
+        Cell3DPosition(Origin[0] - 4, Origin[1] + 1, Origin[2] + 1),
+        Cell3DPosition(Origin[0] - 3, Origin[1] + 1, Origin[2] - 2),
+        Cell3DPosition(Origin[0] - 3, Origin[1] + 1, Origin[2] + 2),
+        Cell3DPosition(Origin[0] - 2, Origin[1] + 1, Origin[2] - 2),
+        Cell3DPosition(Origin[0] - 2, Origin[1] + 1, Origin[2] + 2),
+        Cell3DPosition(Origin[0] - 2, Origin[1], Origin[2] - 1),
+        Cell3DPosition(Origin[0] - 2, Origin[1], Origin[2] + 1),
+        Cell3DPosition(Origin[0] - 1, Origin[1], Origin[2]),
+        Cell3DPosition(Origin[0] - 1, Origin[1], Origin[2] - 1),
+        Cell3DPosition(Origin[0] - 1, Origin[1], Origin[2] + 1),
+        Cell3DPosition(Origin[0], Origin[1], Origin[2] - 1),
+        Cell3DPosition(Origin[0], Origin[1], Origin[2]),
+        Cell3DPosition(Origin[0], Origin[1], Origin[2] + 1),
+        Cell3DPosition(Origin[0] + 1, Origin[1] + 1, Origin[2] - 2),
+        Cell3DPosition(Origin[0] + 1, Origin[1] + 1, Origin[2] + 2),
+        Cell3DPosition(Origin[0] + 2, Origin[1] + 1, Origin[2] + 2),
+        Cell3DPosition(Origin[0] + 2, Origin[1] + 1, Origin[2] + 1),
+        Cell3DPosition(Origin[0] + 2, Origin[1] + 1, Origin[2] - 2),
+        Cell3DPosition(Origin[0] + 2, Origin[1] + 1, Origin[2] - 1),
+        Cell3DPosition(Origin[0] + 3, Origin[1] + 2, Origin[2]),
+        Cell3DPosition(Origin[0] + 3, Origin[1] + 1, Origin[2] - 1),
+        Cell3DPosition(Origin[0] + 3, Origin[1] + 1, Origin[2] + 1),
+
+
+    }
+   );
+
+
 
 //state 1
 std::queue<Cell3DPosition> CatomsTest4BlockCode::targetQueue(
@@ -119,6 +157,8 @@ Cell3DPosition(Origin[0] -16, Origin[1],     Origin[2] - 1), // (1,5,5)
 Cell3DPosition(Origin[0] -16, Origin[1],     Origin[2]),     // (1,5,6)
 
 Cell3DPosition(Origin[0] -16, Origin[1],     Origin[2] + 1), // (1,5,7)
+        Cell3DPosition(Origin[0] -17, Origin[1],     Origin[2] + 1),
+        Cell3DPosition(Origin[0] -17, Origin[1],     Origin[2] - 1),
 
         // Cell3DPosition(1, 6, 7)
 
@@ -127,6 +167,38 @@ Cell3DPosition(Origin[0] -16, Origin[1],     Origin[2] + 1), // (1,5,7)
     }
 );
 
+
+std::queue<Cell3DPosition> CatomsTest4BlockCode::startQueueBack(
+    std::deque{
+
+        Cell3DPosition(Origin[0] -16, Origin[1],     Origin[2] + 1), // (1,5,7)
+        Cell3DPosition(Origin[0] -16, Origin[1],     Origin[2]),     // (1,5,6)
+        Cell3DPosition(Origin[0] -16, Origin[1],     Origin[2] - 1), // (1,5,5)
+        Cell3DPosition(Origin[0] -15, Origin[1] + 1, Origin[2] - 2), // (2,6,4)
+        Cell3DPosition(Origin[0] -15, Origin[1] + 1, Origin[2] + 2), // (2,6,8)
+        Cell3DPosition(Origin[0] -14, Origin[1] + 1, Origin[2] + 2), // (3,6,8)
+        Cell3DPosition(Origin[0] -14, Origin[1] + 1, Origin[2] - 2), // (3,6,4)
+        Cell3DPosition(Origin[0] -14, Origin[1] + 1, Origin[2] - 1), // (3,6,5)
+        Cell3DPosition(Origin[0] -14, Origin[1] + 1, Origin[2] + 1), // (3,6,7)
+        Cell3DPosition(Origin[0] -13, Origin[1] + 1, Origin[2] + 1), // (4,6,7)
+        Cell3DPosition(Origin[0] -13, Origin[1] + 1, Origin[2] - 1), // (4,6,5)
+        Cell3DPosition(Origin[0] -13, Origin[1] + 2, Origin[2]),     // (4,7,6)
+        Cell3DPosition(Origin[0] -12, Origin[1] + 2, Origin[2]),     // (5,7,6)
+        Cell3DPosition(Origin[0] -12, Origin[1] + 1, Origin[2] - 1), // (5,6,5)
+        Cell3DPosition(Origin[0] -12, Origin[1] + 1, Origin[2] + 1), // (5,6,7)
+        Cell3DPosition(Origin[0] -11, Origin[1] + 1, Origin[2] - 2), // (6,6,4)
+        Cell3DPosition(Origin[0] -11, Origin[1] + 1, Origin[2] + 2), // (6,6,8)
+        Cell3DPosition(Origin[0] -10, Origin[1] + 1, Origin[2] + 2), // (7,6,8)
+        Cell3DPosition(Origin[0] -10, Origin[1] + 1, Origin[2] - 2), // (7,6,4)
+        Cell3DPosition(Origin[0] -10, Origin[1],     Origin[2] - 1), // (7,5,5)
+        Cell3DPosition(Origin[0] -10, Origin[1],     Origin[2] + 1), // (7,5,7)
+        Cell3DPosition(Origin[0] - 9, Origin[1],     Origin[2]),     // (8,5,6)
+        Cell3DPosition(Origin[0] - 9, Origin[1],     Origin[2] - 1), // (8,5,5)
+        Cell3DPosition(Origin[0] - 9, Origin[1],     Origin[2] + 1), // (8,5,7)
+
+
+    }
+);
 
 
 // state 2
@@ -159,8 +231,7 @@ std::queue<Cell3DPosition> CatomsTest3BlockCode::targetQueue(
 
 */
 
-// Flag to enable saving. If the file exists, this flag will be disabled.
-bool CatomsTest4BlockCode::savingEnabled = true;
+
 
 CatomsTest4BlockCode::CatomsTest4BlockCode(Catoms3DBlock *host) : Catoms3DBlockCode(host) {
     if (!host) return;
@@ -240,13 +311,17 @@ void CatomsTest4BlockCode::startup() {
         }
         // If there is a saved file, search for a matching path.
         for (const auto &path : loadedPaths) {
-            // Check that the path is not empty and its first position matches the module's current position.
+
             if (!path.empty() && path.front() == module->position) {
-                matchingPath = path;  // assuming matchingPath is declared as a member variable
+                matchingPath = path;
+                // Create a reversed copy of the matching path.
+                reversedPath = path;
+                std::reverse(reversedPath.begin(), reversedPath.end());
                 console << "Matching path found for module's current position.\n";
                 break;
             }
         }
+
     }
 
     static bool hasStarted = false;
@@ -288,6 +363,8 @@ void CatomsTest4BlockCode::processLocalEvent(EventPtr pev) {
         case EVENT_TELEPORTATION_END:
 
 
+
+
                 if (!targetQueue.empty() && currentPosition == targetQueue.front()) {
                     targetQueue.pop();
 
@@ -295,11 +372,7 @@ void CatomsTest4BlockCode::processLocalEvent(EventPtr pev) {
                         console << pos << "\n";
                     }
 
-//save
-
-
-
-
+//Next module
 
 
                     // Initiate next module's pathfinding so that subsequent modules move.
@@ -309,22 +382,31 @@ void CatomsTest4BlockCode::processLocalEvent(EventPtr pev) {
 
                     //Move on Loaded
                     if (!matchingPath.empty() && matchingPath.size() > 1) {
-
                         Cell3DPosition nextStep = matchingPath[1];
+
+
+
+                        //Use the going back Queue
+                        if (nextStep[0] < Origin[0] - 16) {
+                            // Check that the reversed path is valid.
+                            if (!reversedPath.empty() && reversedPath.size() > 1) {
+                                console << "Switching to reversed path.\n";
+                            }
+                            nextStep = reversedPath[1];
+                            console << "Reversed Path: Teleporting to " << nextStep << "\n";
+                            getScheduler()->schedule(new TeleportationStartEvent(getScheduler()->now() + 1000, module, nextStep));
+                            reversedPath.erase(reversedPath.begin());
+
+                            initiateNextModulePathfinding();
+
+                            return;
+                        }
+
                         console << "Matching Path: Teleporting to " << nextStep << "\n";
                         getScheduler()->schedule(new TeleportationStartEvent(getScheduler()->now() + 1000, module, nextStep));
                        //module->moveTo(nextStep);
 
                         matchingPath.erase(matchingPath.begin());
-                    } else if (!openSet.empty()) {
-                        auto nextStep = openSet.top();
-                        openSet.pop();
-                        console << "A*: Teleporting to " << nextStep.first << "\n";
-                      getScheduler()->schedule(new TeleportationStartEvent(getScheduler()->now() + 1000, module, nextStep.first));
-                     //   module->moveTo(nextStep.first);
-
-                    } else {
-                        console << "A*: No more nodes to explore. Path not found.\n";
                     }
 
 
@@ -399,46 +481,24 @@ void CatomsTest4BlockCode::initiateNextModulePathfinding() {
     Cell3DPosition nextStart = startQueue.front();
     startQueue.pop();
 
-    // Verify that the block exists
+    //Getting module
     BuildingBlock *nextBlock = BaseSimulator::getWorld()->getBlockByPosition(nextStart);
-    if (!nextBlock || !nextBlock->blockCode) {
-        console << "Error: Block at position " << nextStart << " is null or has no blockCode.\n";
-        return;
-    }
+
+    //Pointer
     Catoms3DBlockCode* nextModule = static_cast<Catoms3DBlockCode*>(nextBlock->blockCode);
 
 
-    bool usedPrecomputed = false;
-
-
-
-    if (!usedPrecomputed) {
-
-        }
-
-
-        console << "Initiating *A* pathfinding* for module at " << nextStart << "\n";
+        console << "Moving at " << nextStart << "\n";
         nextModule->setColor(RED);
-
-        Cell3DPosition currentPosition = nextStart;
-
 
         if (targetQueue.empty()) {
             console << "Error: targetQueue is empty in initiateNextModulePathfinding().\n";
             return;
         }
 
-
-
-        openSet.push({currentPosition, fScore[currentPosition]});
-
-        if (!openSet.empty()) {
-            auto nextStep = openSet.top();
-            openSet.pop();
-           getScheduler()->schedule(new TeleportationStartEvent(
-                getScheduler()->now() + 1000, nextModule->hostBlock, nextStep.first));
+    getScheduler()->schedule(new TeleportationStartEvent(
+        getScheduler()->now() + 1000, nextModule->hostBlock, nextStart));
 
             //nextModule->hostBlock->moveTo(nextStep.first);
 
-        }
     }

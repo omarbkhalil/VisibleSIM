@@ -73,6 +73,8 @@ std::queue<Cell3DPosition> CatomsTest3BlockCode::startQueue(
         Cell3DPosition(Origin[0] - 4, Origin[1] + 1, Origin[2] - 1),
 
         Cell3DPosition(Origin[0] - 4, Origin[1] + 2, Origin[2]),
+        Cell3DPosition(Origin[0]-5,Origin[1]+1 , Origin[2]+1),
+        Cell3DPosition(Origin[0]-5,Origin[1]+1 , Origin[2]-1),
 
 
      //   Cell3DPosition(12, 6, 7)
@@ -125,6 +127,8 @@ Cell3DPosition(Origin[0] -16, Origin[1],     Origin[2] - 1), // (1,5,5)
 Cell3DPosition(Origin[0] -16, Origin[1],     Origin[2]),     // (1,5,6)
 
 Cell3DPosition(Origin[0] -16, Origin[1],     Origin[2] + 1), // (1,5,7)
+        Cell3DPosition(Origin[0] -17, Origin[1],     Origin[2] + 1),
+        Cell3DPosition(Origin[0] -17, Origin[1],     Origin[2] - 1),
 
         // Cell3DPosition(1, 6, 7)
 
@@ -165,8 +169,6 @@ std::queue<Cell3DPosition> CatomsTest3BlockCode::targetQueue(
 
 */
 
-// Flag to enable saving. If the file exists, this flag will be disabled.
-bool CatomsTest3BlockCode::savingEnabled = true;
 
 CatomsTest3BlockCode::CatomsTest3BlockCode(Catoms3DBlock *host) : Catoms3DBlockCode(host) {
     if (!host) return;
@@ -174,52 +176,7 @@ CatomsTest3BlockCode::CatomsTest3BlockCode(Catoms3DBlock *host) : Catoms3DBlockC
 }
 
 
-std::vector<std::vector<Cell3DPosition>> CatomsTest3BlockCode::loadAllOptimalPaths() {
-    std::vector<std::vector<Cell3DPosition>> allPaths;
-    std::ifstream inFile("optimal_paths.txt");
-    if (!inFile.is_open()) {
-        console << "Error: Could not open optimal_paths.txt for reading.\n";
-        return allPaths;
-    }
-    std::string line;
-    bool readingPath = false;
-    std::vector<Cell3DPosition> currentPath;
-    while (std::getline(inFile, line)) {
-        // Look for the header line.
-        if (line.find("Optimal path from start to goal:") != std::string::npos) {
-            readingPath = true;
-            currentPath.clear();
-            continue;
-        }
-        // End of a path entry when a blank line is encountered.
-        if (readingPath && line.empty()) {
-            if (!currentPath.empty()) {
-                allPaths.push_back(currentPath);
-            }
-            readingPath = false;
-            continue;
-        }
-        if (readingPath) {
-            // Expect line format: (x,y,z)
-            if (!line.empty() && line.front() == '(' && line.back() == ')') {
-                std::string coords = line.substr(1, line.size() - 2); // remove parentheses
-                std::istringstream iss(coords);
-                int x, y, z;
-                char comma1, comma2;
-                if (iss >> x >> comma1 >> y >> comma2 >> z) {
-                    currentPath.push_back(Cell3DPosition(x, y, z));
-                }
-            }
-        }
-    }
-    // In case file did not end with a blank line.
-    if (readingPath && !currentPath.empty()) {
-        allPaths.push_back(currentPath);
-    }
-    inFile.close();
-    return allPaths;
 
-}
 
 void CatomsTest3BlockCode::startup() {
     console << "start\n";
@@ -319,19 +276,12 @@ void CatomsTest3BlockCode::processLocalEvent(EventPtr pev) {
 
 //save
 
-                    auto savedPaths = loadAllOptimalPaths();
 
-                    bool alreadySaved = false;
-                    for (const auto &savedPath : savedPaths) {
-                        if (savedPath == discoveredPath) { // Assumes operator== is defined for Cell3DPosition
-                            alreadySaved = true;
-                            break;
-                        }
-                    }
 
-                    if (!alreadySaved) {
+
+
                         saveOptimalPath(discoveredPath);
-                    }
+
 
 
 
@@ -429,11 +379,7 @@ double CatomsTest3BlockCode::heuristic(const Cell3DPosition& current, const Cell
 }
 
 void CatomsTest3BlockCode::saveOptimalPath(const std::vector<Cell3DPosition>& path) {
-    // If saving is disabled, do nothing.
-    if (!savingEnabled) {
-        console << "Optimal path saving disabled. Not saving new path.\n";
-        return;
-    }
+
 
     std::ofstream outFile("optimal_paths.txt", std::ios::app);
     if (outFile.is_open()) {
