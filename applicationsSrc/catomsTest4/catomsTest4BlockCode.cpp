@@ -82,6 +82,9 @@ std::queue<Cell3DPosition> CatomsTest4BlockCode::startQueue(
 
 std::queue<Cell3DPosition> CatomsTest4BlockCode::targetQueueBack(
     std::deque{
+        Cell3DPosition(Origin[0]-5,Origin[1]+1 , Origin[2]-1),
+
+        Cell3DPosition(Origin[0]-5,Origin[1]+1 , Origin[2]+1),
 
         Cell3DPosition(Origin[0] - 4, Origin[1] + 2, Origin[2]),
         Cell3DPosition(Origin[0] - 4, Origin[1] + 1, Origin[2] - 1),
@@ -193,6 +196,8 @@ std::queue<Cell3DPosition> CatomsTest4BlockCode::startQueueBack(
         Cell3DPosition(Origin[0] -10, Origin[1],     Origin[2] - 1), // (7,5,5)
         Cell3DPosition(Origin[0] -10, Origin[1],     Origin[2] + 1), // (7,5,7)
         Cell3DPosition(Origin[0] - 9, Origin[1],     Origin[2]),     // (8,5,6)
+        Cell3DPosition(Origin[0] - 9, Origin[1],     Origin[2] - 1), // (8,5,5)
+        Cell3DPosition(Origin[0] - 9, Origin[1],     Origin[2] + 1), // (8,5,7)
         Cell3DPosition(Origin[0] - 9, Origin[1],     Origin[2] - 1), // (8,5,5)
         Cell3DPosition(Origin[0] - 9, Origin[1],     Origin[2] + 1), // (8,5,7)
 
@@ -339,8 +344,9 @@ void CatomsTest4BlockCode::startup() {
         Cell3DPosition nextStep = matchingPath.front();
 
 
+       // getScheduler()->schedule(new Catoms3DRotationStartEvent(getScheduler()->now() + 1000, module, nextStep));
          getScheduler()->schedule(new TeleportationStartEvent(getScheduler()->now() + 1000, module, nextStep));
-          // module->moveTo(nextStep);
+          //module->moveTo(nextStep);
         }
 
 }
@@ -360,7 +366,7 @@ void CatomsTest4BlockCode::processLocalEvent(EventPtr pev) {
 
     switch (pev->eventType) {
         //change this to rotaton event in new class
-        case EVENT_TELEPORTATION_END:
+        case EVENT_ROTATION3D_END:
 
 
 
@@ -368,16 +374,21 @@ void CatomsTest4BlockCode::processLocalEvent(EventPtr pev) {
                 if (!targetQueue.empty() && currentPosition == targetQueue.front()) {
                     targetQueue.pop();
 
-                    for (auto &pos : discoveredPath) {
-                        console << pos << "\n";
-                    }
 
-//Next module
-
-
-                    // Initiate next module's pathfinding so that subsequent modules move.
+                   //Next module
                     initiateNextModulePathfinding();
-                } else {
+
+                }
+                if(!targetQueueBack.empty() && currentPosition == targetQueueBack.front()) {
+
+            targetQueueBack.pop();
+
+            //Next module
+
+            initiateNextModulePathfinding();
+        }
+
+
 
 
                     //Move on Loaded
@@ -394,23 +405,34 @@ void CatomsTest4BlockCode::processLocalEvent(EventPtr pev) {
                             }
                             nextStep = reversedPath[1];
                             console << "Reversed Path: Teleporting to " << nextStep << "\n";
-                            getScheduler()->schedule(new TeleportationStartEvent(getScheduler()->now() + 1000, module, nextStep));
+                           // getScheduler()->schedule(new TeleportationStartEvent(getScheduler()->now() + 1000, module, nextStep));
+                            getScheduler()->schedule(new Catoms3DRotationStartEvent(getScheduler()->now() + 1000, module, nextStep));
+
                             reversedPath.erase(reversedPath.begin());
 
                             initiateNextModulePathfinding();
 
-                            return;
+                        }
+                        else if(nextStep[0] >= Origin[0] - 16){
+
+                            console << "Matching Path: Teleporting to " << nextStep << "\n";
+                            //getScheduler()->schedule(new TeleportationStartEvent(getScheduler()->now() + 1000, module, nextStep));
+                            getScheduler()->schedule(new Catoms3DRotationStartEvent(getScheduler()->now() + 1000, module, nextStep));
+
+                            //module->moveTo(nextStep);
+
+                            matchingPath.erase(matchingPath.begin());
+
+                         //   initiateNextModulePathfinding();
+
                         }
 
-                        console << "Matching Path: Teleporting to " << nextStep << "\n";
-                        getScheduler()->schedule(new TeleportationStartEvent(getScheduler()->now() + 1000, module, nextStep));
-                       //module->moveTo(nextStep);
 
-                        matchingPath.erase(matchingPath.begin());
+
                     }
 
 
-                }
+
 
             break;
         default:
@@ -478,6 +500,9 @@ void CatomsTest4BlockCode::initiateNextModulePathfinding() {
         return;
     }
 
+    if (!targetQueue.empty()) {
+
+
     Cell3DPosition nextStart = startQueue.front();
     startQueue.pop();
 
@@ -491,14 +516,38 @@ void CatomsTest4BlockCode::initiateNextModulePathfinding() {
         console << "Moving at " << nextStart << "\n";
         nextModule->setColor(RED);
 
-        if (targetQueue.empty()) {
-            console << "Error: targetQueue is empty in initiateNextModulePathfinding().\n";
-            return;
-        }
 
-    getScheduler()->schedule(new TeleportationStartEvent(
-        getScheduler()->now() + 1000, nextModule->hostBlock, nextStart));
 
-            //nextModule->hostBlock->moveTo(nextStep.first);
+    //getScheduler()->schedule(new TeleportationStartEvent(
+        //getScheduler()->now() + 1000, nextModule->hostBlock, nextStart));
+
+      //  getScheduler()->schedule(new TeleportationStartEvent(getScheduler()->now() + 1000, nextModule->hostBlock, nextStart));
+
+            nextModule->hostBlock->moveTo(nextStart);
 
     }
+
+     if (targetQueue.empty()){
+
+        Cell3DPosition nextStart = startQueueBack.front();
+        startQueueBack.pop();
+
+        //Getting module
+        BuildingBlock *nextBlock = BaseSimulator::getWorld()->getBlockByPosition(nextStart);
+
+        //Pointer
+        Catoms3DBlockCode* nextModule = static_cast<Catoms3DBlockCode*>(nextBlock->blockCode);
+
+
+        console << "Moving at " << nextStart << "\n";
+        nextModule->setColor(RED);
+
+
+
+        getScheduler()->schedule(new TeleportationStartEvent(
+          getScheduler()->now() + 1000, nextModule->hostBlock, nextStart));
+
+       // nextModule->hostBlock->moveTo(nextStart);
+
+    }
+}
