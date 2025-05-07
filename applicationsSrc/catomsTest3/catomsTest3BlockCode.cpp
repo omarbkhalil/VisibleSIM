@@ -39,128 +39,199 @@ std::set<Cell3DPosition> CatomsTest3BlockCode::closedSet;
 std::vector<std::vector<Cell3DPosition> > CatomsTest3BlockCode::globalOptimalPaths;
 
 //Origin/Relative pos
-Cell3DPosition CatomsTest3BlockCode::Origin = Cell3DPosition(17 + 18, 5, 6);
+Cell3DPosition CatomsTest3BlockCode::Origin = Cell3DPosition(35, 5, 6);
 
+
+bool CatomsTest3BlockCode::NFound = false;
+
+std::queue<Cell3DPosition> CatomsTest3BlockCode::startD(
+    std::deque{
+
+        Cell3DPosition(Origin[0] + 3, Origin[1] + 1, Origin[2] + 1),
+               // Cell3DPosition(Origin[0] + 3, Origin[1] + 1, Origin[2] - 1),
+               // Cell3DPosition(Origin[0] + 3, Origin[1] + 2, Origin[2]),
+               // Cell3DPosition(Origin[0] + 2, Origin[1] + 1, Origin[2] - 1),
+               // Cell3DPosition(Origin[0] + 2, Origin[1] + 1, Origin[2] - 2),
+               // Cell3DPosition(Origin[0] + 2, Origin[1] + 1, Origin[2] + 1),
+               // Cell3DPosition(Origin[0] + 2, Origin[1] + 1, Origin[2] + 2),
+               // Cell3DPosition(Origin[0] + 1, Origin[1] + 1, Origin[2] + 2),
+               // Cell3DPosition(Origin[0] + 1, Origin[1] + 1, Origin[2] - 2),
+               // Cell3DPosition(Origin[0], Origin[1], Origin[2] + 1),
+               // Cell3DPosition(Origin[0], Origin[1], Origin[2]),
+               // Cell3DPosition(Origin[0], Origin[1], Origin[2] - 1),
+    }
+  );
+
+std::queue<Cell3DPosition> CatomsTest3BlockCode::targetD(
+    std::deque{
+
+        Cell3DPosition(Origin[0] -1 , Origin[1] -1, Origin[2] )
+    }
+  );
+
+std::queue<Cell3DPosition> CatomsTest3BlockCode::startT(
+    std::deque{
+
+        Cell3DPosition(Origin[0]-1, Origin[1] , Origin[2] )
+ //         Cell3DPosition(Origin[0] - 1, Origin[1], Origin[2] - 1),
+ //         Cell3DPosition(Origin[0] - 1, Origin[1], Origin[2]),
+ //
+ //         Cell3DPosition(Origin[0] - 2, Origin[1], Origin[2] + 1),
+ //         Cell3DPosition(Origin[0] - 2, Origin[1], Origin[2] - 1),
+ //         Cell3DPosition(Origin[0] - 2, Origin[1] + 1, Origin[2] + 2),
+ //         Cell3DPosition(Origin[0] - 2, Origin[1] + 1, Origin[2] - 2),
+ //
+ //         Cell3DPosition(Origin[0] - 3, Origin[1] + 1, Origin[2] + 2),
+ //         Cell3DPosition(Origin[0] - 3, Origin[1] + 1, Origin[2] - 2),
+ //         Cell3DPosition(Origin[0] - 4, Origin[1] + 1, Origin[2] + 1),
+ //         Cell3DPosition(Origin[0] - 4, Origin[1] + 1, Origin[2] - 1),
+ //
+ //         Cell3DPosition(Origin[0] - 4, Origin[1] + 2, Origin[2]),
+    }
+  );
+
+std::queue<Cell3DPosition> CatomsTest3BlockCode::targetT(
+    std::deque{
+
+        Cell3DPosition(Origin[0] -4 , Origin[1] + 2, Origin[2] )
+    }
+  );
+
+std::queue<Cell3DPosition> CatomsTest3BlockCode::startA(
+    std::deque{
+
+        Cell3DPosition(Origin[0] -5 , Origin[1] + 2, Origin[2] )
+    }
+  );
+std::queue<Cell3DPosition> CatomsTest3BlockCode::targetA(
+    std::deque{
+
+        Cell3DPosition(Origin[0] -8 , Origin[1] + 2, Origin[2] )
+        //
+        //
+        //
+    }
+  );
 
 // Queues for start and target positions.
-std::queue<Cell3DPosition> CatomsTest3BlockCode::startQueue(
-    std::deque{
-        Cell3DPosition(Origin[0] + 3, Origin[1] + 1, Origin[2] + 1),
-        Cell3DPosition(Origin[0] + 3, Origin[1] + 1, Origin[2] - 1),
-        Cell3DPosition(Origin[0] + 3, Origin[1] + 2, Origin[2]),
-        Cell3DPosition(Origin[0] + 2, Origin[1] + 1, Origin[2] - 1),
-        Cell3DPosition(Origin[0] + 2, Origin[1] + 1, Origin[2] - 2),
-        Cell3DPosition(Origin[0] + 2, Origin[1] + 1, Origin[2] + 1),
-        Cell3DPosition(Origin[0] + 2, Origin[1] + 1, Origin[2] + 2),
-        Cell3DPosition(Origin[0] + 1, Origin[1] + 1, Origin[2] + 2),
-        Cell3DPosition(Origin[0] + 1, Origin[1] + 1, Origin[2] - 2),
-        Cell3DPosition(Origin[0], Origin[1], Origin[2] + 1),
-        Cell3DPosition(Origin[0], Origin[1], Origin[2]),
-        Cell3DPosition(Origin[0], Origin[1], Origin[2] - 1),
-        Cell3DPosition(Origin[0] - 1, Origin[1], Origin[2] + 1),
-        Cell3DPosition(Origin[0] - 1, Origin[1], Origin[2] - 1),
-        Cell3DPosition(Origin[0] - 1, Origin[1], Origin[2]),
-
-        Cell3DPosition(Origin[0] - 2, Origin[1], Origin[2] + 1),
-        Cell3DPosition(Origin[0] - 2, Origin[1], Origin[2] - 1),
-        Cell3DPosition(Origin[0] - 2, Origin[1] + 1, Origin[2] + 2),
-        Cell3DPosition(Origin[0] - 2, Origin[1] + 1, Origin[2] - 2),
-
-        Cell3DPosition(Origin[0] - 3, Origin[1] + 1, Origin[2] + 2),
-        Cell3DPosition(Origin[0] - 3, Origin[1] + 1, Origin[2] - 2),
-        Cell3DPosition(Origin[0] - 4, Origin[1] + 1, Origin[2] + 1),
-        Cell3DPosition(Origin[0] - 4, Origin[1] + 1, Origin[2] - 1),
-
-        Cell3DPosition(Origin[0] - 4, Origin[1] + 2, Origin[2]),
-        Cell3DPosition(Origin[0] - 5, Origin[1] + 1, Origin[2] + 1),
-        Cell3DPosition(Origin[0] - 5, Origin[1] + 1, Origin[2] - 1),
-        Cell3DPosition(Origin[0] - 5, Origin[1] + 2, Origin[2]),
-        Cell3DPosition(Origin[0] - 6, Origin[1] + 1, Origin[2] - 1),
-        Cell3DPosition(Origin[0] - 6, Origin[1] + 1, Origin[2] + 1),
-
-        Cell3DPosition(Origin[0] - 6, Origin[1] + 1, Origin[2] - 2),
-        Cell3DPosition(Origin[0] - 6, Origin[1] + 1, Origin[2] + 2),
-
-
-        Cell3DPosition(Origin[0] - 7, Origin[1] + 1, Origin[2] - 2),
-        Cell3DPosition(Origin[0] - 7, Origin[1] + 1, Origin[2] + 2),
-
-
-        Cell3DPosition(Origin[0] - 8, Origin[1], Origin[2] - 1),
-        Cell3DPosition(Origin[0] - 8, Origin[1], Origin[2] + 1),
-        //   Cell3DPosition(12, 6, 7)
-
-
-        Cell3DPosition(Origin[0] - 8, Origin[1], Origin[2]),
-
-    }
-);
-
-//state 1
-std::queue<Cell3DPosition> CatomsTest3BlockCode::targetQueue(
-    std::deque{
-        Cell3DPosition(Origin[0] - 9, Origin[1], Origin[2] + 1), // (8,5,7)
-        Cell3DPosition(Origin[0] - 9, Origin[1], Origin[2] - 1), // (8,5,5)
-
-        Cell3DPosition(Origin[0] - 9, Origin[1], Origin[2]), // (8,5,6)
-        // Cell3DPosition(7, 5, 6),
-        Cell3DPosition(Origin[0] - 10, Origin[1], Origin[2] + 1), // (7,5,7)
-
-        // Cell3DPosition(6, 5, 7),
-        Cell3DPosition(Origin[0] - 10, Origin[1], Origin[2] - 1), // (7,5,5)
-        // Cell3DPosition(6, 5, 5),
-        Cell3DPosition(Origin[0] - 10, Origin[1] + 1, Origin[2] - 2), // (7,6,4)
-
-        Cell3DPosition(Origin[0] - 10, Origin[1] + 1, Origin[2] + 2), // (7,6,8)
-        Cell3DPosition(Origin[0] - 11, Origin[1] + 1, Origin[2] + 2), // (6,6,8)
-
-        Cell3DPosition(Origin[0] - 11, Origin[1] + 1, Origin[2] - 2), // (6,6,4)
-
-        Cell3DPosition(Origin[0] - 12, Origin[1] + 1, Origin[2] + 1), // (5,6,7)
-
-        Cell3DPosition(Origin[0] - 12, Origin[1] + 1, Origin[2] - 1), // (5,6,5)
-        Cell3DPosition(Origin[0] - 12, Origin[1] + 2, Origin[2]), // (5,7,6)
-
-        Cell3DPosition(Origin[0] - 13, Origin[1] + 2, Origin[2]), // (4,7,6)
-        Cell3DPosition(Origin[0] - 13, Origin[1] + 1, Origin[2] - 1), // (4,6,5)
-
-        Cell3DPosition(Origin[0] - 13, Origin[1] + 1, Origin[2] + 1), // (4,6,7)
-        Cell3DPosition(Origin[0] - 14, Origin[1] + 1, Origin[2] + 1), // (3,6,7)
-
-        Cell3DPosition(Origin[0] - 14, Origin[1] + 1, Origin[2] - 1), // (3,6,5)
-        Cell3DPosition(Origin[0] - 14, Origin[1] + 1, Origin[2] - 2), // (3,6,4)
-
-        Cell3DPosition(Origin[0] - 14, Origin[1] + 1, Origin[2] + 2), // (3,6,8)
-        Cell3DPosition(Origin[0] - 15, Origin[1] + 1, Origin[2] + 2), // (2,6,8)
-
-        Cell3DPosition(Origin[0] - 15, Origin[1] + 1, Origin[2] - 2), // (2,6,4)
-
-        Cell3DPosition(Origin[0] - 16, Origin[1], Origin[2] - 1), // (1,5,5)
-        Cell3DPosition(Origin[0] - 16, Origin[1], Origin[2]), // (1,5,6)
-
-        Cell3DPosition(Origin[0] - 16, Origin[1], Origin[2] + 1), // (1,5,7)
-        Cell3DPosition(Origin[0] - 17, Origin[1], Origin[2] + 1),
-        Cell3DPosition(Origin[0] - 17, Origin[1], Origin[2] - 1),
-        Cell3DPosition(Origin[0] - 17, Origin[1], Origin[2]),
-        Cell3DPosition(Origin[0] - 18, Origin[1], Origin[2] + 1),
-        Cell3DPosition(Origin[0] - 18, Origin[1], Origin[2] - 1),
-
-
-        Cell3DPosition(Origin[0] - 18, Origin[1] + 1, Origin[2] + 2),
-        Cell3DPosition(Origin[0] - 18, Origin[1] + 1, Origin[2] - 2),
-        // Cell3DPosition(1, 6, 7)
-
-        Cell3DPosition(Origin[0] - 19, Origin[1] + 1, Origin[2] + 2),
-        Cell3DPosition(Origin[0] - 19, Origin[1] + 1, Origin[2] - 2),
-
-
-        Cell3DPosition(Origin[0] - 20, Origin[1] + 1, Origin[2] + 1),
-        Cell3DPosition(Origin[0] - 20, Origin[1] + 1, Origin[2] - 1),
-
-        Cell3DPosition(Origin[0] - 20, Origin[1] + 2, Origin[2]),
-
-    }
-);
+// std::queue<Cell3DPosition> CatomsTest3BlockCode::startQueue(
+//     std::deque{
+//         Cell3DPosition(Origin[0] + 3, Origin[1] + 1, Origin[2] + 1),
+//         Cell3DPosition(Origin[0] + 3, Origin[1] + 1, Origin[2] - 1),
+//         Cell3DPosition(Origin[0] + 3, Origin[1] + 2, Origin[2]),
+//         Cell3DPosition(Origin[0] + 2, Origin[1] + 1, Origin[2] - 1),
+//         Cell3DPosition(Origin[0] + 2, Origin[1] + 1, Origin[2] - 2),
+//         Cell3DPosition(Origin[0] + 2, Origin[1] + 1, Origin[2] + 1),
+//         Cell3DPosition(Origin[0] + 2, Origin[1] + 1, Origin[2] + 2),
+//         Cell3DPosition(Origin[0] + 1, Origin[1] + 1, Origin[2] + 2),
+//         Cell3DPosition(Origin[0] + 1, Origin[1] + 1, Origin[2] - 2),
+//         Cell3DPosition(Origin[0], Origin[1], Origin[2] + 1),
+//         Cell3DPosition(Origin[0], Origin[1], Origin[2]),
+//         Cell3DPosition(Origin[0], Origin[1], Origin[2] - 1),
+//         Cell3DPosition(Origin[0] - 1, Origin[1], Origin[2] + 1),
+//         Cell3DPosition(Origin[0] - 1, Origin[1], Origin[2] - 1),
+//         Cell3DPosition(Origin[0] - 1, Origin[1], Origin[2]),
+//
+//         Cell3DPosition(Origin[0] - 2, Origin[1], Origin[2] + 1),
+//         Cell3DPosition(Origin[0] - 2, Origin[1], Origin[2] - 1),
+//         Cell3DPosition(Origin[0] - 2, Origin[1] + 1, Origin[2] + 2),
+//         Cell3DPosition(Origin[0] - 2, Origin[1] + 1, Origin[2] - 2),
+//
+//         Cell3DPosition(Origin[0] - 3, Origin[1] + 1, Origin[2] + 2),
+//         Cell3DPosition(Origin[0] - 3, Origin[1] + 1, Origin[2] - 2),
+//         Cell3DPosition(Origin[0] - 4, Origin[1] + 1, Origin[2] + 1),
+//         Cell3DPosition(Origin[0] - 4, Origin[1] + 1, Origin[2] - 1),
+//
+//         Cell3DPosition(Origin[0] - 4, Origin[1] + 2, Origin[2]),
+//         Cell3DPosition(Origin[0] - 5, Origin[1] + 1, Origin[2] + 1),
+//         Cell3DPosition(Origin[0] - 5, Origin[1] + 1, Origin[2] - 1),
+//         Cell3DPosition(Origin[0] - 5, Origin[1] + 2, Origin[2]),
+//         Cell3DPosition(Origin[0] - 6, Origin[1] + 1, Origin[2] - 1),
+//         Cell3DPosition(Origin[0] - 6, Origin[1] + 1, Origin[2] + 1),
+//
+//         Cell3DPosition(Origin[0] - 6, Origin[1] + 1, Origin[2] - 2),
+//         Cell3DPosition(Origin[0] - 6, Origin[1] + 1, Origin[2] + 2),
+//
+//
+//         Cell3DPosition(Origin[0] - 7, Origin[1] + 1, Origin[2] - 2),
+//         Cell3DPosition(Origin[0] - 7, Origin[1] + 1, Origin[2] + 2),
+//
+//
+//         Cell3DPosition(Origin[0] - 8, Origin[1], Origin[2] - 1),
+//         Cell3DPosition(Origin[0] - 8, Origin[1], Origin[2] + 1),
+//         //   Cell3DPosition(12, 6, 7)
+//
+//
+//         Cell3DPosition(Origin[0] - 8, Origin[1], Origin[2]),
+//
+//     }
+// );
+//
+// //state 1
+// std::queue<Cell3DPosition> CatomsTest3BlockCode::targetQueue(
+//     std::deque{
+//         Cell3DPosition(Origin[0] - 9, Origin[1], Origin[2] + 1), // (8,5,7)
+//         Cell3DPosition(Origin[0] - 9, Origin[1], Origin[2] - 1), // (8,5,5)
+//
+//         Cell3DPosition(Origin[0] - 9, Origin[1], Origin[2]), // (8,5,6)
+//         // Cell3DPosition(7, 5, 6),
+//         Cell3DPosition(Origin[0] - 10, Origin[1], Origin[2] + 1), // (7,5,7)
+//
+//         // Cell3DPosition(6, 5, 7),
+//         Cell3DPosition(Origin[0] - 10, Origin[1], Origin[2] - 1), // (7,5,5)
+//         // Cell3DPosition(6, 5, 5),
+//         Cell3DPosition(Origin[0] - 10, Origin[1] + 1, Origin[2] - 2), // (7,6,4)
+//
+//         Cell3DPosition(Origin[0] - 10, Origin[1] + 1, Origin[2] + 2), // (7,6,8)
+//         Cell3DPosition(Origin[0] - 11, Origin[1] + 1, Origin[2] + 2), // (6,6,8)
+//
+//         Cell3DPosition(Origin[0] - 11, Origin[1] + 1, Origin[2] - 2), // (6,6,4)
+//
+//         Cell3DPosition(Origin[0] - 12, Origin[1] + 1, Origin[2] + 1), // (5,6,7)
+//
+//         Cell3DPosition(Origin[0] - 12, Origin[1] + 1, Origin[2] - 1), // (5,6,5)
+//         Cell3DPosition(Origin[0] - 12, Origin[1] + 2, Origin[2]), // (5,7,6)
+//
+//         Cell3DPosition(Origin[0] - 13, Origin[1] + 2, Origin[2]), // (4,7,6)
+//         Cell3DPosition(Origin[0] - 13, Origin[1] + 1, Origin[2] - 1), // (4,6,5)
+//
+//         Cell3DPosition(Origin[0] - 13, Origin[1] + 1, Origin[2] + 1), // (4,6,7)
+//         Cell3DPosition(Origin[0] - 14, Origin[1] + 1, Origin[2] + 1), // (3,6,7)
+//
+//         Cell3DPosition(Origin[0] - 14, Origin[1] + 1, Origin[2] - 1), // (3,6,5)
+//         Cell3DPosition(Origin[0] - 14, Origin[1] + 1, Origin[2] - 2), // (3,6,4)
+//
+//         Cell3DPosition(Origin[0] - 14, Origin[1] + 1, Origin[2] + 2), // (3,6,8)
+//         Cell3DPosition(Origin[0] - 15, Origin[1] + 1, Origin[2] + 2), // (2,6,8)
+//
+//         Cell3DPosition(Origin[0] - 15, Origin[1] + 1, Origin[2] - 2), // (2,6,4)
+//
+//         Cell3DPosition(Origin[0] - 16, Origin[1], Origin[2] - 1), // (1,5,5)
+//         Cell3DPosition(Origin[0] - 16, Origin[1], Origin[2]), // (1,5,6)
+//
+//         Cell3DPosition(Origin[0] - 16, Origin[1], Origin[2] + 1), // (1,5,7)
+//         Cell3DPosition(Origin[0] - 17, Origin[1], Origin[2] + 1),
+//         Cell3DPosition(Origin[0] - 17, Origin[1], Origin[2] - 1),
+//         Cell3DPosition(Origin[0] - 17, Origin[1], Origin[2]),
+//         Cell3DPosition(Origin[0] - 18, Origin[1], Origin[2] + 1),
+//         Cell3DPosition(Origin[0] - 18, Origin[1], Origin[2] - 1),
+//
+//
+//         Cell3DPosition(Origin[0] - 18, Origin[1] + 1, Origin[2] + 2),
+//         Cell3DPosition(Origin[0] - 18, Origin[1] + 1, Origin[2] - 2),
+//         // Cell3DPosition(1, 6, 7)
+//
+//         Cell3DPosition(Origin[0] - 19, Origin[1] + 1, Origin[2] + 2),
+//         Cell3DPosition(Origin[0] - 19, Origin[1] + 1, Origin[2] - 2),
+//
+//
+//         Cell3DPosition(Origin[0] - 20, Origin[1] + 1, Origin[2] + 1),
+//         Cell3DPosition(Origin[0] - 20, Origin[1] + 1, Origin[2] - 1),
+//
+//         Cell3DPosition(Origin[0] - 20, Origin[1] + 2, Origin[2]),
+//
+//     }
+// );
 
 
 // state 2
@@ -219,10 +290,10 @@ void CatomsTest3BlockCode::startup() {
         return;
     }
 
-    if (!startQueue.empty() && (module->position == startQueue.front())) {
+    if (!startD.empty() && (module->position == startD.front())) {
         hasStarted = true;
-        Cell3DPosition startTarget = startQueue.front();
-        startQueue.pop();
+        Cell3DPosition startTarget = startD.front();
+        startD.pop();
         module->setColor(RED);
         distance = 0;
         Cell3DPosition currentPosition = startTarget;
@@ -230,11 +301,11 @@ void CatomsTest3BlockCode::startup() {
         teleportedPositions.push_back(currentPosition);
         gScore[currentPosition] = 0;
         // Ensure targetQueue is not empty before using front()
-        if (targetQueue.empty()) {
+        if (targetD.empty()) {
             console << "Error: targetQueue is empty in startup().\n";
             return;
         }
-        fScore[currentPosition] = heuristic(currentPosition, targetQueue.front());
+        fScore[currentPosition] = heuristic(currentPosition, targetD.front());
 
         for (auto &pos: module->getAllMotions()) {
             cells[currentPosition].push_back(pos.first);
@@ -269,15 +340,40 @@ void CatomsTest3BlockCode::processLocalEvent(EventPtr pev) {
         }
         cells[currentPosition] = neighbors;
     }
-
+    //Start transfer
+    BuildingBlock *nextBlock = BaseSimulator::getWorld()->getBlockByPosition(startT.front());
+    CatomsTest3BlockCode *ModuleN = static_cast<CatomsTest3BlockCode *>(nextBlock->blockCode);
     switch (pev->eventType) {
         //change this to rotaton event in new class
         //bare in mind every module in real life cant have static maybe configure that later
-        case EVENT_TELEPORTATION_END:
+        case EVENT_ADD_NEIGHBOR: {
+
+            // Only act when this module is the one at the front of startT
+            if (module->position == startT.front()) {
+
+                // grab the next target
+                Cell3DPosition nextPos = startT.front();
+                startT.pop();
+                console << "Neighbor detected – teleporting to " << nextPos << "\n";
+
+                // schedule a teleport in 1 second
+                getScheduler()->schedule(
+                    new TeleportationStartEvent(
+                        getScheduler()->now() + 1000,
+                        module,
+                        nextPos
+                    )
+                );
+            }
+            break;
+        }
+
+
+        case EVENT_TELEPORTATION_END:{
             //case EVENT_ROTATION3D_END:
 
-            if (!targetQueue.empty() && currentPosition == targetQueue.front()) {
-                targetQueue.pop();
+            if (!targetD.empty() && currentPosition == targetD.front()) {
+                //targetD.pop();
                 console << "Goal reached. Reconstructing optimal path...\n";
                 discoveredPath.clear();
                 while (cameFrom.find(currentPosition) != cameFrom.end()) {
@@ -311,11 +407,11 @@ void CatomsTest3BlockCode::processLocalEvent(EventPtr pev) {
                         cameFrom[neighbor] = currentPosition;
                         gScore[neighbor] = tentative_gScore;
                         // Ensure targetQueue is not empty before using front()
-                        if (targetQueue.empty()) {
+                        if (targetD.empty()) {
                             console << "Error: targetQueue is empty during A* processing.\n";
                             return;
                         }
-                        fScore[neighbor] = tentative_gScore + heuristic(neighbor, targetQueue.front());
+                        fScore[neighbor] = tentative_gScore + heuristic(neighbor, targetD.front());
                         openSet.push({neighbor, fScore[neighbor]});
                     }
                 }
@@ -333,7 +429,7 @@ void CatomsTest3BlockCode::processLocalEvent(EventPtr pev) {
                 }
             }
 
-            break;
+            break;}
         default:
             break;
     }
@@ -407,14 +503,14 @@ void CatomsTest3BlockCode::saveOptimalPath(const std::vector<Cell3DPosition> &pa
 }
 
 void CatomsTest3BlockCode::initiateNextModulePathfinding() {
-    if (startQueue.empty()) {
+    if (startD.empty()) {
         console << "No more modules in startQueue.\n";
         return;
     }
 
     // Retrieve the next starting position
-    Cell3DPosition nextStart = startQueue.front();
-    startQueue.pop();
+    Cell3DPosition nextStart = startD.front();
+    startD.pop();
 
     // Verify that the block exists
     BuildingBlock *nextBlock = BaseSimulator::getWorld()->getBlockByPosition(nextStart);
@@ -450,11 +546,11 @@ void CatomsTest3BlockCode::initiateNextModulePathfinding() {
 
         gScore[currentPosition] = 0;
 
-        if (targetQueue.empty()) {
+        if (targetD.empty()) {
             console << "Error: targetQueue is empty in initiateNextModulePathfinding().\n";
             return;
         }
-        fScore[currentPosition] = heuristic(currentPosition, targetQueue.front());
+        fScore[currentPosition] = heuristic(currentPosition, targetD.front());
 
         for (auto &motion: nextModule->hostBlock->getAllMotions()) {
             cells[currentPosition].push_back(motion.first);
@@ -472,4 +568,30 @@ void CatomsTest3BlockCode::initiateNextModulePathfinding() {
             //nextModule->hostBlock->moveTo(nextStep.first);
         }
     }
+}
+
+bool CatomsTest3BlockCode::getAllPossibleMotionsFromPosition(
+    Cell3DPosition position, vector<pair<short, short>> &links,
+    vector<Cell3DPosition> &reachablePositions) {
+
+    bool found = false;
+    for(auto &neighPos: lattice->getActiveNeighborCells(position)) {
+        Catoms3DBlock* neigh = static_cast<Catoms3DBlock*>(lattice->getBlock(neighPos));
+        //cerr << "Neighbor: " << neigh->blockId << endl;
+        vector<Catoms3DMotionRulesLink*> vec;
+        Catoms3DMotionRules motionRulesInstance; // Create an instance of Catoms3DMotionRules
+        Cell3DPosition pos;
+        short conFrom = neigh->getConnectorId(position);
+        //cout << "ConFrom: " << conFrom << endl;
+        motionRulesInstance.getValidMotionListFromPivot(neigh, conFrom, vec, static_cast<FCCLattice*>(lattice), NULL);
+        for(auto link: vec) {
+            cout << link->getConFromID() << " -> " << link->getConToID() << endl;
+            Cell3DPosition toPos;
+            links.push_back(make_pair(link->getConFromID(), link->getConToID()));
+            neigh->getNeighborPos(link->getConToID(), toPos);
+            reachablePositions.push_back(toPos);
+            found = true;
+        }
+    }
+    return found;
 }

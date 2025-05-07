@@ -42,6 +42,9 @@ private:
     // Already declared function to initiate pathfinding for the next module.
     void initiateNextModulePathfinding();
 
+    bool getAllPossibleMotionsFromPosition(Cell3DPosition position, vector<pair<short, short>> &links,
+                                           vector<Cell3DPosition> &reachablePositions);
+
     void serializePath(const std::vector<Cell3DPosition> &path, const std::string &filename);
 
     bool deserializePath(std::vector<Cell3DPosition> &path, const std::string &filename);
@@ -145,6 +148,13 @@ public:
     static std::queue<Cell3DPosition> startQueue1;
     static std::queue<Cell3DPosition> targetQueue1;
 
+    static std::queue<Cell3DPosition> startD;
+    static std::queue<Cell3DPosition> targetD;
+    static std::queue<Cell3DPosition> startT;
+    static std::queue<Cell3DPosition> targetT;
+    static std::queue<Cell3DPosition> startA;
+    static std::queue<Cell3DPosition> targetA;
+ static bool NFound ;
 
     void startup() override;
 
