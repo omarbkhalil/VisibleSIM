@@ -103,6 +103,9 @@ private:
     bool restoredMode = false;
     Cell3DPosition initialPosition;
 
+
+    std::vector<Cell3DPosition> tPhasePath;
+size_t                      tPhaseIndex;
 public:
     std::vector<Cell3DPosition> savedPathForCurrentModule;
 

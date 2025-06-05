@@ -64,11 +64,12 @@ std::queue<Cell3DPosition> CatomsTest3BlockCode::startD(
 
 std::queue<Cell3DPosition> CatomsTest3BlockCode::targetD(
     std::deque{
-
-        Cell3DPosition(Origin[0] -1 , Origin[1] -1, Origin[2] )
+// x should be -1
+        Cell3DPosition(Origin[0]  , Origin[1] -1, Origin[2] )
     }
   );
 
+//35, 5, 6 origin
 std::queue<Cell3DPosition> CatomsTest3BlockCode::startT(
     std::deque{
 
@@ -92,21 +93,22 @@ std::queue<Cell3DPosition> CatomsTest3BlockCode::startT(
 
 std::queue<Cell3DPosition> CatomsTest3BlockCode::targetT(
     std::deque{
-
-        Cell3DPosition(Origin[0] -4 , Origin[1] + 2, Origin[2] )
+// y should be + 2
+        Cell3DPosition(Origin[0] -4 , Origin[1] + 1, Origin[2] )
     }
   );
 
 std::queue<Cell3DPosition> CatomsTest3BlockCode::startA(
     std::deque{
-
-        Cell3DPosition(Origin[0] -5 , Origin[1] + 2, Origin[2] )
+// y+1
+        Cell3DPosition(Origin[0] -5 , Origin[1] +1 , Origin[2] )
     }
   );
 std::queue<Cell3DPosition> CatomsTest3BlockCode::targetA(
     std::deque{
-
-        Cell3DPosition(Origin[0] -8 , Origin[1] + 2, Origin[2] )
+// First target
+        // -9 0 0
+        Cell3DPosition(Origin[0] -9 , Origin[1] , Origin[2] )
         //
         //
         //
@@ -343,35 +345,44 @@ void CatomsTest3BlockCode::processLocalEvent(EventPtr pev) {
     //Start transfer
     BuildingBlock *nextBlock = BaseSimulator::getWorld()->getBlockByPosition(startT.front());
     CatomsTest3BlockCode *ModuleN = static_cast<CatomsTest3BlockCode *>(nextBlock->blockCode);
+
+// Activate A-PHASE
+    if (finishedD && finishedT && !startedA) {
+        startedA = true;
+        console << "[#34] Beginning A-phase now that D & T are both done.\n";
+        scheduleOneTeleportT();  // go to A-PHASE starter
+    }
+
     switch (pev->eventType) {
         //change this to rotaton event in new class
         //bare in mind every module in real life cant have static maybe configure that later
-        case EVENT_ADD_NEIGHBOR: {
-
-            // Only act when this module is the one at the front of startT
-            if (module->position == startT.front()) {
-
-                // grab the next target
-                Cell3DPosition nextPos = startT.front();
-                startT.pop();
-                console << "Neighbor detected – teleporting to " << nextPos << "\n";
-
-                // schedule a teleport in 1 second
-                getScheduler()->schedule(
-                    new TeleportationStartEvent(
-                        getScheduler()->now() + 1000,
-                        module,
-                        nextPos
-                    )
-                );
-            }
-            break;
-        }
+        // case EVENT_ADD_NEIGHBOR: {
+        //
+        //     // Only act when this module is the one at the front of startT
+        //     if (module->position == startT.front()) {
+        //
+        //         // grab the next target
+        //         Cell3DPosition nextPos = startT.front();
+        //         startT.pop();
+        //         console << "Neighbor detected – teleporting to " << nextPos << "\n";
+        //
+        //         // schedule a teleport in 1 second
+        //         getScheduler()->schedule(
+        //             new TeleportationStartEvent(
+        //                 getScheduler()->now() + 1000,
+        //                 module,
+        //                 nextPos
+        //             )
+        //         );
+        //     }
+        //     break;
+        // }
 
 
         case EVENT_TELEPORTATION_END:{
             //case EVENT_ROTATION3D_END:
-
+            //here should !
+if(!finishedD){
             if (!targetD.empty() && currentPosition == targetD.front()) {
                 //targetD.pop();
                 console << "Goal reached. Reconstructing optimal path...\n";
@@ -391,11 +402,27 @@ void CatomsTest3BlockCode::processLocalEvent(EventPtr pev) {
                 //save
 
 
-                saveOptimalPath(discoveredPath);
-
+saveOptimalPath(discoveredPath, "D-phase");
+                 finishedD = true;
+                if(finishedD){                console << "ARRIVAL\n";
+}
+                scheduleOneTeleportD();
+               //  getScheduler()->schedule(
+               //   new TeleportationStartEvent(
+               //     getScheduler()->now() + 1000,   // delay
+               //     module,                         // which block
+               //     Cell3DPosition(                // exact destination
+               //       Origin[0] - 1,
+               //       Origin[1] -1 ,
+               //       Origin[2]
+               //     )
+               //   )
+               // );
 
                 // Initiate next module's pathfinding so that subsequent modules move.
-                initiateNextModulePathfinding();
+               // initiateNextModulePathfinding();
+
+
             } else {
                 closedSet.insert(currentPosition);
                 for (auto &motion: module->getAllMotions()) {
@@ -429,12 +456,123 @@ void CatomsTest3BlockCode::processLocalEvent(EventPtr pev) {
                 }
             }
 
+
+
+}
+// i think we need to do y+1 (app crashed)
+            if (finishedD) {
+                // 1) If tPhasePath is empty, compute it and schedule exactly one hop:
+                if (tPhasePath.empty()) {
+                    tPhasePath = findOptimalPath(module->position, targetT.front());
+                    if (tPhasePath.empty()) {
+                        console << "[#34] No T-phase path found, abort.\n";
+                        return;
+                    }
+
+                    // Print & Save…
+                    console << "[#34] T-phase path (" << tPhasePath.size() << " steps):\n";
+                    // (print each element) …
+
+                    // Schedule the very first hop, then immediately return:
+                    tPhaseIndex = 1;
+                    Cell3DPosition firstHop = tPhasePath[tPhaseIndex];
+                    console << "[#34] Scheduling T-phase first hop to "
+                            << firstHop << "\n";
+                    getScheduler()->schedule(
+                        new TeleportationStartEvent(
+    getScheduler()->now() + 1000, module, firstHop)
+                    );
+                    return;  // ← crucial: stop here so you don’t fall through
+                }
+
+                // 2) If we already have a path, schedule exactly one more hop:
+                if (tPhaseIndex + 1 < tPhasePath.size()) {
+                    ++tPhaseIndex;
+                    Cell3DPosition nextHop = tPhasePath[tPhaseIndex];
+                    console << "[#34] Scheduling next T-phase hop to "
+                            << nextHop << "\n";
+                    getScheduler()->schedule(
+                        new TeleportationStartEvent(
+    getScheduler()->now() + 1000, module, nextHop)
+                    );
+                }
+                else {
+                    // We just finished the final hop:
+                    console << "[#34] T-phase complete at " << currentPosition << "\n";
+                  //  finishedD = false;
+
+                    finishedT = true;
+                 //   scheduleOneTeleportT();
+                }
+            }
+
+
+            if (finishedT && !finishedA) {
+                if (aPhasePath.empty()) {
+                    aPhasePath = findOptimalPath(module->position, targetA.front());
+                    if (aPhasePath.empty()) {
+                        console << "[#34] No A-phase path found, abort.\n";
+                        return;
+                    }
+
+                    console << "[#34] A-phase path (" << aPhasePath.size() << " steps):\n";
+                    for (const auto& pos : aPhasePath) {
+                        console << pos << "\n";
+                    }
+
+                    saveOptimalPath(aPhasePath, "A-phase");
+
+                    aPhaseIndex = 1;
+                    if (aPhasePath.size() <= 1) {
+                        console << "[#34] A-phase trivial or empty path, skipping.\n";
+                        finishedA = true;
+                        return;
+                    }
+                    Cell3DPosition firstHop = aPhasePath[aPhaseIndex];
+                    console << "[#34] Scheduling A-phase first hop to " << firstHop << "\n";
+                    getScheduler()->schedule(
+                        new TeleportationStartEvent(
+                            getScheduler()->now() + 1000, module, firstHop
+                        )
+                    );
+                    return;
+                }
+
+                if (aPhaseIndex + 1 < aPhasePath.size()) {
+                    ++aPhaseIndex;
+                    Cell3DPosition nextHop = aPhasePath[aPhaseIndex];
+                    console << "[#34] Scheduling next A-phase hop to " << nextHop << "\n";
+                    getScheduler()->schedule(
+                        new TeleportationStartEvent(
+                            getScheduler()->now() + 1000, module, nextHop
+                        )
+                    );
+                } else {
+                    console << "[#34] A-phase complete at " << currentPosition << "\n";
+                    finishedA = true;
+                }
+            }
+
+
+
+
+else if (finishedA) {
+    console << "Process for this module ended\n";
+}
             break;}
         default:
             break;
     }
 }
 
+struct Node {
+    Cell3DPosition pos;
+    double f;
+    // priority_queue is a max‐heap by default, so we invert the comparison:
+    bool operator<(const Node& other) const {
+        return this->f > other.f;
+    }
+};
 void CatomsTest3BlockCode::onBlockSelected() {
     std::cerr << std::endl << "--- PRINT MODULE " << *module << " ---" << std::endl;
 }
@@ -487,20 +625,34 @@ double CatomsTest3BlockCode::heuristic(const Cell3DPosition &current, const Cell
            std::abs(current[2] - goal[2]);
 }
 
-void CatomsTest3BlockCode::saveOptimalPath(const std::vector<Cell3DPosition> &path) {
+void CatomsTest3BlockCode::saveOptimalPath(
+    const std::vector<Cell3DPosition> &path,
+    const std::string &phaseLabel
+) {
     std::ofstream outFile("optimal_paths.txt", std::ios::app);
-    if (outFile.is_open()) {
-        outFile << "Optimal path from start to goal:\n";
-        for (const auto &pos: path) {
-            outFile << pos << "\n";
-        }
-        outFile << "\n"; // Separate entries with a blank line.
-        outFile.close();
-        console << "Optimal path saved to optimal_paths.txt\n";
-    } else {
+    if (!outFile.is_open()) {
         console << "Error: Unable to open file for writing optimal path.\n";
+        return;
     }
+
+    // Print a header that includes the phase label (e.g. “D-phase” or “T-phase”)
+    outFile << phaseLabel << " path from start to goal:\n";
+
+    // If this is T-phase, skip the first entry (because it duplicates the D-phase endpoint)
+    size_t startIndex = 0;
+    if (phaseLabel == "T-phase" && path.size() > 1) {
+        startIndex = 1;
+    }
+
+    for (size_t i = startIndex; i < path.size(); ++i) {
+        outFile << path[i] << "\n";
+    }
+    outFile << "\n";  // blank line to separate entries
+    outFile.close();
+
+    console << phaseLabel << " path saved to optimal_paths.txt\n";
 }
+
 
 void CatomsTest3BlockCode::initiateNextModulePathfinding() {
     if (startD.empty()) {
@@ -520,9 +672,7 @@ void CatomsTest3BlockCode::initiateNextModulePathfinding() {
     }
     Catoms3DBlockCode *nextModule = static_cast<Catoms3DBlockCode *>(nextBlock->blockCode);
 
-
     bool usedPrecomputed = false;
-
 
     if (!usedPrecomputed) {
         cells.clear();
@@ -581,9 +731,21 @@ bool CatomsTest3BlockCode::getAllPossibleMotionsFromPosition(
         vector<Catoms3DMotionRulesLink*> vec;
         Catoms3DMotionRules motionRulesInstance; // Create an instance of Catoms3DMotionRules
         Cell3DPosition pos;
+        if (!neigh) {
+            console << "Warning: null neighbor block at " << neighPos << "\n";
+            continue;
+        }
+
         short conFrom = neigh->getConnectorId(position);
+        if (conFrom < 0 || conFrom >= 12) {  // Catoms3D has 12 connectors
+            console << "Warning: invalid connector ID from " << *neigh << " to " << position << "\n";
+            continue;
+        }
         //cout << "ConFrom: " << conFrom << endl;
-        motionRulesInstance.getValidMotionListFromPivot(neigh, conFrom, vec, static_cast<FCCLattice*>(lattice), NULL);
+
+        if (neigh && conFrom >= 0 && conFrom < 12) {
+            motionRulesInstance.getValidMotionListFromPivot(neigh, conFrom, vec, static_cast<FCCLattice*>(lattice), NULL);
+        }
         for(auto link: vec) {
             cout << link->getConFromID() << " -> " << link->getConToID() << endl;
             Cell3DPosition toPos;
@@ -595,3 +757,154 @@ bool CatomsTest3BlockCode::getAllPossibleMotionsFromPosition(
     }
     return found;
 }
+
+void CatomsTest3BlockCode::scheduleOneTeleportD()
+{
+    // reset A* for this single move
+    // gScore.clear();
+    // fScore.clear();
+    // cameFrom.clear();
+    // closedSet.clear();
+    // while (!openSet.empty()) openSet.pop();
+    // cells.clear();
+
+    // initialize just this one step
+    // gScore[start] = 0;
+    // fScore[start] = heuristic(start, goal);
+    // auto &nbrs = cells[start];
+    // nbrs.clear();
+    // for (auto &m : module->getAllMotions())
+    //     nbrs.push_back(m.first);
+    // openSet.push({start, fScore[start]});
+    //
+    // // schedule the teleport event
+    // console << "Scheduling teleport from " << start
+    //         << " toward " << goal << "\n";
+    getScheduler()->schedule(
+  new TeleportationStartEvent(
+    getScheduler()->now() + 1000,   // delay
+    module,                         // which block
+    Cell3DPosition(                // exact destination
+      startT.front()[0],
+      startT.front()[1] -1 ,
+      startT.front()[2]
+
+    )
+
+  )
+
+);
+
+}
+
+
+void CatomsTest3BlockCode::scheduleOneTeleportT()
+{
+
+    getScheduler()->schedule(
+  new TeleportationStartEvent(
+    getScheduler()->now() + 1000,   // delay
+    module,                         // which block
+    Cell3DPosition(                // exact destination
+      startA.front()[0],
+      startA.front()[1]  ,
+      startA.front()[2]
+
+    )
+
+  )
+
+);
+
+}
+
+
+std::vector<Cell3DPosition>
+CatomsTest3BlockCode::findOptimalPath(
+    const Cell3DPosition &start,
+    const Cell3DPosition &goal)
+{
+    // --- Reset state ---closedSet.clear();
+    cameFrom.clear();
+    gScore.clear();
+    fScore.clear();
+    console << "[DEBUG] Entering findOptimalPath from " << start
+        << " to " << goal << "\n";
+
+    while (!openSet.empty()) openSet.pop();
+
+    gScore[start] = 0;
+    fScore[start] = heuristic(start, goal);
+    openSet.push({start, fScore[start]});
+
+    console << "[DEBUG] Pushed start onto openSet with f=" << fScore[start] << "\n";
+
+    while (!openSet.empty()) {
+        // 1) Pop
+        auto topPair = openSet.top();
+        openSet.pop();
+        Cell3DPosition current = topPair.first;
+        double currentF = topPair.second;
+
+        console << "[DEBUG] Popped node " << current
+                << "  f=" << currentF
+                << "  g=" << gScore[current]
+                << "  h=" << heuristic(current, goal)
+                << "\n";
+
+        // 2) Check goal
+        if (current == goal) {
+            console << "[DEBUG] current == goal! Reconstructing path...\n";
+            std::vector<Cell3DPosition> path;
+            for (Cell3DPosition p = goal; cameFrom.count(p); p = cameFrom[p]) {
+                path.push_back(p);
+            }
+            path.push_back(start);
+            std::reverse(path.begin(), path.end());
+            return path;
+        }
+
+        closedSet.insert(current);
+
+        // 3) Generate neighbors
+        std::vector<std::pair<short, short> > links;
+        std::vector<Cell3DPosition> neighbors;
+        bool any = getAllPossibleMotionsFromPosition(current, links, neighbors);
+
+        console << "[DEBUG]   getAllPossibleMotionsFromPosition("
+                << current << ") ➔ found=" << any
+                << "  neighbors=" << neighbors.size() << "\n";
+        for (auto &n: neighbors) {
+            console << "        neighbor: " << n << "\n";
+        }
+
+        // 4) Try to enqueue each neighbor
+        for (auto &neighbor: neighbors) {
+            if (closedSet.count(neighbor)) {
+                console << "          skipping " << neighbor
+                        << " (already in closedSet)\n";
+                continue;
+            }
+            double tentative = gScore[current] + 1;
+            if (!gScore.count(neighbor) || tentative < gScore[neighbor]) {
+                cameFrom[neighbor] = current;
+                gScore[neighbor] = tentative;
+                fScore[neighbor] = tentative + heuristic(neighbor, goal);
+
+                console << "          [ENQUEUE] " << neighbor
+                        << " ⟵ " << current
+                        << "  (g=" << gScore[neighbor]
+                        << ", f=" << fScore[neighbor] << ")\n";
+
+                openSet.push({neighbor, fScore[neighbor]});
+            }
+        }
+    }
+
+    // If we exit the loop without ever popping `goal`, we return {}
+    console << "[DEBUG] openSet empty, goal never reached → returning empty.\n";
+    return {};
+}
+
+
+//since the gettPos works, apply astra

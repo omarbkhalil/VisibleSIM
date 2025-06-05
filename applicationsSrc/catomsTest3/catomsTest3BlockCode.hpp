@@ -28,7 +28,7 @@ private:
     // A* heuristic function (declared as static)
     static double heuristic(const Cell3DPosition &current, const Cell3DPosition &goal);
 
-    void saveOptimalPath(const vector<Cell3DPosition> &path);
+    void saveOptimalPath(const vector<Cell3DPosition> &path, const std::string &phaseLabel);
 
     void pushOptimalPath(const std::vector<Cell3DPosition> &path, const std::string &filename);
 
@@ -44,6 +44,12 @@ private:
 
     bool getAllPossibleMotionsFromPosition(Cell3DPosition position, vector<pair<short, short>> &links,
                                            vector<Cell3DPosition> &reachablePositions);
+
+    void scheduleOneTeleportD();
+
+    void scheduleOneTeleportT();
+
+    std::vector<Cell3DPosition> findOptimalPath(const Cell3DPosition &start, const Cell3DPosition &goal);
 
     void serializePath(const std::vector<Cell3DPosition> &path, const std::string &filename);
 
@@ -103,8 +109,21 @@ private:
     static const Cell3DPosition goalPosition;
     bool restoredMode = false;
     Cell3DPosition initialPosition;
+    bool finishedD = false;
+    bool finishedT = false;
+    bool finishedA = false;
+    bool aPhaseInitialized = false;
+bool initializedAPhase = false;
+    bool startedA = false;
+
+    std::vector<Cell3DPosition> tPhasePath;
+    size_t                      tPhaseIndex;
+    int aPhaseIndex = 0;
 
 public:
+
+    std::vector<Cell3DPosition> aPhasePath;
+    size_t                       aPhaseIdx = 0;
     std::vector<Cell3DPosition> savedPathForCurrentModule;
 
     static vector<Cell3DPosition> optimalPath;
