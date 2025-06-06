@@ -119,6 +119,8 @@ bool initializedAPhase = false;
     std::vector<Cell3DPosition> tPhasePath;
     size_t                      tPhaseIndex;
     int aPhaseIndex = 0;
+    static std::vector<Cell3DPosition> dPhasePath;
+    static int dPhaseIndex;
 
 public:
 

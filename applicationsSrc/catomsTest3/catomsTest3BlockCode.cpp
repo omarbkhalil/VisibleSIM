@@ -16,6 +16,9 @@
 
 using namespace Catoms3D;
 
+
+std::vector<Cell3DPosition> CatomsTest3BlockCode::dPhasePath;
+int CatomsTest3BlockCode::dPhaseIndex = 0;
 // Global static variables for the A* state.
 std::map<Cell3DPosition, std::vector<Cell3DPosition> > CatomsTest3BlockCode::cells;
 std::vector<Cell3DPosition> CatomsTest3BlockCode::visited;
@@ -277,55 +280,45 @@ void CatomsTest3BlockCode::startup() {
     console << "start\n";
     std::cout << "Working directory: " << std::filesystem::current_path() << std::endl;
 
-    // Check that the module pointer is valid.
     if (!module) {
         console << "Error: module pointer is null in startup().\n";
         return;
     }
 
+    if (!startD.empty() && module->position == startD.front()) {
+        // Only the module at front of startD proceeds
+        console << "[startup] This module (" << module->position << ") is starting D-phase.\n";
 
-    // Normal A* initialization
-    static bool hasStarted = false;
-    if (hasStarted) {
-        distance = -1;
-        hostBlock->setColor(LIGHTGREY);
-        return;
-    }
-
-    if (!startD.empty() && (module->position == startD.front())) {
-        hasStarted = true;
-        Cell3DPosition startTarget = startD.front();
-        startD.pop();
-        module->setColor(RED);
-        distance = 0;
-        Cell3DPosition currentPosition = startTarget;
-        cells[currentPosition].clear();
-        teleportedPositions.push_back(currentPosition);
-        gScore[currentPosition] = 0;
-        // Ensure targetQueue is not empty before using front()
-        if (targetD.empty()) {
-            console << "Error: targetQueue is empty in startup().\n";
+        // Compute path now
+        dPhasePath = findOptimalPath(module->position, targetD.front());
+        if (dPhasePath.empty()) {
+            console << "[startup] No path found. Abort.\n";
             return;
         }
-        fScore[currentPosition] = heuristic(currentPosition, targetD.front());
 
-        for (auto &pos: module->getAllMotions()) {
-            cells[currentPosition].push_back(pos.first);
-            visited.push_back(pos.first);
-        }
-        openSet.push({currentPosition, fScore[currentPosition]});
-        if (!openSet.empty()) {
-            auto nextStep = openSet.top();
-            openSet.pop();
-            getScheduler()->schedule(new TeleportationStartEvent(getScheduler()->now() + 1000, module, nextStep.first));
-            //  getScheduler()->schedule(new Catoms3DRotationStartEvent(getScheduler()->now() + 1000, module, nextStep.first));
-            // module->moveTo(nextStep.first);
+        // Now we can safely pop
+        startD.pop();
+        dPhaseIndex = 1;
+        distance = 0;
+        module->setColor(RED);
+
+        saveOptimalPath(dPhasePath, "D-phase");
+
+        if (dPhasePath.size() > 1) {
+            Cell3DPosition firstHop = dPhasePath[dPhaseIndex];
+            console << "[startup] Scheduling first hop to " << firstHop << "\n";
+            getScheduler()->schedule(
+                new TeleportationStartEvent(getScheduler()->now() + 1000, module, firstHop));
+        } else {
+            console << "[startup] D-phase path trivial. Skipping.\n";
+            finishedD = true;
         }
     } else {
         distance = -1;
         hostBlock->setColor(LIGHTGREY);
     }
 }
+
 
 
 void CatomsTest3BlockCode::onMotionEnd() {
@@ -382,83 +375,53 @@ void CatomsTest3BlockCode::processLocalEvent(EventPtr pev) {
         case EVENT_TELEPORTATION_END:{
             //case EVENT_ROTATION3D_END:
             //here should !
-if(!finishedD){
-            if (!targetD.empty() && currentPosition == targetD.front()) {
-                //targetD.pop();
-                console << "Goal reached. Reconstructing optimal path...\n";
-                discoveredPath.clear();
-                while (cameFrom.find(currentPosition) != cameFrom.end()) {
-                    discoveredPath.push_back(currentPosition);
-                    currentPosition = cameFrom[currentPosition];
-                }
-                discoveredPath.push_back(currentPosition);
-                std::reverse(discoveredPath.begin(), discoveredPath.end());
-                console << "Optimal path from start to goal:\n";
-                for (auto &pos: discoveredPath) {
-                    console << pos << "\n";
-                }
+            if (!finishedD) {
+                if (dPhasePath.empty()) {
 
-
-                //save
-
-
-saveOptimalPath(discoveredPath, "D-phase");
-                 finishedD = true;
-                if(finishedD){                console << "ARRIVAL\n";
-}
-                scheduleOneTeleportD();
-               //  getScheduler()->schedule(
-               //   new TeleportationStartEvent(
-               //     getScheduler()->now() + 1000,   // delay
-               //     module,                         // which block
-               //     Cell3DPosition(                // exact destination
-               //       Origin[0] - 1,
-               //       Origin[1] -1 ,
-               //       Origin[2]
-               //     )
-               //   )
-               // );
-
-                // Initiate next module's pathfinding so that subsequent modules move.
-               // initiateNextModulePathfinding();
-
-
-            } else {
-                closedSet.insert(currentPosition);
-                for (auto &motion: module->getAllMotions()) {
-                    Cell3DPosition neighbor = motion.first;
-                    if (closedSet.find(neighbor) != closedSet.end())
-                        continue;
-                    double tentative_gScore = gScore[currentPosition] + 1;
-                    if (gScore.find(neighbor) == gScore.end() || tentative_gScore < gScore[neighbor]) {
-                        cameFrom[neighbor] = currentPosition;
-                        gScore[neighbor] = tentative_gScore;
-                        // Ensure targetQueue is not empty before using front()
-                        if (targetD.empty()) {
-                            console << "Error: targetQueue is empty during A* processing.\n";
-                            return;
-                        }
-                        fScore[neighbor] = tentative_gScore + heuristic(neighbor, targetD.front());
-                        openSet.push({neighbor, fScore[neighbor]});
+                    dPhasePath = findOptimalPath(startD.front(), targetD.front());
+                    if (dPhasePath.empty()) {
+                        console << "[#34] No D-phase path found, abort.\n";
+                        return;
                     }
+
+                    console << "[#34] D-phase path (" << dPhasePath.size() << " steps):\n";
+                    for (const auto& pos : dPhasePath) {
+                        console << pos << "\n";
+                    }
+
+                    saveOptimalPath(dPhasePath, "D-phase");
+
+                    dPhaseIndex = 1;
+                    if (dPhasePath.size() <= 1) {
+                        console << "[#34] D-phase trivial or empty path, skipping.\n";
+                        finishedD = true;
+                        return;
+                    }
+
+                    Cell3DPosition firstHop = dPhasePath[dPhaseIndex];
+                    console << "[#34] Scheduling D-phase first hop to " << firstHop << "\n";
+                    getScheduler()->schedule(
+                        new TeleportationStartEvent(getScheduler()->now() + 1000, module, firstHop)
+                    );
+                    return;
                 }
 
-                if (!openSet.empty()) {
-                    auto nextStep = openSet.top();
-                    openSet.pop();
-                    console << "A*: Teleporting to " << nextStep.first << "\n";
+                if (dPhaseIndex + 1 < dPhasePath.size()) {
+                    ++dPhaseIndex;
+                    Cell3DPosition nextHop = dPhasePath[dPhaseIndex];
+                    console << "[#34] Scheduling next D-phase hop to " << nextHop << "\n";
                     getScheduler()->schedule(
-                        new TeleportationStartEvent(getScheduler()->now() + 1000, module, nextStep.first));
-                    //   module->moveTo(nextStep.first);
-                    //    getScheduler()->schedule(new Catoms3DRotationStartEvent(getScheduler()->now() + 1000, module, nextStep.first));
+                        new TeleportationStartEvent(getScheduler()->now() + 1000, module, nextHop)
+                    );
                 } else {
-                    console << "A*: No more nodes to explore. Path not found.\n";
+                    console << "[#34] D-phase complete at " << currentPosition << "\n";
+                    finishedD = true;
+
+                    // Continue to T-phase immediately
+                    scheduleOneTeleportD(); // or call next logic directly
                 }
             }
 
-
-
-}
 // i think we need to do y+1 (app crashed)
             if (finishedD) {
                 // 1) If tPhasePath is empty, compute it and schedule exactly one hop:
