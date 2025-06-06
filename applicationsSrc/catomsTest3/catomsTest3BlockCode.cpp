@@ -501,6 +501,12 @@ saveOptimalPath(discoveredPath, "D-phase");
                     console << "[#34] T-phase complete at " << currentPosition << "\n";
                   //  finishedD = false;
 
+                    if(!tPhasePathSaved) {
+                        saveOptimalPath(tPhasePath, "T-phase");
+                        tPhasePathSaved = true;
+
+                    }
+
                     finishedT = true;
                  //   scheduleOneTeleportT();
                 }
@@ -640,9 +646,10 @@ void CatomsTest3BlockCode::saveOptimalPath(
 
     // If this is T-phase, skip the first entry (because it duplicates the D-phase endpoint)
     size_t startIndex = 0;
-    if (phaseLabel == "T-phase" && path.size() > 1) {
+    if ((phaseLabel == "T-phase" || phaseLabel == "A-phase") && path.size() > 1) {
         startIndex = 1;
     }
+
 
     for (size_t i = startIndex; i < path.size(); ++i) {
         outFile << path[i] << "\n";

@@ -115,7 +115,7 @@ private:
     bool aPhaseInitialized = false;
 bool initializedAPhase = false;
     bool startedA = false;
-
+ bool tPhasePathSaved = false;
     std::vector<Cell3DPosition> tPhasePath;
     size_t                      tPhaseIndex;
     int aPhaseIndex = 0;
