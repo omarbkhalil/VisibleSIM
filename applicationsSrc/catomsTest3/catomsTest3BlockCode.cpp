@@ -276,7 +276,7 @@ CatomsTest3BlockCode::CatomsTest3BlockCode(Catoms3DBlock *host) : Catoms3DBlockC
     module = static_cast<Catoms3DBlock *>(hostBlock);
 }
 
-//Maybe add a flag, when startup finishs it flips, so next module executes A* in Event
+//Maybe,add a flag, when startup finishs it flips, so next module executes A* in Event
 void CatomsTest3BlockCode::startup() {
     console << "start\n";
     std::cout << "Working directory: " << std::filesystem::current_path() << std::endl;
