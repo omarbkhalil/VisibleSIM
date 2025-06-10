@@ -30,6 +30,8 @@ private:
 
     void saveOptimalPath(const vector<Cell3DPosition> &path, const std::string &phaseLabel);
 
+    std::vector<Cell3DPosition> loadOptimalPathFromFile(const std::string &phaseLabel);
+
     void pushOptimalPath(const std::vector<Cell3DPosition> &path, const std::string &filename);
 
     std::vector<Cell3DPosition> popOptimalPath(const std::string &filename);

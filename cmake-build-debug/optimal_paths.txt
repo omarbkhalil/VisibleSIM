@@ -1,8 +1,49 @@
 D-phase path from start to goal:
-(38,6,7)
 (37,5,7)
-(36,5,7)
-(35,4,7)
+(38,6,6)
+(37,5,5)
+(36,5,5)
+(35,4,5)
+(35,4,6)
+
+D-phase path from start to goal:
+(37,5,7)
+(38,6,6)
+(37,5,5)
+(36,5,5)
+(35,4,5)
+(35,4,6)
+
+D-phase path from start to goal:
+(37,5,7)
+(38,6,6)
+(37,5,5)
+(36,5,5)
+(35,4,5)
+(35,4,6)
+
+D-phase path from start to goal:
+(37,5,7)
+(38,6,6)
+(37,5,5)
+(36,5,5)
+(35,4,5)
+(35,4,6)
+
+D-phase path from start to goal:
+(37,5,7)
+(38,6,6)
+(37,5,5)
+(36,5,5)
+(35,4,5)
+(35,4,6)
+
+D-phase path from start to goal:
+(37,5,7)
+(38,6,6)
+(37,5,5)
+(36,5,5)
+(35,4,5)
 (35,4,6)
 
 T-phase path from start to goal:
@@ -24,11 +65,84 @@ A-phase path from start to goal:
 (26,5,6)
 
 D-phase path from start to goal:
-(38,6,7)
 (37,5,7)
-(36,5,7)
-(35,4,7)
+(38,6,6)
+(37,5,5)
+(36,5,5)
+(35,4,5)
 (35,4,6)
+
+T-phase path from start to goal:
+(34,4,5)
+(33,4,5)
+(32,5,5)
+(31,5,5)
+(31,6,4)
+(30,5,5)
+(31,6,6)
+
+A-phase path from start to goal:
+(30,5,7)
+(30,6,8)
+(29,5,7)
+(28,5,7)
+(28,6,6)
+(27,6,6)
+(26,5,6)
+
+T-phase path from start to goal:
+(34,4,5)
+(33,4,5)
+(32,5,5)
+(31,5,5)
+(31,6,4)
+(30,5,5)
+(31,6,6)
+
+A-phase path from start to goal:
+(30,5,7)
+(30,6,8)
+(29,5,7)
+(28,5,7)
+(28,6,6)
+(27,6,6)
+(26,5,6)
+
+T-phase path from start to goal:
+(34,4,5)
+(33,4,5)
+(32,5,5)
+(31,5,5)
+(31,6,4)
+(30,5,5)
+(31,6,6)
+
+A-phase path from start to goal:
+(30,5,7)
+(30,6,8)
+(29,5,7)
+(28,5,7)
+(28,6,6)
+(27,6,6)
+(26,5,6)
+
+T-phase path from start to goal:
+(34,4,5)
+(33,4,5)
+(32,5,5)
+(31,5,5)
+(31,6,4)
+(30,5,5)
+(31,6,6)
+
+A-phase path from start to goal:
+(30,5,7)
+(30,6,8)
+(29,5,7)
+(28,5,7)
+(28,6,6)
+(27,6,6)
+(26,5,6)
 
 T-phase path from start to goal:
 (34,4,5)
