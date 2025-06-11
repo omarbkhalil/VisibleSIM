@@ -296,6 +296,9 @@ void CatomsTest3BlockCode::startup() {
         // Define your goal position here
         Cell3DPosition goal = targetD.front();
 
+        //Only gets A* Path once, and others should use it
+        //In event D, we only retrieved
+        //Add flag for it in next modules of D without startup
         // Run A* pathfinding to get a path
         std::vector<Cell3DPosition> path = findOptimalPath(module->position, goal);
 
@@ -307,6 +310,7 @@ void CatomsTest3BlockCode::startup() {
 
         // Save path
         matchingPath = path;
+        saveOptimalPath(path, "D-phase");
 
         // 🔽 Print the full path
         console << "[startup] D-phase path (" << path.size() << " steps):\n";
@@ -400,7 +404,7 @@ dPhasePath = loadOptimalPathFromFile("D-phase");
 
                     //saveOptimalPath(dPhasePath, "D-phase");
 
-                    dPhaseIndex = 1;
+                    dPhaseIndex = 2;
                     if (dPhasePath.size() <= 1) {
                         console << "[#34] D-phase trivial or empty path, skipping.\n";
                         finishedD = true;
