@@ -53,6 +53,18 @@ private:
 
     std::vector<Cell3DPosition> findOptimalPath(const Cell3DPosition &start, const Cell3DPosition &goal);
 
+    void computeAndStartSecondPath();
+
+    Cell3DPosition findReachableNeighborWithOffset(Cell3DPosition origin, int dz);
+
+    bool isNeighborOfPathHead(const std::vector<Cell3DPosition> &path, const Cell3DPosition &modulePos);
+
+    bool isNeighborOfAnyPathNode(const std::vector<Cell3DPosition> &path, const Cell3DPosition &modulePos);
+
+    bool areAdjacent(const Cell3DPosition &a, const Cell3DPosition &b);
+
+    void startDPhaseFromPathOnly(const std::vector<Cell3DPosition> &fullPath);
+
     void serializePath(const std::vector<Cell3DPosition> &path, const std::string &filename);
 
     bool deserializePath(std::vector<Cell3DPosition> &path, const std::string &filename);
@@ -111,21 +123,35 @@ private:
     static const Cell3DPosition goalPosition;
     bool restoredMode = false;
     Cell3DPosition initialPosition;
-    bool finishedD = false;
-    bool finishedT = false;
-    bool finishedA = false;
+   static bool finishedD ;
+  static  bool finishedT ;
+   static bool finishedA ;
     bool aPhaseInitialized = false;
 bool initializedAPhase = false;
     bool startedA = false;
- bool tPhasePathSaved = false;
+ static bool tPhasePathSaved ;
     std::vector<Cell3DPosition> tPhasePath;
     size_t                      tPhaseIndex;
     int aPhaseIndex = 0;
     static std::vector<Cell3DPosition> dPhasePath;
     static int dPhaseIndex;
+    static Cell3DPosition pathPlannerPosition;
+
+
+    // In catomsTest3BlockCode.hpp (or at top of .cpp if using static)
+    static std::map<Cell3DPosition, std::string> dPhaseAssignment;
 
 public:
 
+
+
+
+
+
+
+
+
+  static  bool aPhasePathSaved ;
     std::vector<Cell3DPosition> aPhasePath;
     size_t                       aPhaseIdx = 0;
     std::vector<Cell3DPosition> savedPathForCurrentModule;

@@ -17,7 +17,16 @@
 using namespace Catoms3D;
 
 
+std::map<Cell3DPosition, std::string> CatomsTest3BlockCode::dPhaseAssignment;
+
 std::vector<Cell3DPosition> CatomsTest3BlockCode::dPhasePath;
+bool CatomsTest3BlockCode::tPhasePathSaved = false;
+bool CatomsTest3BlockCode::aPhasePathSaved = false;
+
+bool CatomsTest3BlockCode::finishedD = false;
+bool CatomsTest3BlockCode::finishedT = false;
+bool CatomsTest3BlockCode::finishedA = false;
+
 int CatomsTest3BlockCode::dPhaseIndex = 0;
 // Global static variables for the A* state.
 std::map<Cell3DPosition, std::vector<Cell3DPosition> > CatomsTest3BlockCode::cells;
@@ -50,11 +59,11 @@ bool CatomsTest3BlockCode::NFound = false;
 //can do dynamic queues if not put in future work
 std::queue<Cell3DPosition> CatomsTest3BlockCode::startD(
     std::deque{
+      Cell3DPosition(Origin[0] + 3, Origin[1] + 1, Origin[2] - 1),
 
-        Cell3DPosition(Origin[0] + 3, Origin[1] + 1, Origin[2] + 1),
-               // Cell3DPosition(Origin[0] + 3, Origin[1] + 1, Origin[2] - 1),
-               // Cell3DPosition(Origin[0] + 3, Origin[1] + 2, Origin[2]),
-               // Cell3DPosition(Origin[0] + 2, Origin[1] + 1, Origin[2] - 1),
+         Cell3DPosition(Origin[0] + 3, Origin[1] + 1, Origin[2] + 1),
+                // Cell3DPosition(Origin[0] + 3, Origin[1] + 2, Origin[2]),
+                // Cell3DPosition(Origin[0] + 2, Origin[1] + 1, Origin[2] - 1),
                // Cell3DPosition(Origin[0] + 2, Origin[1] + 1, Origin[2] - 2),
                // Cell3DPosition(Origin[0] + 2, Origin[1] + 1, Origin[2] + 1),
                // Cell3DPosition(Origin[0] + 2, Origin[1] + 1, Origin[2] + 2),
@@ -69,7 +78,7 @@ std::queue<Cell3DPosition> CatomsTest3BlockCode::startD(
 std::queue<Cell3DPosition> CatomsTest3BlockCode::targetD(
     std::deque{
 // x should be -1
-        Cell3DPosition(Origin[0]  , Origin[1] -1, Origin[2] )
+        Cell3DPosition(Origin[0]  , Origin[1] , Origin[2] )
     }
   );
 
@@ -105,7 +114,7 @@ std::queue<Cell3DPosition> CatomsTest3BlockCode::targetT(
 std::queue<Cell3DPosition> CatomsTest3BlockCode::startA(
     std::deque{
 // y+1
-        Cell3DPosition(Origin[0] -5 , Origin[1] +1 , Origin[2] )
+        Cell3DPosition(Origin[0] -5 , Origin[1]  , Origin[2] )
     }
   );
 std::queue<Cell3DPosition> CatomsTest3BlockCode::targetA(
@@ -286,49 +295,118 @@ void CatomsTest3BlockCode::startup() {
         return;
     }
 
-    if (!startD.empty() && module->position == startD.front()) {
-        console << "[startup] This module (" << module->position << ") is starting D-phase.\n";
+    static bool pathAlreadyComputed = false;
 
-        startD.pop();  // Only pop now
-        distance = 0;
-        module->setColor(RED);
+    // ─── PATH PLANNER ───
+    if (!pathAlreadyComputed && !targetD.empty() && module->position == targetD.front()) {
+        console << "[startup] This module (" << module->position << ") is computing both D-phase paths.\n";
 
-        // Define your goal position here
-        Cell3DPosition goal = targetD.front();
+        Cell3DPosition goal(
+            targetD.front()[0],
+            targetD.front()[1] - 1,
+            targetD.front()[2]
+        );
 
-        //Only gets A* Path once, and others should use it
-        //In event D, we only retrieved
-        //Add flag for it in next modules of D without startup
-        // Run A* pathfinding to get a path
-        std::vector<Cell3DPosition> path = findOptimalPath(module->position, goal);
+        // ⬇️ DOWNWARD path (first in startD)
+        if (startD.size() >= 1) {
+            Cell3DPosition startDown = startD.front();
+            std::vector<Cell3DPosition> pathDown = findOptimalPath(startDown, goal);
 
-        if (path.size() < 2) {
-            console << "Error: No valid path found from " << module->position
-                    << " to " << goal << "\n";
+            if (pathDown.size() >= 2) {
+                saveOptimalPath(pathDown, "D-phase-down");
+                dPhaseAssignment[pathDown.front()] = "down";
+                console << "[startup] Saved D-phase-DOWN path (" << pathDown.size() << " steps):\n";
+                for (const auto& pos : pathDown)
+                    console << "  " << pos << "\n";
+            } else {
+                console << "Warning: No valid DOWN path found.\n";
+            }
+        }
+
+        // ⬆️ UPWARD path (second in startD)
+        if (startD.size() >= 2) {
+            Cell3DPosition first = startD.front(); startD.pop();
+            Cell3DPosition startUp = startD.front(); startD.push(first);
+
+            std::vector<Cell3DPosition> pathUp = findOptimalPath(startUp, goal);
+
+            if (pathUp.size() >= 2) {
+                saveOptimalPath(pathUp, "D-phase-up");
+                dPhaseAssignment[pathUp.front()] = "up";
+                console << "[startup] Saved D-phase-UP path (" << pathUp.size() << " steps):\n";
+                for (const auto& pos : pathUp)
+                    console << "  " << pos << "\n";
+            } else {
+                console << "Warning: No valid UP path found.\n";
+            }
+        } else {
+            console << "Warning: Not enough modules in startD to compute both paths.\n";
+        }
+
+        pathAlreadyComputed = true;
+        return;
+    }
+
+    // ─── PATH EXECUTOR (AUTO-DETECT TRACK) ───
+    if (pathAlreadyComputed) {
+        // ✅ Only allow the module at front of startD to proceed
+        if (startD.empty() || module->position != startD.front()) {
+            console << "[startup] Module " << module->position << " is waiting. Not first in startD queue.\n";
+            hostBlock->setColor(LIGHTGREY);
+            distance = -1;
             return;
         }
 
-        // Save path
-        matchingPath = path;
-        saveOptimalPath(path, "D-phase");
+        // Load both paths
+        auto pathUp = loadOptimalPathFromFile("D-phase-up");
+        auto pathDown = loadOptimalPathFromFile("D-phase-down");
 
-        // 🔽 Print the full path
-        console << "[startup] D-phase path (" << path.size() << " steps):\n";
-        for (const auto& pos : path) {
-            console << "  " << pos << "\n";
+        // Detect which path the module is on
+        auto itUp = std::find(pathUp.begin(), pathUp.end(), module->position);
+        auto itDown = std::find(pathDown.begin(), pathDown.end(), module->position);
+
+        if (itUp != pathUp.end()) {
+            console << "[startup] Module " << module->position << " is on D-phase-UP path.\n";
+            dPhasePath = pathUp;
+            dPhaseIndex = std::distance(pathUp.begin(), itUp);
+        } else if (itDown != pathDown.end()) {
+            console << "[startup] Module " << module->position << " is on D-phase-DOWN path.\n";
+            dPhasePath = pathDown;
+            dPhaseIndex = std::distance(pathDown.begin(), itDown);
+        } else {
+            console << "[startup] Module " << module->position << " is passive (not on any D-phase path).\n";
+            hostBlock->setColor(LIGHTGREY);
+            distance = -1;
+            return;
         }
 
-        // Schedule the first movement to the next cell
-        Cell3DPosition nextStep = path[1];
-        console << "[startup] Next step is " << nextStep << "\n";
+        // Start motion
+        finishedD = false;
+        distance = 0;
+        module->setColor(RED);
 
+        if (dPhaseIndex + 1 >= dPhasePath.size()) {
+            console << "[startup] Already at final position of D-phase path.\n";
+            finishedD = true;
+            return;
+        }
+
+        Cell3DPosition nextStep = dPhasePath[dPhaseIndex + 1];
+        console << "[startup] Scheduling next D-phase hop to " << nextStep << "\n";
         getScheduler()->schedule(
-            new Catoms3DRotationStartEvent(getScheduler()->now() + 1000, module, nextStep));
-    } else {
-        distance = -1;
-        hostBlock->setColor(LIGHTGREY);
+            new Catoms3DRotationStartEvent(getScheduler()->now() + 1000, module, nextStep)
+        );
+        return;
     }
+
+
+    // ─── Passive fallback ───
+    console << "[startup] Module " << module->position << " is passive.\n";
+    distance = -1;
+    hostBlock->setColor(LIGHTGREY);
 }
+
+
 
 
 
@@ -354,11 +432,13 @@ void CatomsTest3BlockCode::processLocalEvent(EventPtr pev) {
     CatomsTest3BlockCode *ModuleN = static_cast<CatomsTest3BlockCode *>(nextBlock->blockCode);
 
 // Activate A-PHASE
-    if (finishedD && finishedT && !startedA) {
-        startedA = true;
-        console << "[#34] Beginning A-phase now that D & T are both done.\n";
-        scheduleOneTeleportT();  // go to A-PHASE starter
-    }
+    // if (finishedD && finishedT && !startedA) {
+    //     startedA = true;
+    //     console << "[#34] Beginning A-phase now that D & T are both done.\n";
+    //      // scheduleOneTeleportT();  // go to A-PHASE starter
+    //     // finishedT = true;
+    //
+    // }
 
     switch (pev->eventType) {
         //change this to rotaton event in new class
@@ -386,155 +466,201 @@ void CatomsTest3BlockCode::processLocalEvent(EventPtr pev) {
         // }
 
 
-        case EVENT_ROTATION3D_END:{
-            //case EVENT_ROTATION3D_END:
-            //here should !
+        case EVENT_ROTATION3D_END: {
             if (!finishedD) {
                 if (dPhasePath.empty()) {
-dPhasePath = loadOptimalPathFromFile("D-phase");
-                    if (dPhasePath.empty()) {
-                        console << "[#34] No D-phase path found, abort.\n";
-                        return;
-                    }
-
-                    console << "[#34] D-phase path (" << dPhasePath.size() << " steps):\n";
-                    for (const auto& pos : dPhasePath) {
-                        console << pos << "\n";
-                    }
-
-                    //saveOptimalPath(dPhasePath, "D-phase");
-
-                    dPhaseIndex = 2;
-                    if (dPhasePath.size() <= 1) {
-                        console << "[#34] D-phase trivial or empty path, skipping.\n";
-                        finishedD = true;
-                        return;
-                    }
-
-                    Cell3DPosition firstHop = dPhasePath[dPhaseIndex];
-                    console << "[#34] Scheduling D-phase first hop to " << firstHop << "\n";
-                    getScheduler()->schedule(
-                        new Catoms3DRotationStartEvent(getScheduler()->now() + 1000, module, firstHop)
-                    );
+                    console << "[#34] Error: dPhasePath is empty at EVENT_ROTATION3D_END\n";
                     return;
                 }
 
                 if (dPhaseIndex + 1 < dPhasePath.size()) {
                     ++dPhaseIndex;
+
+                    // Keep skipping if same as current position
+                    while (dPhaseIndex < dPhasePath.size() &&
+                           dPhasePath[dPhaseIndex] == module->position) {
+                        console << "[#34] Skipping redundant hop to " << dPhasePath[dPhaseIndex] << "\n";
+                        ++dPhaseIndex;
+                           }
+
+                    if (dPhaseIndex >= dPhasePath.size()) {
+                        console << "[#34] D-phase complete at " << module->position << " (no more useful steps)\n";
+                        finishedD = true;
+                     //  scheduleOneTeleportD();
+                        return;
+                    }
+
                     Cell3DPosition nextHop = dPhasePath[dPhaseIndex];
                     console << "[#34] Scheduling next D-phase hop to " << nextHop << "\n";
                     getScheduler()->schedule(
                         new Catoms3DRotationStartEvent(getScheduler()->now() + 1000, module, nextHop)
                     );
                 } else {
-                    console << "[#34] D-phase complete at " << currentPosition << "\n";
+                    console << "[#34] D-phase complete at " << module->position << "\n";
                     finishedD = true;
+                    initiateNextModulePathfinding();
+                    // scheduleOneTeleportD();
 
-                    // Continue to T-phase immediately
-                    scheduleOneTeleportD(); // or call next logic directly
+
+                    if (!startD.empty() && module->position == startD.front()) {
+                        startD.pop();
+                        console << "[#34] Module " << module->position << " popped from startD queue.\n";
+                    }
+
                 }
+
             }
+
+
+
+
 
 // i think we need to do y+1 (app crashed)
 if (finishedD && !finishedT && !finishedA) {
-                // 1) If tPhasePath is empty, compute it and schedule exactly one hop:
-                if (tPhasePath.empty()) {
-                    tPhasePath = findOptimalPath(module->position, targetT.front());
-                    if (tPhasePath.empty()) {
-                        console << "[#34] No T-phase path found, abort.\n";
-                        return;
-                    }
+    // ──────────────── COMPUTE ONCE ────────────────
+if (!tPhasePathSaved && finishedD && !finishedT && !finishedA) {
 
-                    // Print & Save…
-                    console << "[#34] T-phase path (" << tPhasePath.size() << " steps):\n";
-                    // (print each element) …
+        // Only the leader (at targetD.front()) computes the T-phase path
+        tPhasePath = findOptimalPath( module->position, targetT.front());
 
-                    // Schedule the very first hop, then immediately return:
-                    tPhaseIndex = 1;
-                    Cell3DPosition firstHop = tPhasePath[tPhaseIndex];
-                    console << "[#34] Scheduling T-phase first hop to "
-                            << firstHop << "\n";
-                    getScheduler()->schedule(
-                        new Catoms3DRotationStartEvent(
-    getScheduler()->now() + 1000, module, firstHop)
-                    );
-                    return;  // ← crucial: stop here so you don’t fall through
-                }
+        if (tPhasePath.empty()) {
+            console << "[#" << module->blockId << "] No T-phase path found, abort.\n";
+            return;
+        }
 
-                // 2) If we already have a path, schedule exactly one more hop:
-                if (tPhaseIndex + 1 < tPhasePath.size()) {
-                    ++tPhaseIndex;
-                    Cell3DPosition nextHop = tPhasePath[tPhaseIndex];
-                    console << "[#34] Scheduling next T-phase hop to "
-                            << nextHop << "\n";
-                    getScheduler()->schedule(
-                        new Catoms3DRotationStartEvent(
-    getScheduler()->now() + 1000, module, nextHop)
-                    );
-                }
-                else {
-                    // We just finished the final hop:
-                    console << "[#34] T-phase complete at " << currentPosition << "\n";
-                  //  finishedD = false;
+        console << "[#" << module->blockId << "] Computed T-phase path (" << tPhasePath.size() << " steps):\n";
+        for (const auto &pos : tPhasePath)
+            console << pos << "\n";
 
-                    if(!tPhasePathSaved) {
-                        saveOptimalPath(tPhasePath, "T-phase");
-                        tPhasePathSaved = true;
+        saveOptimalPath(tPhasePath, "T-phase");
+        tPhasePathSaved = true;
 
-                    }
+        tPhaseIndex = 1; // Start from the second node
+        Cell3DPosition firstHop = tPhasePath[tPhaseIndex];
+        console << "[#" << module->blockId << "] Scheduling T-phase first hop to " << firstHop << "\n";
+        getScheduler()->schedule(
+            new Catoms3DRotationStartEvent(getScheduler()->now() + 1000, module, firstHop)
+        );
+        return;
+    }
 
-                    finishedT = true;
-                 //   scheduleOneTeleportT();
-                }
-            }
+    // ──────────────── LOAD FROM FILE ────────────────
+    if (tPhasePath.empty()) {
+        tPhasePath = loadOptimalPathFromFile("T-phase");
+
+        if (tPhasePath.empty()) {
+            console << "[#" << module->blockId << "] Failed to load T-phase path.\n";
+            return;
+        }
+
+        console << "[#" << module->blockId << "] Loaded T-phase path (" << tPhasePath.size() << " steps).\n";
+
+        // Force all modules to follow the full path (start from beginning)
+        tPhaseIndex = 0;
+        // Determine starting index based on current position
+        auto it = std::find(tPhasePath.begin(), tPhasePath.end(), module->position);
+        if (it != tPhasePath.end())
+            tPhaseIndex = std::distance(tPhasePath.begin(), it);
+        else {
+            console << "[#" << module->blockId << "] Current position not on T-phase path.\n";
+            return;
+        }
+    }
+
+    // ──────────────── FOLLOW PATH ────────────────
+    if (tPhaseIndex + 1 < tPhasePath.size()) {
+        ++tPhaseIndex;
+        Cell3DPosition nextHop = tPhasePath[tPhaseIndex];
+        console << "[#" << module->blockId << "] Scheduling next T-phase hop to " << nextHop << "\n";
+        getScheduler()->schedule(
+            new Catoms3DRotationStartEvent(getScheduler()->now() + 1000, module, nextHop)
+        );
+    } else {
+        console << "[#" << module->blockId << "] T-phase complete at " << module->position << "\n";
+         finishedT = true;
+        startedA = true;
+
+         scheduleOneTeleportT();
+
+    }
+
+    return;
+}
 
 
-            if (finishedT && !finishedA) {
-                if (aPhasePath.empty()) {
-                    aPhasePath = findOptimalPath(module->position, targetA.front());
-                    if (aPhasePath.empty()) {
-                        console << "[#34] No A-phase path found, abort.\n";
-                        return;
-                    }
 
-                    console << "[#34] A-phase path (" << aPhasePath.size() << " steps):\n";
-                    for (const auto& pos : aPhasePath) {
-                        console << pos << "\n";
-                    }
+    if (startedA && !finishedA) {
+    // ────── COMPUTE ONCE (first module after T-phase) ──────
+    if (!aPhasePathSaved) {
+        aPhasePath = findOptimalPath(module->position, targetA.front());
 
-                    saveOptimalPath(aPhasePath, "A-phase");
+        if (aPhasePath.empty()) {
+            console << "[#" << module->blockId << "] No A-phase path found, abort.\n";
+            return;
+        }
 
-                    aPhaseIndex = 1;
-                    if (aPhasePath.size() <= 1) {
-                        console << "[#34] A-phase trivial or empty path, skipping.\n";
-                        finishedA = true;
-                        return;
-                    }
-                    Cell3DPosition firstHop = aPhasePath[aPhaseIndex];
-                    console << "[#34] Scheduling A-phase first hop to " << firstHop << "\n";
-                    getScheduler()->schedule(
-                        new Catoms3DRotationStartEvent(
-                            getScheduler()->now() + 1000, module, firstHop
-                        )
-                    );
-                    return;
-                }
+        console << "[#" << module->blockId << "] Computed A-phase path (" << aPhasePath.size() << " steps):\n";
+        for (const auto &pos : aPhasePath)
+            console << pos << "\n";
 
-                if (aPhaseIndex + 1 < aPhasePath.size()) {
-                    ++aPhaseIndex;
-                    Cell3DPosition nextHop = aPhasePath[aPhaseIndex];
-                    console << "[#34] Scheduling next A-phase hop to " << nextHop << "\n";
-                    getScheduler()->schedule(
-                        new Catoms3DRotationStartEvent(
-                            getScheduler()->now() + 1000, module, nextHop
-                        )
-                    );
-                } else {
-                    console << "[#34] A-phase complete at " << currentPosition << "\n";
-                    finishedA = true;
-                    initiateNextModulePathfinding();
-                }
-            }
+        saveOptimalPath(aPhasePath, "A-phase");
+        aPhasePathSaved = true;
+
+        aPhaseIndex = 1;
+        Cell3DPosition firstHop = aPhasePath[aPhaseIndex];
+        console << "[#" << module->blockId << "] Scheduling A-phase first hop to " << firstHop << "\n";
+        getScheduler()->schedule(
+            new Catoms3DRotationStartEvent(
+                getScheduler()->now() + 1000, module, firstHop
+            )
+        );
+        return;
+    }
+
+    // ────── LOAD FROM FILE (for all other modules) ──────
+    if (aPhasePath.empty()) {
+        aPhasePath = loadOptimalPathFromFile("A-phase");
+
+        if (aPhasePath.empty()) {
+            console << "[#" << module->blockId << "] Failed to load A-phase path.\n";
+            return;
+        }
+
+        console << "[#" << module->blockId << "] Loaded A-phase path (" << aPhasePath.size() << " steps).\n";
+
+        auto it = std::find(aPhasePath.begin(), aPhasePath.end(), module->position);
+        if (it != aPhasePath.end()) {
+            aPhaseIndex = std::distance(aPhasePath.begin(), it);
+        } else {
+            console << "[#" << module->blockId << "] Not on A-phase path → teleporting to startA.front()\n";
+            getScheduler()->schedule(
+                new Catoms3DRotationStartEvent(
+                    getScheduler()->now() + 1000,
+                    module,
+                    startA.front()
+                )
+            );
+            return;
+        }
+
+    }
+
+    // ────── FOLLOW A-phase path ──────
+    if (aPhaseIndex + 1 < aPhasePath.size()) {
+        ++aPhaseIndex;
+        Cell3DPosition nextHop = aPhasePath[aPhaseIndex];
+        console << "[#" << module->blockId << "] Scheduling next A-phase hop to " << nextHop << "\n";
+        getScheduler()->schedule(
+            new Catoms3DRotationStartEvent(
+                getScheduler()->now() + 1000, module, nextHop
+            )
+        );
+    } else {
+        console << "[#" << module->blockId << "] A-phase complete at " << module->position << "\n";
+        finishedA = true;
+        initiateNextModulePathfinding();
+    }
+}
 
 
 
@@ -616,9 +742,7 @@ void CatomsTest3BlockCode::saveOptimalPath(
 
     // If this is T-phase, skip the first entry (because it duplicates the D-phase endpoint)
     size_t startIndex = 0;
-    if ((phaseLabel == "T-phase" || phaseLabel == "A-phase") && path.size() > 1) {
-        startIndex = 1;
-    }
+
 
 
     for (size_t i = startIndex; i < path.size(); ++i) {
@@ -685,65 +809,59 @@ void CatomsTest3BlockCode::initiateNextModulePathfinding() {
         return;
     }
 
-    // Retrieve the next starting position
+    // Get next module
     Cell3DPosition nextStart = startD.front();
     startD.pop();
 
-    // Verify that the block exists
     BuildingBlock *nextBlock = BaseSimulator::getWorld()->getBlockByPosition(nextStart);
     if (!nextBlock || !nextBlock->blockCode) {
-        console << "Error: Block at position " << nextStart << " is null or has no blockCode.\n";
+        console << "Error: Block at " << nextStart << " is null or has no blockCode.\n";
         return;
     }
-    Catoms3DBlockCode *nextModule = static_cast<Catoms3DBlockCode *>(nextBlock->blockCode);
 
-    bool usedPrecomputed = false;
+    finishedD = false;
+    finishedT = false;
+    finishedA = false;
 
-    if (!usedPrecomputed) {
-        cells.clear();
-        visited.clear();
-        teleportedPositions.clear();
-        while (!openSet.empty()) {
-            openSet.pop();
-        }
-        gScore.clear();
-        fScore.clear();
-        cameFrom.clear();
-        closedSet.clear();
+    CatomsTest3BlockCode *nextModule = static_cast<CatomsTest3BlockCode *>(nextBlock->blockCode);
 
-        console << "Initiating *A* pathfinding* for module at " << nextStart << "\n";
-        nextModule->setColor(RED);
-        distance = 0;
 
-        Cell3DPosition currentPosition = nextStart;
-        cells[currentPosition].clear();
-        teleportedPositions.push_back(currentPosition);
 
-        gScore[currentPosition] = 0;
+    // Determine which path this module should follow
+    auto pathUp = loadOptimalPathFromFile("D-phase-up");
+    auto pathDown = loadOptimalPathFromFile("D-phase-down");
 
-        if (targetD.empty()) {
-            console << "Error: targetQueue is empty in initiateNextModulePathfinding().\n";
-            return;
-        }
-        fScore[currentPosition] = heuristic(currentPosition, targetD.front());
+    if (!pathUp.empty() && pathUp.front() == nextStart) {
+        nextModule->dPhasePath = pathUp;
+        nextModule->dPhaseIndex = 0;
+        nextModule->finishedD = false;
+        console << "[INIT] Assigned D-phase-UP to " << nextStart << "\n";
+    } else if (!pathDown.empty() && pathDown.front() == nextStart) {
+        nextModule->dPhasePath = pathDown;
+        nextModule->dPhaseIndex = 0;
+        nextModule->finishedD = false;
+        console << "[INIT] Assigned D-phase-DOWN to " << nextStart << "\n";
+    } else {
+        console << "[INIT] No matching D-phase path for " << nextStart << "\n";
+        return;
+    }
 
-        for (auto &motion: nextModule->hostBlock->getAllMotions()) {
-            cells[currentPosition].push_back(motion.first);
-            visited.push_back(motion.first);
-        }
+    nextModule->distance = 0;
+    nextModule->module->setColor(RED);
 
-        openSet.push({currentPosition, fScore[currentPosition]});
-
-        if (!openSet.empty()) {
-            auto nextStep = openSet.top();
-            openSet.pop();
-            getScheduler()->schedule(new TeleportationStartEvent(
-                getScheduler()->now() + 1000, nextModule->hostBlock, nextStep.first));
-
-            //nextModule->hostBlock->moveTo(nextStep.first);
-        }
+    // Schedule first move
+    if (nextModule->dPhasePath.size() > 1) {
+        Cell3DPosition firstHop = nextModule->dPhasePath[1];
+        console << "[INIT] Scheduling first hop to " << firstHop << "\n";
+        getScheduler()->schedule(
+            new Catoms3DRotationStartEvent(getScheduler()->now() + 1000, nextModule->module, firstHop)
+        );
+    } else {
+        console << "[INIT] Path too short, skipping.\n";
+        nextModule->finishedD = true;
     }
 }
+
 
 bool CatomsTest3BlockCode::getAllPossibleMotionsFromPosition(
     Cell3DPosition position, vector<pair<short, short>> &links,
@@ -805,20 +923,20 @@ void CatomsTest3BlockCode::scheduleOneTeleportD()
     // // schedule the teleport event
     // console << "Scheduling teleport from " << start
     //         << " toward " << goal << "\n";
-//     getScheduler()->schedule(
-//   new Catoms3DRotationStartEvent(
-//     getScheduler()->now() + 1000,   // delay
-//     module,                         // which block
-//     Cell3DPosition(                // exact destination
-//       startT.front()[0],
-//       startT.front()[1] -1 ,
-//       startT.front()[2]
-//
-//     )
-//
-//   )
-//
-// );
+    getScheduler()->schedule(
+  new Catoms3DRotationStartEvent(
+    getScheduler()->now() + 1000,   // delay
+    module,                         // which block
+    Cell3DPosition(                // exact destination
+      startT.front()[0],
+      startT.front()[1]-1  ,
+      startT.front()[2]
+
+    )
+
+  )
+
+);
 
 }
 
@@ -826,20 +944,20 @@ void CatomsTest3BlockCode::scheduleOneTeleportD()
 void CatomsTest3BlockCode::scheduleOneTeleportT()
 {
 
-//     getScheduler()->schedule(
-//   new Catoms3DRotationStartEvent(
-//     getScheduler()->now() + 1000,   // delay
-//     module,                         // which block
-//     Cell3DPosition(                // exact destination
-//       startA.front()[0],
-//       startA.front()[1]  ,
-//       startA.front()[2]
-//
-//     )
-//
-//   )
-//
-// );
+    getScheduler()->schedule(
+  new Catoms3DRotationStartEvent(
+    getScheduler()->now() + 1000,   // delay
+    module,                         // which block
+    Cell3DPosition(                // exact destination
+      startA.front()[0] ,
+      startA.front()[1] +1  ,
+      startA.front()[2]
+
+    )
+
+  )
+
+);
 
 }
 
@@ -936,3 +1054,4 @@ CatomsTest3BlockCode::findOptimalPath(
 //only 1 class, no need for 2 since we have getallPossibleMotion
 //try to let metaModules itself compute
 //
+//Always choosing downpath for first StartD
