@@ -128,7 +128,11 @@ private:
    static bool finishedA ;
     bool aPhaseInitialized = false;
 bool initializedAPhase = false;
-    bool startedA = false;
+    static bool startedA ;
+    static int assignedAPaths;
+
+  static  std::map<int, int> moduleToAPathIndex;
+
  static bool tPhasePathSaved ;
     std::vector<Cell3DPosition> tPhasePath;
     size_t                      tPhaseIndex;
@@ -149,10 +153,15 @@ public:
 
 
 
+    static bool onlyone;
+    static std::set<int> assignedPaths;
 
+    static  bool dPhasePathSaved ;
+    static bool aPhasePathsComputed ;
 
   static  bool aPhasePathSaved ;
     std::vector<Cell3DPosition> aPhasePath;
+
     size_t                       aPhaseIdx = 0;
     std::vector<Cell3DPosition> savedPathForCurrentModule;
 
