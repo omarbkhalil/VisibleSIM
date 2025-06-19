@@ -53,6 +53,11 @@ private:
 
     std::vector<Cell3DPosition> findOptimalPath(const Cell3DPosition &start, const Cell3DPosition &goal);
 
+    bool isRotationPossible(const Cell3DPosition &from, const Cell3DPosition &to);
+
+    // static
+    void initializeTargetA(const std::deque<Cell3DPosition> &tempStartD);
+
     void computeAndStartSecondPath();
 
     Cell3DPosition findReachableNeighborWithOffset(Cell3DPosition origin, int dz);
@@ -132,10 +137,12 @@ bool initializedAPhase = false;
     static int assignedAPaths;
 
   static  std::map<int, int> moduleToAPathIndex;
+    static bool dPathsComputed2 ;
+    // static bool dPathsComputed ;
 
  static bool tPhasePathSaved ;
     std::vector<Cell3DPosition> tPhasePath;
-    size_t                      tPhaseIndex;
+    size_t                      tPhaseIndex ;
     int aPhaseIndex = 0;
     static std::vector<Cell3DPosition> dPhasePath;
     static int dPhaseIndex;
@@ -207,6 +214,8 @@ public:
     static std::queue<Cell3DPosition> targetQueue1;
 
     static std::queue<Cell3DPosition> startD;
+    static std::queue<Cell3DPosition> startD1;
+    static std::queue<Cell3DPosition> targetD1;
     static std::queue<Cell3DPosition> targetD;
     static std::queue<Cell3DPosition> startT;
     static std::queue<Cell3DPosition> targetT;
