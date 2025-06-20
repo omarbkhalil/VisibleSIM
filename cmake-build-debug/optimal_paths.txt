@@ -190,6 +190,85 @@ A-phase-29 path from start to goal:
 (24,7,6)
 (23,7,6)
 
+D1-phase-0 path from start to goal:
+(34,5,5)
+(33,6,5)
+(32,6,5)
+(32,6,6)
+(31,5,7)
+(31,6,8)
+(30,5,7)
+(31,6,6)
+
+D1-phase-1 path from start to goal:
+(34,5,7)
+(33,6,7)
+(32,6,7)
+(32,6,6)
+(31,5,7)
+(31,6,8)
+(30,5,7)
+(31,6,6)
+
+D1-phase-2 path from start to goal:
+(34,5,6)
+(33,6,6)
+(32,5,5)
+(31,5,5)
+(31,6,4)
+(30,5,5)
+(31,6,6)
+
+D1-phase-3 path from start to goal:
+(33,5,7)
+(32,5,7)
+(31,5,7)
+(31,6,8)
+(30,5,7)
+(31,6,6)
+
+D1-phase-4 path from start to goal:
+(33,5,5)
+(32,5,5)
+(31,5,5)
+(31,6,4)
+(30,5,5)
+(31,6,6)
+
+D1-phase-5 path from start to goal:
+(33,6,8)
+(32,5,8)
+(31,6,8)
+(30,5,7)
+(31,6,6)
+
+D1-phase-6 path from start to goal:
+(33,6,4)
+(32,5,4)
+(31,6,4)
+(30,5,5)
+(31,6,6)
+
+D1-phase-7 path from start to goal:
+(32,6,8)
+(31,6,8)
+(30,5,7)
+(31,6,6)
+
+D1-phase-8 path from start to goal:
+(32,6,4)
+(31,6,4)
+(30,5,5)
+(31,6,6)
+
+D1-phase-9 path from start to goal:
+(31,6,7)
+(31,6,6)
+
+D1-phase-10 path from start to goal:
+(31,6,5)
+(31,6,6)
+
 T-phase path from start to goal:
 (35,4,6)
 (34,4,5)
@@ -381,4 +460,83 @@ A-phase-29 path from start to goal:
 (24,6,5)
 (24,7,6)
 (23,7,6)
+
+D1-phase-0 path from start to goal:
+(34,5,5)
+(33,6,5)
+(32,6,5)
+(32,6,6)
+(31,5,7)
+(31,6,8)
+(30,5,7)
+(31,6,6)
+
+D1-phase-1 path from start to goal:
+(34,5,7)
+(33,6,7)
+(32,6,7)
+(32,6,6)
+(31,5,7)
+(31,6,8)
+(30,5,7)
+(31,6,6)
+
+D1-phase-2 path from start to goal:
+(34,5,6)
+(33,6,6)
+(32,5,5)
+(31,5,5)
+(31,6,4)
+(30,5,5)
+(31,6,6)
+
+D1-phase-3 path from start to goal:
+(33,5,7)
+(32,5,7)
+(31,5,7)
+(31,6,8)
+(30,5,7)
+(31,6,6)
+
+D1-phase-4 path from start to goal:
+(33,5,5)
+(32,5,5)
+(31,5,5)
+(31,6,4)
+(30,5,5)
+(31,6,6)
+
+D1-phase-5 path from start to goal:
+(33,6,8)
+(32,5,8)
+(31,6,8)
+(30,5,7)
+(31,6,6)
+
+D1-phase-6 path from start to goal:
+(33,6,4)
+(32,5,4)
+(31,6,4)
+(30,5,5)
+(31,6,6)
+
+D1-phase-7 path from start to goal:
+(32,6,8)
+(31,6,8)
+(30,5,7)
+(31,6,6)
+
+D1-phase-8 path from start to goal:
+(32,6,4)
+(31,6,4)
+(30,5,5)
+(31,6,6)
+
+D1-phase-9 path from start to goal:
+(31,6,7)
+(31,6,6)
+
+D1-phase-10 path from start to goal:
+(31,6,5)
+(31,6,6)
 

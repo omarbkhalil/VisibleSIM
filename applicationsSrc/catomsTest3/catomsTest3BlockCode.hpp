@@ -227,6 +227,8 @@ public:
 
     void processLocalEvent(EventPtr pev) override;
 
+    void computeD1PhasePaths();
+
     void onMotionEnd() override;
 
     void handleSampleMessage(std::shared_ptr<Message> _msg, P2PNetworkInterface *sender);
