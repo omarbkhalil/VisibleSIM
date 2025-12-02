@@ -6,6 +6,7 @@ BlinkyBlocksBlock *moduleC=nullptr;
 BlinkyBlocksBlock *moduleCenter=nullptr;
 int distAB,distBC,distBcenter,distCcenter;
 
+
 using namespace BlinkyBlocks;
 
 MyApp2BlockCode::MyApp2BlockCode(BlinkyBlocksBlock *host) : BlinkyBlocksBlockCode(host) {
@@ -20,6 +21,11 @@ MyApp2BlockCode::MyApp2BlockCode(BlinkyBlocksBlock *host) : BlinkyBlocksBlockCod
                          std::bind(&MyApp2BlockCode::handleSampleMessage, this,
                                    std::placeholders::_1, std::placeholders::_2));
 
+    addMessageEventFunc2(FLOOD_FROM_B_ID,
+                         std::bind(&MyApp2BlockCode::handleFLOOD_FROM_B_ID, this,
+                                   std::placeholders::_1, std::placeholders::_2));
+
+
     // Set the module pointer
     module = static_cast<BlinkyBlocksBlock*>(hostBlock);
   }
@@ -27,16 +33,24 @@ MyApp2BlockCode::MyApp2BlockCode(BlinkyBlocksBlock *host) : BlinkyBlocksBlockCod
 void MyApp2BlockCode::startup() {
     console << "start";
 
+
     // Sample distance coloring algorithm below
     if (isA) { // Master ID is 1
         module->setColor(RED);
         distance = 0;
-        sendMessageToAllNeighbors("Sample Broadcast",
-                                  new MessageOf<int>(SAMPLE_MSG_ID,distance),100,200,0);
+        // sendMessageToAllNeighbors("Sample Broadcast",
+        //                           new MessageOf<int>(SAMPLE_MSG_ID,distance),100,200,0); //message format //to dt, is duration between these 2 values in ms // if u add a para next to nexcept, choose a modukle to not send msg to
+
+        floodDistance();
     } else {
         distance = -1; // Unknown distance
         hostBlock->setColor(LIGHTGREY);
     }
+
+    //if dis is infinity, so msg newly arrived,
+    //then assign msg data here and send again the message from here as distance+! an exception of sender
+
+    //At simulatorCore we find the library
 
     // Additional initialization and algorithm start below
     // ...
@@ -46,17 +60,17 @@ void MyApp2BlockCode::handleSampleMessage(std::shared_ptr<Message> _msg,
                                                P2PNetworkInterface* sender) {
     MessageOf<int>* msg = static_cast<MessageOf<int>*>(_msg.get());
 
-    int dis=0;
-    int d = *msg->getData() + 1;
+        //int d = *msg->getData() + 1;
+    int d = *msg->getData() ;
     console << " received d =" << d << " from " << sender->getConnectedBlockId() << "\n";
 
     if (distance == -1 || distance > d) {
         console << " updated distance = " << d << "\n";
+        parent = sender;
         distance = d;
         floodDistance();
 
         if (distance > distAB) {
-
             if (moduleB != nullptr) {
                 moduleB->setColor(LIGHTGREY);
             }
@@ -64,36 +78,89 @@ void MyApp2BlockCode::handleSampleMessage(std::shared_ptr<Message> _msg,
             moduleB = module;
             moduleB->setColor(YELLOW);
 
-            distest=distance;
+
+            floodDistanceB();
+
+           // distest=distance;
         }
-        else if (distance > distBC) {
+
+        if (distance == distAB) {
+
+//floodDistanceB();
+
+        }
+    }
+        }
+        // else if (distance > distBC ) {
+        //
+        //     if (moduleC != nullptr) {
+        //         moduleC->setColor(LIGHTGREY);
+        //     }
+        //     distBC = distance;
+        //     moduleC = module;
+        //     moduleC->setColor(BLUE);
+        // }
+
+
+        // else if (distance == (distance-(distest / 2))) {
+        //     if (moduleCenter == nullptr) {
+        //     moduleCenter = module;
+        //     moduleCenter->setColor(BROWN);
+        // }
+        //
+        // }
+
+
+
+
+
+
+void MyApp2BlockCode::handleFLOOD_FROM_B_ID(std::shared_ptr<Message> _msg,P2PNetworkInterface* sender) {
+
+
+     MessageOf<int>* msg = static_cast<MessageOf<int>*>(_msg.get());
+
+        //int d = *msg->getData() + 1;
+    int d1 = *msg->getData() ;
+    console << "B Back message d =" << d1 << " from " << sender->getConnectedBlockId() << "\n";
+    nbWaitedAnswers--;
+
+
+    if (nbWaitedAnswers==0) {
+        console << "B Module #" << module->blockId << " has received all responses. Max distance = "
+                     << distanceB << "\n";
+
+    }
+
+
+    if (distanceB == -1 || distanceB > d1) {
+        console << "B updated distance = " << d1 << "\n";
+        distanceB = d1;
+        floodDistanceB();
+
+        if (distanceB > distBC) {
+            distBC = distanceB;
+            // pathInterface = sender;
+        }
+
+
+        if (distanceB > distBC ) {
 
             if (moduleC != nullptr) {
                 moduleC->setColor(LIGHTGREY);
             }
-            distBC = distance;
-            moduleC = module;
-            moduleC->setColor(BLUE);
+            // distBC = distanceB;
+            // moduleC = module;
+            // moduleC->setColor(BLUE);
 
+            distest=distanceB;
 
-
-
-
-        }
-        else if (distance == (distance-(distest / 2))) {
-            if (moduleCenter == nullptr) {
-            moduleCenter = module;
-            moduleCenter->setColor(BROWN);
-        }
+            // floodDistanceB();
 
         }
 
-
-    }
-
-    }
-
-
+}
+}
 
 
 
@@ -197,6 +264,7 @@ string MyApp2BlockCode::onInterfaceDraw() {
     return str;
 }
 void MyApp2BlockCode::floodDistance() {
+    nbWaitedAnswers++;
     for (int i = 0; i < module->getNbInterfaces(); i++) {
         P2PNetworkInterface* neighborInterface = module->getInterface(i);
         if (neighborInterface && neighborInterface->connectedInterface) {
@@ -205,6 +273,17 @@ void MyApp2BlockCode::floodDistance() {
     }
 
 }
+
+void MyApp2BlockCode::floodDistanceB() {
+    for (int i = 0; i < module->getNbInterfaces(); i++) {
+        P2PNetworkInterface* neighborInterface = module->getInterface(i);
+        if (neighborInterface && neighborInterface->connectedInterface) {
+            sendMessage("Flood", new MessageOf<int>(FLOOD_FROM_B_ID, distanceB + 1), neighborInterface, 100, 100);
+        }
+    }
+
+}
+
 void MyApp2BlockCode::parseUserBlockElements(TiXmlElement *config) {
     const char *attr = config->Attribute("isA");
     if (attr != nullptr) {

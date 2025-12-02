@@ -45,8 +45,35 @@ HexaEx1BlockCode::HexaEx1BlockCode(HexanodesBlock *host) : HexanodesBlockCode(ho
 
 std::vector<Cell3DPosition> HexaEx1BlockCode::targetPositions;
 
+ void  HexaEx1BlockCode::init() {
+     myDistance = 2000000;
+     bestDist   = -1;
+     bestId = 0;
+     parent = nullptr;
+     winnerChild = nullptr;
+     nbWaitedAns = 0;
 
+
+
+ }
 void HexaEx1BlockCode::startup() {
+
+
+   // parent = nullptr; winnerChild = nullptr;
+    //myDistance = 0;
+   // bestDist = -1; bestId = 0;
+     if (isA) {
+        bestId     = getId();
+        setColor(RED);
+        stage = 1;
+        nbWaitedAns = sendMessageToAllNeighbors("initial go from leader",
+                                  new MessageOf<pair<int,int>>(SAMPLE_MSG_ID, {1,stage}), 1000, 0, 0);
+
+    }
+    else {
+        setColor(LIGHTGREY);
+    }
+
     HexanodesWorld *wrl = Hexanodes::getWorld();
 
     if (!target->isInTarget(module->position) && !firstModuleStarted) {
@@ -56,124 +83,228 @@ void HexaEx1BlockCode::startup() {
             target->highlight(); // Highlight the target
         }
 
-        vector<HexanodesMotion *> tab = wrl->getAllMotionsForModule(module);
-        console << "#motion=" << tab.size() << "\n";
-
-        if (canMove(motionDirection::CW)) {
-            moveTo(motionDirection::CW, 500000);
-        }
+        // vector<HexanodesMotion *> tab = wrl->getAllMotionsForModule(module);
+        // console << "#motion=" << tab.size() << "\n";
+        //
+        // if (canMove(motionDirection::CW)) {
+        //     moveTo(motionDirection::CW, 500000);
+        // }
     }
 }
 
 
 
 void HexaEx1BlockCode::onMotionEnd() {
-    HexanodesWorld *wrl = Hexanodes::getWorld();
+     HexanodesWorld *wrl = Hexanodes::getWorld();
+     auto motions = wrl->getAllMotionsForModule(module);
 
-    if (!target->isInTarget(module->position)) {
-        auto tab = wrl->getAllMotionsForModule(module);
-        auto ci = tab.begin();
-        while (ci != tab.end() && ((*ci)->direction != motionDirection::CW)) {
-            ci++;
-        }
-        if (ci != tab.end() && nMotions <= 500) {
-            moveTo(CW);
+     int counter = 0;
 
-        }
-    } else {
-        Check = true;
-        //Sleep(2000);
-        floodDistance();
-        // auto tab = wrl->getAllMotionsForModule(moduleB);
-        // auto ci = tab.begin();
-        // while (ci != tab.end() && ((*ci)->direction != motionDirection::CW)) {
-        //     ci++;
-        // }
-        // if (ci != tab.end() && nMotions <= 500) {
-        //     moveTo(CW);
-        // }
-    }
+     for (int i = 0; i < module->getNbInterfaces(); i++) {
+         P2PNetworkInterface *neighborInterface = module->getInterface(i);
+         if (neighborInterface && neighborInterface->connectedInterface) {
+             counter++;
+             nMotions++;
+         }
+     }
+
+
+     // Loop until we either:
+     // 1. Find a CW motion that enters the target (Phase 1)
+     // 2. Continue moving inside the target (Phase 2)
+     for (auto m : motions) {
+         if (m->direction != motionDirection::CW) continue;
+
+         Cell3DPosition nextPos = m->getFinalPos(module->position);
+
+         if (!FTarget) {
+             // Phase 1: move until first position inside target
+             moveTo(CW);
+             if (target->isInTarget(nextPos)) {
+                 FTarget = true; // first target reached
+                 console << "Entered target at position: " << nextPos << "\n";
+             }
+             return; // wait for next motion end
+         }
+else if (counter>2) {
+
+
+    Check = true; // optional flag
+    stage++;
+    init();
+    nbWaitedAns = sendMessageToAllNeighbors("initial go from leader",
+                   new MessageOf<pair<int,int>>(SAMPLE_MSG_ID, {stage,0}), 1000, 0, 0);
+
 }
+         else  {
+             // Phase 2: already in target, move only if next position stays in target
+             if (target->isInTarget(nextPos)) {
+                 moveTo(CW);
+                 return; // wait for next motion end
+             } else {
+                 // Stop: next position leaves target
+                 console << "Module reached target boundary, stopping at position: " << module->position << "\n";
+                 Check = true; // optional flag
+                 stage++;
+                 init();
+                 nbWaitedAns = sendMessageToAllNeighbors("initial go from leader",
+                                new MessageOf<pair<int,int>>(SAMPLE_MSG_ID, {stage,0}), 1000, 0, 0);
+                 return;
+             }
+         }
+     }
+ }
 
 
 void HexaEx1BlockCode::handleSampleMessage(std::shared_ptr<Message> _msg, P2PNetworkInterface *sender) {
-    MessageOf<int> *msg = static_cast<MessageOf<int> *>(_msg.get());
-    int receivedDistance = *msg->getData() + 1; // Increment the distance
-    console << "Module #" << module->blockId << " received distance = " << receivedDistance
-            << " from module #" << sender->getConnectedBlockId() << "\n";
+    MessageOf<pair<int, int>>* msg = static_cast<MessageOf<pair<int,int>>*>(_msg.get());
 
-    if (parent == nullptr || distance > receivedDistance) {
-        distance = receivedDistance;
-        console << "distance: " << distance << "\n";
-        parent = sender; // Record the interface to trace back
-        for (auto *it: module->getP2PNetworkInterfaces()) {
-            if (it->isConnected() && it != sender) {
-                nbWaitedAnswers++;
-                sendMessage("Flood", new MessageOf<int>(SAMPLE_MSG_ID, distance), it, 100, 200);
-            }
+    pair<int, int> msgData =*msg->getData();
+
+    int msgDistance = msgData.second;
+    int msgStage = msgData.first;
+
+    if (msgStage>stage) {
+        stage = msgStage;
+
+        init();
+
+        if (target->isInTarget(module->position)) {
+            msgDistance= -1;
         }
-        if (nbWaitedAnswers == 0) {
-            int returnDistance;
-            if (canMove(CW) && !target->isInTarget(module->position)) returnDistance = distance;
-            else returnDistance = -1;
-            sendMessage("Back", new MessageOf<int>(BACK_MSG_ID, returnDistance), sender, 100, 200);
-            distance = 0;
-            parent = nullptr;
-            maxDistance = -1;
+
+        parent = nullptr;
+        myDistance = msgDistance;
+
+    }
+
+
+    if (parent == nullptr || distance > msgDistance) {
+        // First time we get GO: adopt this sender as parent in the BFS tree
+        parent      = sender;
+        myDistance  = msgDistance;
+
+        bestDist    = myDistance;
+        bestId      = getId();
+        winnerChild = nullptr;
+
+        // Forward GO to all neighbors except parent; count children
+        nbWaitedAns = sendMessageToAllNeighbors("go",
+                           new MessageOf<pair<int,int>>(SAMPLE_MSG_ID, {stage,myDistance + 1}),
+                           1000, 100, 1, parent);
+
+        // If no children, leaf send BACK immediately to parent
+        if (nbWaitedAns == 0) {
+            BackPayload b{0, (target->isInTarget(module->position)?-1:myDistance), getId()};
+            sendMessage("leafBack",
+                        new MessageOf<BackPayload>(BACK_MSG_ID, b),
+                        parent, 1000, 100);
         }
     } else {
-        sendMessage("Back", new MessageOf<int>(BACK_MSG_ID, -1), sender, 100, 200);
+        // Already have a parent
+        BackPayload b{0, (target->isInTarget(module->position)?-1:myDistance), getId()};
+
+       // BackPayload b{0, -1, getId()}; // dist=-1 so it never wins aggregation
+        sendMessage("reject",
+                    new MessageOf<BackPayload>(BACK_MSG_ID, b),
+                    sender, 1000, 100);
     }
 }
 
 void HexaEx1BlockCode::handleBackMessage(std::shared_ptr<Message> _msg, P2PNetworkInterface *sender) {
-    if (!_msg || !sender) {
-        console << "Error: Invalid message or sender in handleBackMessage.\n";
-        return;
+    auto* m = static_cast<MessageOf<BackPayload>*>(_msg.get());
+    BackPayload bp = *m->getData();
+
+    if (bp.kind == 1) {
+        if (getId() == bp.id) {
+            // farthest from the B
+            setColor(YELLOW);
+            distAB   = bp.dist;
+            // bp.dist    = 0;
+            console << "DIstanceTEST=" <<  bp.dist << "\n";
+
+            HexanodesWorld *wrl = Hexanodes::getWorld();
+
+
+            vector<HexanodesMotion *> tab = wrl->getAllMotionsForModule(module);
+            console << "#motion=" << tab.size() << "\n";
+
+            if (canMove(motionDirection::CW)) {
+                moveTo(motionDirection::CW, 500000);
+            }
+            // // ---- Start PHASE 2 from B ----
+            // parent2      = nullptr;
+            // winnerChild2 = nullptr;
+            // myDistance2  = 0;
+            // bestDist2    = 0;
+            // bestId2      = getId();
+
+init();
+        } else if (winnerChild) {
+            // Forward only along the stored branch that produced the winner
+            sendMessage("selectDown",
+                        new MessageOf<BackPayload>(BACK_MSG_ID,bp),
+                        winnerChild, 100, 1000);
+        }
+        return; // do not touch nbWaitedAns on select-down
     }
 
-    MessageOf<int> *msg = static_cast<MessageOf<int> *>(_msg.get());
-    int receivedDistance = *msg->getData();
-    nbWaitedAnswers--;
-
-    console << "Module #" << module->blockId << " received Back message from module #"
-            << sender->getConnectedBlockId() << " with distance = " << receivedDistance << "\n";
-
-    if (receivedDistance > maxDistance) {
-        maxDistance = receivedDistance;
-        pathInterface = sender;
+    // ACK_UP from a child
+    if (bp.dist > bestDist || (bp.dist == bestDist && bp.id < bestId)) {
+        bestDist    = bp.dist;
+        bestId      = bp.id;
+        winnerChild = sender;
     }
 
-    if (nbWaitedAnswers == 0) {
-        console << "Module #" << module->blockId << " has received all responses. Max distance = "
-                << maxDistance << "\n";
-
+    // Count child answers
+    nbWaitedAns--;
+    if (nbWaitedAns == 0) {
         if (parent) {
-            sendMessage("Back", new MessageOf<int>(BACK_MSG_ID, maxDistance), parent, 100, 200);
-        } else if (pathInterface && maxDistance > 0) {
-            sendMessage("report", new Message(REPORT_MSG_ID), pathInterface, 100, 200);
+
+            if (myDistance > bestDist || (myDistance == bestDist && getId() < bestId)) {
+                bestDist    = myDistance;
+                bestId      = getId();
+                winnerChild = nullptr;
+            }
+
+            BackPayload up{0, bestDist, bestId};
+            sendMessage("backUp",
+                        new MessageOf<BackPayload>(BACK_MSG_ID, up),
+                        parent, 100, 1000);
         } else {
-            console << "Module #" << module->blockId << " is the farthest.\n";
+            // Root decides winner
+            console << "Phase1: farthest from leader = " << bestId
+                    << " at dist = " << bestDist << "\n";
+
+            distAB = bestDist;
+
+            if (winnerChild) {
+                // Send select-down
+                BackPayload sel{1, bestDist, bestId}; // SELECT_DOWN
+                sendMessage("selectDown",
+                            new MessageOf<BackPayload>(BACK_MSG_ID, sel),
+                            winnerChild, 100, 1000);
+            }
         }
     }
 }
 
 void HexaEx1BlockCode::handleReportMessage(std::shared_ptr<Message> _msg, P2PNetworkInterface *sender) {
-    if(pathInterface) {
-        sendMessage("report", new Message(REPORT_MSG_ID), pathInterface, 100, 200);
-        pathInterface = nullptr;
-    } else {
-        console << "can start moving \n";
-        HexanodesWorld *wrl = Hexanodes::getWorld();
-        auto tab = wrl->getAllMotionsForModule(module);
-        auto ci = tab.begin();
-        while (ci != tab.end() && ((*ci)->direction != motionDirection::CW)) {
-            ci++;
-        }
-        if (ci != tab.end() && nMotions <= 500) {
-            moveTo(CW);
-        }
-    }
+    // if(pathInterface) {
+    //     sendMessage("report", new Message(REPORT_MSG_ID), pathInterface, 100, 200);
+    //     pathInterface = nullptr;
+    // } else {
+    //     console << "can start moving \n";
+    //     HexanodesWorld *wrl = Hexanodes::getWorld();
+    //     auto tab = wrl->getAllMotionsForModule(module);
+    //     auto ci = tab.begin();
+    //     while (ci != tab.end() && ((*ci)->direction != motionDirection::CW)) {
+    //         ci++;
+    //     }
+    //     if (ci != tab.end() && nMotions <= 500) {
+    //         moveTo(CW);
+    //     }
+    // }
 }
 
 /*
@@ -302,4 +433,12 @@ bool HexaEx1BlockCode::parseUserCommandLineArgument(int &argc, char **argv[]) {
 
 string HexaEx1BlockCode::onInterfaceDraw() {
     return "Number of motions: " + to_string(nMotions);
+}
+
+void HexaEx1BlockCode::parseUserBlockElements(TiXmlElement *config) {
+    const char *attr = config->Attribute("isA");
+    if (attr != nullptr) {
+        std::cout << getId() << " is isA!" << std::endl;
+        isA = true;
+    }
 }

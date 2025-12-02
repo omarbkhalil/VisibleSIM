@@ -37,7 +37,7 @@ public:
 
     inline const short operator[](const int i) const { return pt[i]; }
 
-    bool isAdjacentTo(const Cell3DPosition &other) const;;
+    bool isAdjacentTo(const Cell3DPosition &other) const;
     bool operator<(const Cell3DPosition &o) const;
     bool operator==(const Cell3DPosition &o) const {
         return (pt[0] == o.pt[0]) && (pt[1] == o.pt[1]) && (pt[2] == o.pt[2]);

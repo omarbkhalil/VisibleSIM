@@ -611,6 +611,61 @@ add_executable(myAppSC applicationsSrc/myAppSC/myAppSC.cpp applicationsSrc/myApp
 target_link_libraries(myAppSC -lSlidingCubes -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
 install(TARGETS myAppSC RUNTIME DESTINATION applicationsBin/myAppSC)
 
+
+add_executable(pseaudoTp1 applicationsSrc/pseaudoTp1/pseaudoTp1.cpp applicationsSrc/pseaudoTp1/pseaudoTp1BlockCode.cpp applicationsSrc/pseaudoTp1/pseaudoTp1BlockCode.hpp)
+target_link_libraries(pseaudoTp1 -lBlinkyBlocks -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
+install(TARGETS pseaudoTp1 RUNTIME DESTINATION applicationsBin/pseaudoTp1)
+
+
+add_executable(boxesBonus applicationsSrc/boxesBonus/boxesBonus.cpp applicationsSrc/boxesBonus/boxesBonusBlockCode.cpp applicationsSrc/boxesBonus/boxesBonusBlockCode.hpp)
+target_link_libraries(boxesBonus -lBlinkyBlocks -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
+install(TARGETS boxesBonus RUNTIME DESTINATION applicationsBin/boxesBonus)
+
+
+add_executable(pseaudoTP1Bonus applicationsSrc/pseaudoTP1Bonus/pseaudoTP1Bonus.cpp applicationsSrc/pseaudoTP1Bonus/pseaudoTP1BonusBlockCode.cpp applicationsSrc/pseaudoTP1Bonus/pseaudoTP1BonusBlockCode.hpp)
+target_link_libraries(pseaudoTP1Bonus -lBlinkyBlocks -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
+install(TARGETS pseaudoTP1Bonus RUNTIME DESTINATION applicationsBin/pseaudoTP1Bonus)
+
+
+add_executable(boxes applicationsSrc/boxes/boxes.cpp applicationsSrc/boxes/boxesBlockCode.cpp applicationsSrc/boxes/boxesBlockCode.hpp)
+target_link_libraries(boxes -lBlinkyBlocks -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
+install(TARGETS boxes RUNTIME DESTINATION applicationsBin/boxes)
+
+
+
+add_executable(assigningIDs applicationsSrc/assigningIDs/assigningIDs.cpp applicationsSrc/assigningIDs/assigningIDsBlockCode.cpp applicationsSrc/assigningIDs/assigningIDsBlockCode.hpp)
+target_link_libraries(assigningIDs -lBlinkyBlocks -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
+install(TARGETS assigningIDs RUNTIME DESTINATION applicationsBin/assigningIDs)
+
+add_executable(leaderElecLab2 applicationsSrc/leaderElecLab2/leaderElecLab2.cpp applicationsSrc/leaderElecLab2/leaderElecLab2BlockCode.cpp applicationsSrc/leaderElecLab2/leaderElecLab2BlockCode.hpp)
+target_link_libraries(leaderElecLab2 -lBlinkyBlocks -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
+install(TARGETS leaderElecLab2 RUNTIME DESTINATION applicationsBin/leaderElecLab2)
+
+
+add_executable(IdTree applicationsSrc/IdTree/IdTree.cpp applicationsSrc/IdTree/IdTreeCode.cpp applicationsSrc/IdTree/IdTreeCode.hpp)
+target_link_libraries(IdTree -lBlinkyBlocks -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
+install(TARGETS IdTree RUNTIME DESTINATION applicationsBin/IdTree)
+
+
+
+add_executable(leaderElection applicationsSrc/leaderElection/leaderElection.cpp applicationsSrc/leaderElection/leaderElectionCode.cpp applicationsSrc/leaderElection/leaderElectionCode.hpp)
+target_link_libraries(leaderElection -lBlinkyBlocks -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
+install(TARGETS leaderElection RUNTIME DESTINATION applicationsBin/leaderElection)
+
+
+add_executable(myAppMotionSC applicationsSrc/myAppMotionSC/myAppMotionSC.cpp applicationsSrc/myAppMotionSC/myAppMotionSCCode.cpp applicationsSrc/myAppMotionSC/myAppMotionSCCode.hpp)
+target_link_libraries(myAppMotionSC -lSlidingCubes -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
+install(TARGETS myAppMotionSC RUNTIME DESTINATION applicationsBin/myAppMotionSC)
+
+add_executable(SBsnake applicationsSrc/SBsnake/SBsnake.cpp applicationsSrc/SBsnake/SBsnakeCode.cpp applicationsSrc/SBsnake/SBsnakeCode.hpp)
+target_link_libraries(SBsnake -lSlidingCubes -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
+install(TARGETS SBsnake RUNTIME DESTINATION applicationsBin/SBsnake)
+
+add_executable(snackeMotionSc applicationsSrc/snackeMotionSc/snackeMotionSc.cpp applicationsSrc/snackeMotionSc/snackeMotionScBlockCode.cpp applicationsSrc/snackeMotionSc/snackeMotionScBlockCode.hpp)
+target_link_libraries(snackeMotionSc -lSlidingCubes -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
+install(TARGETS snackeMotionSc RUNTIME DESTINATION applicationsBin/snackeMotionSc)
+
+
 add_executable(demo01_SC applicationsSrc/demo01_SC/demo01_SC.cpp applicationsSrc/demo01_SC/demo01_SCCode.cpp applicationsSrc/demo01_SC/demo01_SCCode.hpp)
 target_link_libraries(demo01_SC -lSlidingCubes -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
 install(TARGETS demo01_SC RUNTIME DESTINATION applicationsBin/demo01_SC)
@@ -618,6 +673,15 @@ install(TARGETS demo01_SC RUNTIME DESTINATION applicationsBin/demo01_SC)
 add_executable(catoms3DRotate applicationsSrc/catoms3DRotate/catoms3DRotate.cpp applicationsSrc/catoms3DRotate/catoms3DRotateCode.cpp)
 target_link_libraries(catoms3DRotate -lCatoms3D -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
 install(TARGETS catoms3DRotate RUNTIME DESTINATION applicationsBin/catoms3DRotate)
+
+
+
+add_executable(catomsMAPF applicationsSrc/catomsMAPF/catomsMAPF.cpp applicationsSrc/catomsMAPF/catomsMAPFBlockCode.cpp
+        applicationsSrc/catomsMAPF/ReservationTable.h)
+target_link_libraries(catomsMAPF -lCatoms3D -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
+install(TARGETS catomsMAPF RUNTIME DESTINATION applicationsBin/catomsMAPF)
+
+
 
 add_executable(e1_flooding applicationsSrc/e1_flooding/e1_flooding.cpp applicationsSrc/e1_flooding/e1_floodingCode.cpp)
 target_link_libraries(e1_flooding -lBlinkyBlocks -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
@@ -653,6 +717,26 @@ add_executable(catomsTest1 applicationsSrc/catomsTest1/catomsTest1.cpp applicati
 target_link_libraries(catomsTest1 -lCatoms3D -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
 install(TARGETS catomsTest1 RUNTIME DESTINATION applicationsBin/catomsTest1)
 
+
+add_executable(CatomMAPF2CONF2 applicationsSrc/CatomMAPF2CONF2/CatomMAPF2CONF2.cpp applicationsSrc/CatomMAPF2CONF2/CatomMAPF2CONF2BlockCode.cpp
+        applicationsSrc/catomMAPF2CONF2/ReservationTable.h)
+target_link_libraries(CatomMAPF2CONF2 -lCatoms3D -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
+install(TARGETS CatomMAPF2CONF2 RUNTIME DESTINATION applicationsBin/CatomMAPF2CONF2)
+
+
+
+add_executable(CatomMAPFCBS1 applicationsSrc/CatomMAPFCBS1/CatomMAPFCBS1.cpp applicationsSrc/CatomMAPFCBS1/CatomMAPFCBS1BlockCode.cpp
+        applicationsSrc/catomMAPFCBS1/ConstraintTree.h)
+target_link_libraries(CatomMAPFCBS1 -lCatoms3D -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
+install(TARGETS CatomMAPFCBS1 RUNTIME DESTINATION applicationsBin/CatomMAPFCBS1)
+
+
+
+add_executable(catomsTp applicationsSrc/catomsTp/catomsTp.cpp applicationsSrc/catomsTp/catomsTpBlockCode.cpp
+        applicationsSrc/catomsTp/ca_star_planner.hpp)
+target_link_libraries(catomsTp -lCatoms3D -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
+install(TARGETS catomsTp RUNTIME DESTINATION applicationsBin/catomsTp)
+
 add_executable(catomsTest2 applicationsSrc/catomsTest2/catomsTest2.cpp applicationsSrc/catomsTest2/catomsTest2BlockCode.cpp)
 target_link_libraries(catomsTest2 -lCatoms3D -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
 install(TARGETS catomsTest2 RUNTIME DESTINATION applicationsBin/catomsTest2)
@@ -664,6 +748,14 @@ install(TARGETS catomsTest3 RUNTIME DESTINATION applicationsBin/catomsTest3)
 add_executable(catomsTest4 applicationsSrc/catomsTest4/catomsTest4.cpp applicationsSrc/catomsTest4/catomsTest4BlockCode.cpp)
 target_link_libraries(catomsTest4 -lCatoms3D -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
 install(TARGETS catomsTest4 RUNTIME DESTINATION applicationsBin/catomsTest4)
+
+add_executable(catomsTest5 applicationsSrc/catomsTest5/catomsTest5.cpp applicationsSrc/catomsTest5/catomsTest5BlockCode.cpp)
+target_link_libraries(catomsTest5 -lCatoms3D -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
+install(TARGETS catomsTest5 RUNTIME DESTINATION applicationsBin/catomsTest5)
+
+add_executable(catomsTest6 applicationsSrc/catomsTest6/catomsTest6.cpp applicationsSrc/catomsTest6/catomsTest6BlockCode.cpp)
+target_link_libraries(catomsTest6 -lCatoms3D -lfreeglut -lmuparser -lOpenGL32 -lglu32 -lglew32d) #
+install(TARGETS catomsTest6 RUNTIME DESTINATION applicationsBin/catomsTest6)
 
 
 

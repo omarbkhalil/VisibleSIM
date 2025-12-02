@@ -205,10 +205,12 @@ public:
 
     ~CatomsTest3BlockCode() {
     };
+    static std::map<int, Cell3DPosition> startDOrigin;
 
     // Queues for start and target positions.
     static std::queue<Cell3DPosition> startQueue;
     static std::queue<Cell3DPosition> targetQueue;
+    static std::queue<Cell3DPosition> targetA_backup;
 
     static std::queue<Cell3DPosition> startQueue1;
     static std::queue<Cell3DPosition> targetQueue1;

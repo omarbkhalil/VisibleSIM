@@ -50,6 +50,7 @@ std::priority_queue<
         return a.second > b.second;
     }
 };
+std::map<int, Cell3DPosition> CatomsTest3BlockCode::startDOrigin;
 
 std::map<Cell3DPosition, double> CatomsTest3BlockCode::gScore;
 std::map<Cell3DPosition, double> CatomsTest3BlockCode::fScore;
@@ -157,71 +158,6 @@ std::queue<Cell3DPosition> CatomsTest3BlockCode::targetT(
     }
   );
 
-// shift by 8?
-// std::queue<Cell3DPosition> CatomsTest3BlockCode::startA(
-//     std::deque{
-// // y+1
-//         // Cell3DPosition(Origin[0] -5 , Origin[1] +2  , Origin[2] )
-//
-//         Cell3DPosition(Origin[0] + 3, Origin[1] , Origin[2]),
-//
-//     }
-//   );
-// // 35 5 6
-// std::queue<Cell3DPosition> CatomsTest3BlockCode::targetA(
-//     std::deque{
-//         Cell3DPosition(Origin[0]-1, Origin[1] , Origin[2] + 1),
-//
-//         Cell3DPosition(Origin[0]-1, Origin[1]-1 , Origin[2] ),
-//         Cell3DPosition(Origin[0]-1, Origin[1] , Origin[2] - 1),
-//         Cell3DPosition(Origin[0]-2  , Origin[1] , Origin[2] - 1),
-//         Cell3DPosition(Origin[0]-2, Origin[1] , Origin[2] + 1),
-//         Cell3DPosition(Origin[0]-2, Origin[1] + 1, Origin[2] + 2),
-//         Cell3DPosition(Origin[0]-2, Origin[1] + 1, Origin[2] - 2),
-//         Cell3DPosition(Origin[0]-3, Origin[1] + 1, Origin[2] - 2),
-//         Cell3DPosition(Origin[0]-3, Origin[1] + 1, Origin[2] + 2),
-//         Cell3DPosition(Origin[0]-4, Origin[1] + 1, Origin[2] + 1),
-//         Cell3DPosition(Origin[0]-4, Origin[1] + 1, Origin[2] - 1),
-//         Cell3DPosition(Origin[0]-4, Origin[1] + 2, Origin[2] ),
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-// // First target
-//         // -9 0 0
-//        //  Cell3DPosition(Origin[0] -9 , Origin[1] , Origin[2]-1 ),
-//        //
-//        // Cell3DPosition(Origin[0] -9 , Origin[1] , Origin[2]+1 ),
-//        //
-//        //   Cell3DPosition(Origin[0] -9 , Origin[1] , Origin[2] ),
-//
-//         // Cell3DPosition(Origin[0] -9 , Origin[1] , Origin[2]+1 ),
-//
-//
-//       //  Cell3DPosition(Origin[0] -9 , Origin[1] , Origin[2] ),
-//
-//
-//         // Cell3DPosition(Origin[0] -10 , Origin[1] , Origin[2] ),
-//
-//         //
-//         //
-//         //
-//         //
-//         // Cell3DPosition(Origin[0] -1 , Origin[1] , Origin[2] ),
-//         // Cell3DPosition(Origin[0] -2 , Origin[1] , Origin[2]-1 ),
-//         // Cell3DPosition(Origin[0] -2 , Origin[1] , Origin[2]+1 ),
-//         //         Cell3DPosition(Origin[0] -2 , Origin[1] , Origin[2]+1 ),
-//
-//
-//     }
-//   );
-
 // std::queue<Cell3DPosition> CatomsTest3BlockCode::targetA;
 
 std::queue<Cell3DPosition> CatomsTest3BlockCode::startA(
@@ -254,156 +190,6 @@ std::queue<Cell3DPosition> CatomsTest3BlockCode::targetA(
     }
   );
 
-// Queues for start and target positions.
-// std::queue<Cell3DPosition> CatomsTest3BlockCode::startQueue(
-//     std::deque{
-//         Cell3DPosition(Origin[0] + 3, Origin[1] + 1, Origin[2] + 1),
-//         Cell3DPosition(Origin[0] + 3, Origin[1] + 1, Origin[2] - 1),
-//         Cell3DPosition(Origin[0] + 3, Origin[1] + 2, Origin[2]),
-//         Cell3DPosition(Origin[0] + 2, Origin[1] + 1, Origin[2] - 1),
-//         Cell3DPosition(Origin[0] + 2, Origin[1] + 1, Origin[2] - 2),
-//         Cell3DPosition(Origin[0] + 2, Origin[1] + 1, Origin[2] + 1),
-//         Cell3DPosition(Origin[0] + 2, Origin[1] + 1, Origin[2] + 2),
-//         Cell3DPosition(Origin[0] + 1, Origin[1] + 1, Origin[2] + 2),
-//         Cell3DPosition(Origin[0] + 1, Origin[1] + 1, Origin[2] - 2),
-//         Cell3DPosition(Origin[0], Origin[1], Origin[2] + 1),
-//         Cell3DPosition(Origin[0], Origin[1], Origin[2]),
-//         Cell3DPosition(Origin[0], Origin[1], Origin[2] - 1),
-//         Cell3DPosition(Origin[0] - 1, Origin[1], Origin[2] + 1),
-//         Cell3DPosition(Origin[0] - 1, Origin[1], Origin[2] - 1),
-//         Cell3DPosition(Origin[0] - 1, Origin[1], Origin[2]),
-//
-//         Cell3DPosition(Origin[0] - 2, Origin[1], Origin[2] + 1),
-//         Cell3DPosition(Origin[0] - 2, Origin[1], Origin[2] - 1),
-//         Cell3DPosition(Origin[0] - 2, Origin[1] + 1, Origin[2] + 2),
-//         Cell3DPosition(Origin[0] - 2, Origin[1] + 1, Origin[2] - 2),
-//
-//         Cell3DPosition(Origin[0] - 3, Origin[1] + 1, Origin[2] + 2),
-//         Cell3DPosition(Origin[0] - 3, Origin[1] + 1, Origin[2] - 2),
-//         Cell3DPosition(Origin[0] - 4, Origin[1] + 1, Origin[2] + 1),
-//         Cell3DPosition(Origin[0] - 4, Origin[1] + 1, Origin[2] - 1),
-//
-//         Cell3DPosition(Origin[0] - 4, Origin[1] + 2, Origin[2]),
-//         Cell3DPosition(Origin[0] - 5, Origin[1] + 1, Origin[2] + 1),
-//         Cell3DPosition(Origin[0] - 5, Origin[1] + 1, Origin[2] - 1),
-//         Cell3DPosition(Origin[0] - 5, Origin[1] + 2, Origin[2]),
-//         Cell3DPosition(Origin[0] - 6, Origin[1] + 1, Origin[2] - 1),
-//         Cell3DPosition(Origin[0] - 6, Origin[1] + 1, Origin[2] + 1),
-//
-//         Cell3DPosition(Origin[0] - 6, Origin[1] + 1, Origin[2] - 2),
-//         Cell3DPosition(Origin[0] - 6, Origin[1] + 1, Origin[2] + 2),
-//
-//
-//         Cell3DPosition(Origin[0] - 7, Origin[1] + 1, Origin[2] - 2),
-//         Cell3DPosition(Origin[0] - 7, Origin[1] + 1, Origin[2] + 2),
-//
-//
-//         Cell3DPosition(Origin[0] - 8, Origin[1], Origin[2] - 1),
-//         Cell3DPosition(Origin[0] - 8, Origin[1], Origin[2] + 1),
-//         //   Cell3DPosition(12, 6, 7)
-//
-//
-//         Cell3DPosition(Origin[0] - 8, Origin[1], Origin[2]),
-//
-//     }
-// );
-//
-// //state 1
-// std::queue<Cell3DPosition> CatomsTest3BlockCode::targetQueue(
-//     std::deque{
-//         Cell3DPosition(Origin[0] - 9, Origin[1], Origin[2] + 1), // (8,5,7)
-//         Cell3DPosition(Origin[0] - 9, Origin[1], Origin[2] - 1), // (8,5,5)
-//
-//         Cell3DPosition(Origin[0] - 9, Origin[1], Origin[2]), // (8,5,6)
-//         // Cell3DPosition(7, 5, 6),
-//         Cell3DPosition(Origin[0] - 10, Origin[1], Origin[2] + 1), // (7,5,7)
-//
-//         // Cell3DPosition(6, 5, 7),
-//         Cell3DPosition(Origin[0] - 10, Origin[1], Origin[2] - 1), // (7,5,5)
-//         // Cell3DPosition(6, 5, 5),
-//         Cell3DPosition(Origin[0] - 10, Origin[1] + 1, Origin[2] - 2), // (7,6,4)
-//
-//         Cell3DPosition(Origin[0] - 10, Origin[1] + 1, Origin[2] + 2), // (7,6,8)
-//         Cell3DPosition(Origin[0] - 11, Origin[1] + 1, Origin[2] + 2), // (6,6,8)
-//
-//         Cell3DPosition(Origin[0] - 11, Origin[1] + 1, Origin[2] - 2), // (6,6,4)
-//
-//         Cell3DPosition(Origin[0] - 12, Origin[1] + 1, Origin[2] + 1), // (5,6,7)
-//
-//         Cell3DPosition(Origin[0] - 12, Origin[1] + 1, Origin[2] - 1), // (5,6,5)
-//         Cell3DPosition(Origin[0] - 12, Origin[1] + 2, Origin[2]), // (5,7,6)
-//
-//         Cell3DPosition(Origin[0] - 13, Origin[1] + 2, Origin[2]), // (4,7,6)
-//         Cell3DPosition(Origin[0] - 13, Origin[1] + 1, Origin[2] - 1), // (4,6,5)
-//
-//         Cell3DPosition(Origin[0] - 13, Origin[1] + 1, Origin[2] + 1), // (4,6,7)
-//         Cell3DPosition(Origin[0] - 14, Origin[1] + 1, Origin[2] + 1), // (3,6,7)
-//
-//         Cell3DPosition(Origin[0] - 14, Origin[1] + 1, Origin[2] - 1), // (3,6,5)
-//         Cell3DPosition(Origin[0] - 14, Origin[1] + 1, Origin[2] - 2), // (3,6,4)
-//
-//         Cell3DPosition(Origin[0] - 14, Origin[1] + 1, Origin[2] + 2), // (3,6,8)
-//         Cell3DPosition(Origin[0] - 15, Origin[1] + 1, Origin[2] + 2), // (2,6,8)
-//
-//         Cell3DPosition(Origin[0] - 15, Origin[1] + 1, Origin[2] - 2), // (2,6,4)
-//
-//         Cell3DPosition(Origin[0] - 16, Origin[1], Origin[2] - 1), // (1,5,5)
-//         Cell3DPosition(Origin[0] - 16, Origin[1], Origin[2]), // (1,5,6)
-//
-//         Cell3DPosition(Origin[0] - 16, Origin[1], Origin[2] + 1), // (1,5,7)
-//         Cell3DPosition(Origin[0] - 17, Origin[1], Origin[2] + 1),
-//         Cell3DPosition(Origin[0] - 17, Origin[1], Origin[2] - 1),
-//         Cell3DPosition(Origin[0] - 17, Origin[1], Origin[2]),
-//         Cell3DPosition(Origin[0] - 18, Origin[1], Origin[2] + 1),
-//         Cell3DPosition(Origin[0] - 18, Origin[1], Origin[2] - 1),
-//
-//
-//         Cell3DPosition(Origin[0] - 18, Origin[1] + 1, Origin[2] + 2),
-//         Cell3DPosition(Origin[0] - 18, Origin[1] + 1, Origin[2] - 2),
-//         // Cell3DPosition(1, 6, 7)
-//
-//         Cell3DPosition(Origin[0] - 19, Origin[1] + 1, Origin[2] + 2),
-//         Cell3DPosition(Origin[0] - 19, Origin[1] + 1, Origin[2] - 2),
-//
-//
-//         Cell3DPosition(Origin[0] - 20, Origin[1] + 1, Origin[2] + 1),
-//         Cell3DPosition(Origin[0] - 20, Origin[1] + 1, Origin[2] - 1),
-//
-//         Cell3DPosition(Origin[0] - 20, Origin[1] + 2, Origin[2]),
-//
-//     }
-// );
-
-
-// state 2
-/*
-std::queue<Cell3DPosition> CatomsTest3BlockCode::targetQueue(
-    std::deque{
-        Cell3DPosition(8, 6, 7),
-        Cell3DPosition(8, 6, 5),
-        Cell3DPosition(8, 7, 6),
-        Cell3DPosition(7, 7, 6),
-        Cell3DPosition(7, 6, 7),
-        Cell3DPosition(6, 6, 4),
-        Cell3DPosition(7, 6, 5),
-        Cell3DPosition(6, 6, 5),
-        Cell3DPosition(6, 4, 6),
-        Cell3DPosition(6, 6, 8),
-        Cell3DPosition(5, 6, 4),
-        Cell3DPosition(5, 6, 8),
-        Cell3DPosition(4, 6, 7),
-        Cell3DPosition(4, 6, 5),
-        Cell3DPosition(4, 7, 6),
-        Cell3DPosition(3, 7, 6),
-        Cell3DPosition(3, 6, 5),
-        Cell3DPosition(3, 6, 7),
-        Cell3DPosition(2, 6, 7),
-        Cell3DPosition(2, 6, 5),
-        Cell3DPosition(2, 6, 4)
-    }
-);
-
-*/
 
 
 CatomsTest3BlockCode::CatomsTest3BlockCode(Catoms3DBlock *host) : Catoms3DBlockCode(host) {
@@ -454,35 +240,6 @@ void CatomsTest3BlockCode::startup() {
 
         return;
     }
-
-
-    // // ─── D1-PHASE PATH PLANNER ───
-     // if ( module->position == targetD1.front()) {
-  //     console << "[startup] Computing D1-phase paths...\n";
-    //     Cell3DPosition goal = targetD1.front();
-    //     std::deque<Cell3DPosition> tempStartD1;
-    //
-    //     int i = 0;
-    //     while (i < 12 && !startD1.empty()) {
-    //         Cell3DPosition start = startD1.front(); startD1.pop();
-    //         tempStartD1.push_back(start);
-    //
-    //         std::vector<Cell3DPosition> path = findOptimalPath(start, Cell3DPosition(goal[0], goal[1] - 1, goal[2]));
-    //         if (path.size() >= 2) {
-    //             std::stringstream filename;
-    //             filename << "D1-phase-" << i;
-    //             saveOptimalPath(path, filename.str());
-    //             console << "[startup] Saved " << filename.str() << " (" << path.size() << " steps).\n";
-    //         } else {
-    //             console << "[startup]  No valid path from " << start << " to " << goal << "\n";
-    //         }
-    //         ++i;
-    //     }
-    //
-    //     for (const auto& pos : tempStartD1) startD1.push(pos);
-    //
-    //     return;
-     // }
 
     // ─── T-PHASE PATH PLANNER ───
     if (!tPathComputed && !startT.empty() && module->position == startT.front()) {
@@ -598,33 +355,13 @@ void CatomsTest3BlockCode::processLocalEvent(EventPtr pev) {
     // }
 
     switch (pev->eventType) {
-        //change this to rotaton event in new class
-        //bare in mind every module in real life cant have static maybe configure that later
-        // case EVENT_ADD_NEIGHBOR: {
-        //
-        //     // Only act when this module is the one at the front of startT
-        //     if (module->position == startT.front()) {
-        //
-        //         // grab the next target
-        //         Cell3DPosition nextPos = startT.front();
-        //         startT.pop();
-        //         console << "Neighbor detected – teleporting to " << nextPos << "\n";
-        //
-        //         // schedule a teleport in 1 second
-        //         getScheduler()->schedule(
-        //             new TeleportationStartEvent(
-        //                 getScheduler()->now() + 1000,
-        //                 module,
-        //                 nextPos
-        //             )
-        //         );
-        //     }
-        //     break;
-        // }
 
 
         case EVENT_ROTATION3D_END: {
             if (!finishedD) {
+                startDOrigin[module->blockId] = module->position; // when D starts
+
+                setColor(BLUE);
                 if (dPhasePath.empty()) {
                     console << "[#" << module->blockId << "] dPhasePath is empty. Attempting to load from file...\n";
 
@@ -696,6 +433,7 @@ void CatomsTest3BlockCode::processLocalEvent(EventPtr pev) {
 
 // i think we need to do y+1 (app crashed)
             if (finishedD && !finishedT && !finishedA) {
+                setColor(GREEN);
                 if(dPathsComputed2) {
                     // dPathsComputed2 = false;
 
@@ -751,179 +489,12 @@ void CatomsTest3BlockCode::processLocalEvent(EventPtr pev) {
 
 
 
-//
-// if (startedA && !finishedA) {
-//         console << "[DEBUG] A-phase check for #" << module->blockId
-//             << " | pos: " << module->position
-//             << " | path empty: " << aPhasePath.empty()
-//             << " | saved: " << aPhasePathSaved << "\n";
-//
-//     Cell3DPosition elevatedStartA = Cell3DPosition(
-//         startA.front()[0],
-//         startA.front()[1] + 1,
-//         startA.front()[2]
-//     );
-//
-//     // ───── COMPUTE ONCE ─────
-//     if (!aPhasePathSaved && aPhasePath.empty() && module->position == elevatedStartA) {
-//         console << "[A-COMPUTE] Module #" << module->blockId
-//                 << " computing A-phase paths\n";
-//
-//         int pathCount = 0;
-//         int maxPaths = 2;
-//
-//         while (pathCount < maxPaths && !targetA.empty()) {
-//             Cell3DPosition target = targetA.front(); targetA.pop();
-//             std::vector<Cell3DPosition> path = findOptimalPath(startA.front(), target);
-//             if (path.empty()) {
-//                 console << "[#"<< module->blockId << "] No path to " << target << "\n";
-//                 continue;
-//             }
-//
-//             std::stringstream filename;
-//             filename << "A-phase-" << pathCount;
-//             saveOptimalPath(path, filename.str());
-//
-//             console << "[#"<< module->blockId << "] Saved A-phase-" << pathCount
-//                     << " with " << path.size() << " steps\n";
-//
-//             ++pathCount;
-//         }
-//
-//         aPhasePathSaved = true;
-//         return;
-//     }
-//
-//     // ───── LOAD & ASSIGN (fixed) ─────
-//     if (aPhasePath.empty()) {
-//         // Assign a unique path index to each module using its blockId
-//         if (moduleToAPathIndex.find(module->blockId) == moduleToAPathIndex.end()) {
-//             moduleToAPathIndex[module->blockId] = moduleToAPathIndex.size();
-//         }
-//
-//         int assignedIndex = moduleToAPathIndex[module->blockId];
-//         std::stringstream filename;
-//         filename << "A-phase-" << assignedIndex;
-//
-//         aPhasePath = loadOptimalPathFromFile(filename.str());
-//         if (aPhasePath.empty()) {
-//             console << "[#" << module->blockId << "] Could not load " << filename.str() << "\n";
-//             return;
-//         }
-//
-//         aPhaseIndex = 0;
-//         if (aPhasePath.size() > 1 && aPhasePath[0] == module->position)
-//             ++aPhaseIndex;
-//
-//         console << "[#" << module->blockId << "] Assigned A-phase path: " << filename.str()
-//                 << " with " << aPhasePath.size() << " steps, starting at index " << aPhaseIndex << "\n";
-//     }
-//
-//     // ───── FOLLOW PATH ─────
-//     if (aPhaseIndex < aPhasePath.size()) {
-//         Cell3DPosition nextHop = aPhasePath[aPhaseIndex];
-//         ++aPhaseIndex;
-//         console << "[#" << module->blockId << "] A-phase hop to " << nextHop << "\n";
-//         getScheduler()->schedule(
-//             new Catoms3DRotationStartEvent(getScheduler()->now() + 1000, module, nextHop)
-//         );
-//     } else {
-//         console << "[#" << module->blockId << "] A-phase complete at " << module->position << "\n";
-//         finishedA = true;
-//         initiateNextModulePathfinding();
-//     }
-//
-// }
-// if (startedA && !finishedA) {
-//     // ────── COMPUTE ONCE (first module after T-phase) ──────
-//     if (!aPhasePathSaved) {
-//         int pathCount = 0;
-//         int maxPaths = 12;
-//
-//         while (pathCount < maxPaths && !targetA.empty()) {
-//             Cell3DPosition goal = targetA.front(); targetA.pop();
-//
-//             std::vector<Cell3DPosition> path = findOptimalPath(startA.front(), goal);
-//
-//             // 🟥 Skip first position (start point)
-//             if (!path.empty() && path[0] == startA.front())
-//                 // path.erase(path.begin());
-//
-//             if (path.empty()) {
-//                 console << "[#" << module->blockId << "] Skipped empty A-phase-" << pathCount << "\n";
-//                 continue;
-//             }
-//
-//             // 🟦 Shift all X by -7
-//             // for (auto &pos : path)
-//             //     pos = Cell3DPosition(pos[0] - 8, pos[1], pos[2]);
-//             //
-//             // // 🟩 Lower Z of new first position by 1 (simulate lift to move)
-//             // path[0] = Cell3DPosition(path[0][0], path[0][1], path[0][2] );
-//
-//             std::stringstream filename;
-//             filename << "A-phase-" << pathCount;
-//             saveOptimalPath(path, filename.str());
-//
-//             console << "[#" << module->blockId << "] Saved A-phase-" << pathCount
-//                     << " with " << path.size() << " steps (shifted X and lowered Z of first).\n";
-//
-//             ++pathCount;
-//         }
-//
-//         aPhasePathSaved = true;
-//     }
-//
-//     // ────── LOAD FROM FILE (based on ID-to-index mapping) ──────
-//     if (aPhasePathSaved) {
-//         console << "HIIIIIIIIIIIIIIIIIIIIIII" ;
-//         if (moduleToAPathIndex.find(module->blockId) == moduleToAPathIndex.end())
-//             moduleToAPathIndex[module->blockId] = moduleToAPathIndex.size();
-//
-//         int index = moduleToAPathIndex[module->blockId];
-//
-//         std::stringstream filename;
-//         filename << "A-phase-" << index;
-//
-//         aPhasePath = loadOptimalPathFromFile(filename.str());
-//         if (aPhasePath.empty()) {
-//             console << "[#" << module->blockId << "] Could not load " << filename.str() << "\n";
-//             return;
-//         }
-//
-//         console << "[#" << module->blockId << "] Loaded A-phase path (" << aPhasePath.size()
-//                 << " steps) from " << filename.str() << "\n";
-//
-//         // Start path execution
-//         // aPhaseIndex = 0;
-//         ++aPhaseIndex;
-//     }
-//
-//     // ────── FOLLOW A-phase path ──────
-//     if (aPhaseIndex < aPhasePath.size()) {
-//         Cell3DPosition nextHop = aPhasePath[aPhaseIndex];
-//         // ++aPhaseIndex;
-//         console << "[#" << module->blockId << "] A-phase step to " << nextHop << "\n";
-//
-//
-//         getScheduler()->schedule(
-//             new Catoms3DRotationStartEvent(getScheduler()->now() + 1000, module, nextHop)
-//         );
-//     } else {
-//         console << "[#" << module->blockId << "] A-phase complete at " << module->position << "\n";
-//         finishedA = true;
-//         initiateNextModulePathfinding();
-//     }
-// }
-
-
-
-
 
 
 
 
 if (startedA && !finishedA) {
+    setColor(YELLOW);
     // ────── COMPUTE ONCE ──────
     if (aPhasePath.empty()) {
         if (!targetA.empty()) {
@@ -1029,23 +600,7 @@ if (startedA && !finishedA) {
                     startD.push(startD1.front());
                     startD1.pop();
                 }
-                // dPathsComputed2 = false;
-                // if (!dPathsComputed2 && !startD.empty() && !targetD.empty()) {
-                //     //How while traget q is empty?
-                //     Cell3DPosition goal = targetD1.front();
-                //
-                //     BuildingBlock *targetBlock = BaseSimulator::getWorld()->getBlockByPosition(goal);
-                //     if (targetBlock && targetBlock->blockCode) {
-                //         CatomsTest3BlockCode *targetModule = static_cast<CatomsTest3BlockCode *>(targetBlock->blockCode);
-                //         targetModule->module->setColor(DARKGREY);
-                //         console << "[D-PHASE2] Marked targetD module at " << goal << " for second D-phase planning\n";
-                //     } else {
-                //         console << "[D-PHASE2] Warning: Cannot find targetD module at " << goal << "\n";
-                //     }
-                //
-                //     dPathsComputed2 = true;
-                //     return;  // Let the target module handle path computation in startup()
-                // }
+
 
                 while (!targetD1.empty()) {
                     targetD.push(targetD1.front());
@@ -1069,12 +624,16 @@ if (startedA && !finishedA) {
 
 
                 // Trigger the next module
+                setColor(RED);
+
                 initiateNextModulePathfinding();
                 return;
             }
         }
 
 
+
+        setColor(RED);
         initiateNextModulePathfinding();
     }
 }
@@ -1253,71 +812,6 @@ std::vector<Cell3DPosition> CatomsTest3BlockCode::loadOptimalPathFromFile(const 
 
 
 
-
-// void CatomsTest3BlockCode::initiateNextModulePathfinding() {
-//     if (startD.empty()) {
-//         console << "No more modules in startD queue.\n";
-//         return;
-//     }
-//
-//     Cell3DPosition nextStart = startD.front();
-//     BuildingBlock *nextBlock = BaseSimulator::getWorld()->getBlockByPosition(nextStart);
-//
-//     if (!nextBlock || !nextBlock->blockCode) {
-//         console << "Error: Block at " << nextStart << " is null or has no blockCode.\n";
-//         return;
-//     }
-//
-//     // ✅ Safe to pop now!
-//     // startD.pop();
-//
-//     CatomsTest3BlockCode *nextModule = static_cast<CatomsTest3BlockCode *>(nextBlock->blockCode);
-//
-//     // Reset flags
-//     finishedD = false;
-//     finishedT = false;
-//     finishedA = false;
-//     startedA = false;
-//
-//     // Try to assign correct D-path
-//     bool matched = false;
-//     for (int i = 0; i < 11; ++i) {
-//         std::stringstream filename;
-//         filename << "D-phase-" << i;
-//         std::vector<Cell3DPosition> path = loadOptimalPathFromFile(filename.str());
-//
-//         auto it = std::find(path.begin(), path.end(), nextStart);
-//         if (it != path.end()) {
-//             nextModule->dPhasePath = path;
-//             nextModule->dPhaseIndex = std::distance(path.begin(), it);
-//             console << "[INIT] Assigned " << filename.str()
-//                     << " to " << nextStart
-//                     << " at index " << nextModule->dPhaseIndex << "\n";
-//             matched = true;
-//             break;
-//         }
-//     }
-//
-//     if (!matched) {
-//         console << "[INIT] No matching D-phase path for " << nextStart << "\n";
-//         return;
-//     }
-//
-//     nextModule->distance = 0;
-//     nextModule->module->setColor(RED);
-//
-//     if (nextModule->dPhaseIndex + 1 < nextModule->dPhasePath.size()) {
-//         Cell3DPosition nextHop = nextModule->dPhasePath[nextModule->dPhaseIndex + 1];
-//         console << "[INIT] Scheduling first hop to " << nextHop << "\n";
-//         getScheduler()->schedule(
-//             new Catoms3DRotationStartEvent(getScheduler()->now() + 1000, nextModule->module, nextHop)
-//         );
-//     } else {
-//         console << "[INIT] Already at end of D-phase path. Marking D-phase complete.\n";
-//         nextModule->finishedD = true;
-//     }
-// }
-
 void CatomsTest3BlockCode::initiateNextModulePathfinding() {
     if (startD.empty()) {
         if (targetD.empty()) {
@@ -1458,26 +952,6 @@ bool CatomsTest3BlockCode::getAllPossibleMotionsFromPosition(
 
 void CatomsTest3BlockCode::scheduleOneTeleportD()
 {
-    // reset A* for this single move
-    // gScore.clear();
-    // fScore.clear();
-    // cameFrom.clear();
-    // closedSet.clear();
-    // while (!openSet.empty()) openSet.pop();
-    // cells.clear();
-
-    // initialize just this one step
-    // gScore[start] = 0;
-    // fScore[start] = heuristic(start, goal);
-    // auto &nbrs = cells[start];
-    // nbrs.clear();
-    // for (auto &m : module->getAllMotions())
-    //     nbrs.push_back(m.first);
-    // openSet.push({start, fScore[start]});
-    //
-    // // schedule the teleport event
-    // console << "Scheduling teleport from " << start
-    //         << " toward " << goal << "\n";
     getScheduler()->schedule(
   new Catoms3DRotationStartEvent(
     getScheduler()->now() + 1000,   // delay
@@ -1652,3 +1126,5 @@ void CatomsTest3BlockCode::initializeTargetA(const std::deque<Cell3DPosition>& t
 
 //can do Tphase planner in startup as i think
 // In the Tphase, take the same module structure, apply normal Astar, shift the X and save as a star
+
+//insteaad of adding  TD1 and SD1 manually, maybe can to Atarget+8X

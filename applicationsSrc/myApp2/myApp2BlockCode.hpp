@@ -5,19 +5,36 @@
 #include "robots/blinkyBlocks/blinkyBlocksBlockCode.h"
 
 static const int SAMPLE_MSG_ID = 1000;
+static const int FLOOD_FROM_B_ID = 1001;
+
 
 using namespace BlinkyBlocks;
 
 class MyApp2BlockCode : public BlinkyBlocksBlockCode {
 private:
  bool isA=false;
+    bool hasFloodedFromB=false;
+    int stage = 0;
 int distest;
-    int distance;
+    int distance = 200000;
+    int distanceB=200000;
     P2PNetworkInterface *parent;
+    P2PNetworkInterface *parentB;
+
+    int nbWaitedAnswers = 0;
+
     BlinkyBlocksBlock *module;
 public :
     MyApp2BlockCode(BlinkyBlocksBlock *host);
     ~MyApp2BlockCode() {};
+    P2PNetworkInterface* pathInterface{nullptr};
+
+    struct BackPayload {
+        int kind;   // 0 = going up, 1 = going down (selection)
+        int dist;   // farthest distance in this subtree
+        int id;     // node id that achieved this distance
+    };
+
 
     /**
      * This function is called on startup of the blockCode, it can be used to perform initial
@@ -46,7 +63,9 @@ public :
      * @param sender Connector of the module that has received the message and that is connected to the sender */
     void handleSampleMessage(std::shared_ptr<Message> _msg, P2PNetworkInterface *sender);
 
-    /// Advanced blockcode handlers below
+ void handleFLOOD_FROM_B_ID(std::shared_ptr<Message> _msg, P2PNetworkInterface *sender);
+
+ /// Advanced blockcode handlers below
 
     /**
      * @brief Provides the user with a pointer to the configuration file parser, which can be used to read additional user information from it.
@@ -64,7 +83,10 @@ public :
     void parseUserBlockElements(TiXmlElement *config) override ;
 
  void floodDistance();
-    /**
+
+ void floodDistanceB();
+
+ /**
      * User-implemented debug function that gets called when a module is selected in the GUI
      */
     void onBlockSelected() override;

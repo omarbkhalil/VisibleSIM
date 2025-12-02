@@ -5,9 +5,9 @@
 	<spotlight target="100,10,80" directionSpherical="60,45,80" angle="25"/>
 
 	<blockList color="128,128,128" blockSize="10.0,10.0,10.0" >
-		<blocksLine plane="0" line=" 2" values="00111000" color="255,128,128"/>
-		<blocksLine plane="0" line=" 3" values="00111000" color="255,128,128"/>
-		<blocksLine plane="0" line=" 4" values="00111000" color="255,128,128"/>
-		<block position="4,3,1"/>
+		<block position="1,1,0" leader="true" color="255,255,0"/>
+		<block position="2,1,0"/>
+		<block position="3,1,0"/>
+		<block position="4,1,0"/>
 	</blockList>
 </world>

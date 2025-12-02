@@ -22,7 +22,7 @@ class MyAppMotionSCCode : public SlidingCubesBlockCode {
 private:
 	SlidingCubesBlock *module = nullptr;
 	bool isLeader=false;
-
+    bool isObstacle=false;
 public :
 	MyAppMotionSCCode(SlidingCubesBlock *host);
 	~MyAppMotionSCCode() {};

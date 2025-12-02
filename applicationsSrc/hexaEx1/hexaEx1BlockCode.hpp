@@ -5,17 +5,50 @@
 #include "robots/hexanodes/hexanodesWorld.h"
 #include "robots/hexanodes/hexanodesBlockCode.h"
 #include <set>
+#include <vector>
 
-constexpr int FLOODSUPPORT_MSG_ID = 1001;
 static const int SAMPLE_MSG_ID = 1000;
 static const int BACK_MSG_ID = 1001;
 static const int REPORT_MSG_ID = 1002;
 using namespace Hexanodes;
 
+struct BackPayload {
+    int  kind;   // 0 = ACK_UP, 1 = SELECT_DOWN
+    int  dist;   // best distance in subtree
+    bID  id;     // node id (use bID, not int)
+};
+
 class HexaEx1BlockCode : public HexanodesBlockCode {
 private:
-    int distance;
+
+    int motions1 = 0 ;
+    bool cant = false;
+    int stage = 0;
+    bool isA = false;
+
+bool FTarget = false;
+    bool STarget = false;
+    int distance=0;
     HexanodesBlock *module;
+    P2PNetworkInterface *parent = nullptr;
+
+    int  bestDist = -1;
+    bID  bestId   = 0;
+    P2PNetworkInterface *winnerChild =nullptr;
+    int myDistance  = 0;
+    int nbWaitedAns = 0;
+
+
+    P2PNetworkInterface *parent2 = nullptr;
+    P2PNetworkInterface *winnerChild2 = nullptr;
+    int  myDistance2  = 0;
+    int  nbWaitedAns2 = 0;
+    int  bestDist2    = -1;
+    bID  bestId2      = 0;
+
+
+
+
     inline static size_t nMotions = 0;
     inline static size_t neMotions = 0;
     int ii=0;
@@ -25,14 +58,16 @@ private:
      const int maxMotions = 500; // Adjust based on your needs
      bool targetReached = false;
     bool hasReachedTarget = false;
+bool finished = false;
+
 
     static int totalNumberOfModules;
     int nbWaitedAnswers = 0;
-    P2PNetworkInterface* parent;
     static int currentMovingModuleId;
 
 public:
 
+bool Done = false;
     void chooseAndMoveFarthestModule() ;
 
     HexanodesBlock* getFarthestModule() ;
@@ -84,6 +119,9 @@ static std::vector<Cell3DPosition> targetPositions;
     bool isPositionCloser(Cell3DPosition newPos, Cell3DPosition target, Cell3DPosition current);
     bool checkIfMotionAdvances(Cell3DPosition newPos, Cell3DPosition target);
     HexanodesMotion* getFirstClockwiseMotion(HexanodesBlock* mod);
+
+    void init();
+
     void startup() override;
     void moveToTargetPosition();
     void moveToTarget(HexanodesBlock* mod);
@@ -100,12 +138,15 @@ static std::vector<Cell3DPosition> targetPositions;
     void handleBackMessage(std::shared_ptr<Message> _msg, P2PNetworkInterface *sender);
     void handleReportMessage(std::shared_ptr<Message> _msg, P2PNetworkInterface *sender);
     void parseUserElements(TiXmlDocument *config) override {}
-    void parseUserBlockElements(TiXmlElement *config) override {}
+	void parseUserBlockElements(TiXmlElement *config) override;
     void onBlockSelected() override;
     void onAssertTriggered() override;
     void onGlDraw() override {}
     void onTap(int face) override {}
     bool parseUserCommandLineArgument(int& argc, char **argv[]) override;
+
+    bool isLocallyFeasible(HexanodesMotion *m);
+
     string onInterfaceDraw() override;
 
     static BlockCode *buildNewBlockCode(BuildingBlock *host) {

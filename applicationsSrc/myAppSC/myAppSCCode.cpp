@@ -23,8 +23,22 @@ void MyAppSCCode::startup() {
 
     if (isLeader) { // Master id is 1
         setColor(RED);
-        tryToMove();
+    //    tryToMove();
+
+        // Color all directly connected neighbors
+
+            auto p2p = module->getInterface(SCLattice2::Direction(2));
+            if (p2p && p2p->isConnected()) {
+                auto neighborBlock = p2p->connectedInterface->hostBlock;
+                if (neighborBlock) {
+                    neighborBlock->setColor(BLUE); // or any color you prefer
+                    console << "Leader " << getId()
+                            << " colors neighbor " << neighborBlock->blockId << "\n";
+                }
+            }
+
     }
+
 }
 
 void MyAppSCCode::myElectFunc(std::shared_ptr<Message> _msg, P2PNetworkInterface *sender) {
@@ -90,63 +104,63 @@ void MyAppSCCode::onMotionEnd() {
 }
 
 bool MyAppSCCode::tryToMove() {
-    auto dir=goalPosition-module->position;
-    cout << getId() << " tries at " << module->position << ", dir=" << dir << endl;
-    Cell3DPosition nextPos;
-    if (dir[1]!=0) {
-        nextPos = module->position + Cell3DPosition(0, (dir[1]>0?1:-1), 0);
-        cout << "try " << nextPos << endl;
-        if (module->canMoveTo(nextPos)) {
-            cout << "------------------------\nmove to " << nextPos << endl;
-            module->moveTo(nextPos);
-            return true;
-        }
-        // try 1 higher
-        auto dirPos= nextPos;
-        nextPos = dirPos+Cell3DPosition(0,0,1);
-        cout << "try " << nextPos << endl;
-        if (module->canMoveTo(nextPos)) {
-            cout << "------------------------\nmove to " << nextPos << endl;
-            module->moveTo(nextPos);
-            return true;
-        }
-        nextPos = dirPos+Cell3DPosition(0,0,-1);
-        cout << "try " << nextPos << endl;
-        if (module->canMoveTo(nextPos)) {
-            cout << "------------------------\nmove to " << nextPos << endl;
-            module->moveTo(nextPos);
-            return true;
-        }
-
-    }
-
-    if (dir[0]!=0) {
-        nextPos = module->position + Cell3DPosition((dir[0] > 0 ? 1 : -1), 0, 0);
-        cout << "try " << nextPos << endl;
-        if (module->canMoveTo(nextPos)) {
-            cout << "------------------------\nmove to " << nextPos << endl;
-            module->moveTo(nextPos);
-            return true;
-        }
-        // try 1 higher
-        auto dirPos= nextPos;
-        nextPos = dirPos+Cell3DPosition(0,0,1);
-        cout << "try " << nextPos << endl;
-        if (module->canMoveTo(nextPos)) {
-            cout << "------------------------\nmove to " << nextPos << endl;
-            module->moveTo(nextPos);
-            return true;
-        }
-        nextPos = dirPos+Cell3DPosition(0,0,-1);
-        cout << "try " << nextPos << endl;
-        if (module->canMoveTo(nextPos)) {
-            cout << "------------------------\nmove to " << nextPos << endl;
-            module->moveTo(nextPos);
-            return true;
-        }
-
-    }
-    return false;
+    // auto dir=goalPosition-module->position;
+    // cout << getId() << " tries at " << module->position << ", dir=" << dir << endl;
+    // Cell3DPosition nextPos;
+    // if (dir[1]!=0) {
+    //     nextPos = module->position + Cell3DPosition(0, (dir[1]>0?1:-1), 0);
+    //     cout << "try " << nextPos << endl;
+    //     if (module->canMoveTo(nextPos)) {
+    //         cout << "------------------------\nmove to " << nextPos << endl;
+    //         module->moveTo(nextPos);
+    //         return true;
+    //     }
+    //     // try 1 higher
+    //     auto dirPos= nextPos;
+    //     nextPos = dirPos+Cell3DPosition(0,0,1);
+    //     cout << "try " << nextPos << endl;
+    //     if (module->canMoveTo(nextPos)) {
+    //         cout << "------------------------\nmove to " << nextPos << endl;
+    //         module->moveTo(nextPos);
+    //         return true;
+    //     }
+    //     nextPos = dirPos+Cell3DPosition(0,0,-1);
+    //     cout << "try " << nextPos << endl;
+    //     if (module->canMoveTo(nextPos)) {
+    //         cout << "------------------------\nmove to " << nextPos << endl;
+    //         module->moveTo(nextPos);
+    //         return true;
+    //     }
+    //
+    // }
+    //
+    // if (dir[0]!=0) {
+    //     nextPos = module->position + Cell3DPosition((dir[0] > 0 ? 1 : -1), 0, 0);
+    //     cout << "try " << nextPos << endl;
+    //     if (module->canMoveTo(nextPos)) {
+    //         cout << "------------------------\nmove to " << nextPos << endl;
+    //         module->moveTo(nextPos);
+    //         return true;
+    //     }
+    //     // try 1 higher
+    //     auto dirPos= nextPos;
+    //     nextPos = dirPos+Cell3DPosition(0,0,1);
+    //     cout << "try " << nextPos << endl;
+    //     if (module->canMoveTo(nextPos)) {
+    //         cout << "------------------------\nmove to " << nextPos << endl;
+    //         module->moveTo(nextPos);
+    //         return true;
+    //     }
+    //     nextPos = dirPos+Cell3DPosition(0,0,-1);
+    //     cout << "try " << nextPos << endl;
+    //     if (module->canMoveTo(nextPos)) {
+    //         cout << "------------------------\nmove to " << nextPos << endl;
+    //         module->moveTo(nextPos);
+    //         return true;
+    //     }
+    //
+    // }
+    // return false;
 }
 
 void MyAppSCCode::parseUserElements(TiXmlDocument *config) {

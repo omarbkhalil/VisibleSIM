@@ -1,0 +1,693 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install"
+		],
+		"files" : 
+		[
+			"CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 579,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 583,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 595,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 599,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 603,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 607,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 612,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 617,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 622,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 627,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 632,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 638,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 642,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 647,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 653,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 658,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 662,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 666,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 671,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 675,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 682,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 688,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 692,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 696,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 700,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 704,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 708,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 713,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 718,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 724,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 731,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 738,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 742,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 746,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 750,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 754,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 758,
+				"parent" : 0
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "../applicationsBin/stressTestSB",
+			"paths" : 
+			[
+				"stressTestSB.exe"
+			],
+			"targetId" : "stressTestSB::@6890427a1f51a3e7e1df",
+			"targetIndex" : 42,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 2,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/simpleColorBB",
+			"paths" : 
+			[
+				"simpleColorBB.exe"
+			],
+			"targetId" : "simpleColorBB::@6890427a1f51a3e7e1df",
+			"targetIndex" : 40,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 3,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/demoMotionsC3D",
+			"paths" : 
+			[
+				"demoMotionsC3D.exe"
+			],
+			"targetId" : "demoMotionsC3D::@6890427a1f51a3e7e1df",
+			"targetIndex" : 23,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/demoMotionsC3D",
+			"paths" : 
+			[
+				"myMotionTest.exe"
+			],
+			"targetId" : "myMotionTest::@6890427a1f51a3e7e1df",
+			"targetIndex" : 36,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 5,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/hexanodes_demo",
+			"paths" : 
+			[
+				"hexanodes_demo.exe"
+			],
+			"targetId" : "hexanodes_demo::@6890427a1f51a3e7e1df",
+			"targetIndex" : 28,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 6,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/hexaEx1",
+			"paths" : 
+			[
+				"hexaEx1.exe"
+			],
+			"targetId" : "hexaEx1::@6890427a1f51a3e7e1df",
+			"targetIndex" : 27,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 7,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/myAppSC",
+			"paths" : 
+			[
+				"myAppSC.exe"
+			],
+			"targetId" : "myAppSC::@6890427a1f51a3e7e1df",
+			"targetIndex" : 35,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 8,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/pseaudoTp1",
+			"paths" : 
+			[
+				"pseaudoTp1.exe"
+			],
+			"targetId" : "pseaudoTp1::@6890427a1f51a3e7e1df",
+			"targetIndex" : 39,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 9,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/boxesBonus",
+			"paths" : 
+			[
+				"boxesBonus.exe"
+			],
+			"targetId" : "boxesBonus::@6890427a1f51a3e7e1df",
+			"targetIndex" : 12,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 10,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/pseaudoTP1Bonus",
+			"paths" : 
+			[
+				"pseaudoTP1Bonus.exe"
+			],
+			"targetId" : "pseaudoTP1Bonus::@6890427a1f51a3e7e1df",
+			"targetIndex" : 38,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 11,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/boxes",
+			"paths" : 
+			[
+				"boxes.exe"
+			],
+			"targetId" : "boxes::@6890427a1f51a3e7e1df",
+			"targetIndex" : 11,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 12,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/assigningIDs",
+			"paths" : 
+			[
+				"assigningIDs.exe"
+			],
+			"targetId" : "assigningIDs::@6890427a1f51a3e7e1df",
+			"targetIndex" : 10,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 13,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/leaderElecLab2",
+			"paths" : 
+			[
+				"leaderElecLab2.exe"
+			],
+			"targetId" : "leaderElecLab2::@6890427a1f51a3e7e1df",
+			"targetIndex" : 29,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 14,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/IdTree",
+			"paths" : 
+			[
+				"IdTree.exe"
+			],
+			"targetId" : "IdTree::@6890427a1f51a3e7e1df",
+			"targetIndex" : 6,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 15,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/leaderElection",
+			"paths" : 
+			[
+				"leaderElection.exe"
+			],
+			"targetId" : "leaderElection::@6890427a1f51a3e7e1df",
+			"targetIndex" : 30,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 16,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/myAppMotionSC",
+			"paths" : 
+			[
+				"myAppMotionSC.exe"
+			],
+			"targetId" : "myAppMotionSC::@6890427a1f51a3e7e1df",
+			"targetIndex" : 34,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 17,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/SBsnake",
+			"paths" : 
+			[
+				"SBsnake.exe"
+			],
+			"targetId" : "SBsnake::@6890427a1f51a3e7e1df",
+			"targetIndex" : 7,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 18,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/snackeMotionSc",
+			"paths" : 
+			[
+				"snackeMotionSc.exe"
+			],
+			"targetId" : "snackeMotionSc::@6890427a1f51a3e7e1df",
+			"targetIndex" : 41,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 19,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/demo01_SC",
+			"paths" : 
+			[
+				"demo01_SC.exe"
+			],
+			"targetId" : "demo01_SC::@6890427a1f51a3e7e1df",
+			"targetIndex" : 22,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 20,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/catoms3DRotate",
+			"paths" : 
+			[
+				"catoms3DRotate.exe"
+			],
+			"targetId" : "catoms3DRotate::@6890427a1f51a3e7e1df",
+			"targetIndex" : 13,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 21,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/catomsMAPF",
+			"paths" : 
+			[
+				"catomsMAPF.exe"
+			],
+			"targetId" : "catomsMAPF::@6890427a1f51a3e7e1df",
+			"targetIndex" : 14,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 22,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/e1_flooding",
+			"paths" : 
+			[
+				"e1_flooding.exe"
+			],
+			"targetId" : "e1_flooding::@6890427a1f51a3e7e1df",
+			"targetIndex" : 24,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 23,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/e2_goback",
+			"paths" : 
+			[
+				"e2_goback.exe"
+			],
+			"targetId" : "e2_goback::@6890427a1f51a3e7e1df",
+			"targetIndex" : 25,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 24,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/test1",
+			"paths" : 
+			[
+				"test1.exe"
+			],
+			"targetId" : "test1::@6890427a1f51a3e7e1df",
+			"targetIndex" : 43,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 25,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/myApp",
+			"paths" : 
+			[
+				"myApp.exe"
+			],
+			"targetId" : "myApp::@6890427a1f51a3e7e1df",
+			"targetIndex" : 31,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 26,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/myApp2",
+			"paths" : 
+			[
+				"myApp2.exe"
+			],
+			"targetId" : "myApp2::@6890427a1f51a3e7e1df",
+			"targetIndex" : 32,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 27,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/myApp2plus",
+			"paths" : 
+			[
+				"myApp2plus.exe"
+			],
+			"targetId" : "myApp2plus::@6890427a1f51a3e7e1df",
+			"targetIndex" : 33,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 28,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/e3_lightpath",
+			"paths" : 
+			[
+				"e3_lightpath.exe"
+			],
+			"targetId" : "e3_lightpath::@6890427a1f51a3e7e1df",
+			"targetIndex" : 26,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 29,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/catomsTest1",
+			"paths" : 
+			[
+				"catomsTest1.exe"
+			],
+			"targetId" : "catomsTest1::@6890427a1f51a3e7e1df",
+			"targetIndex" : 15,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 30,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/CatomMAPF2CONF2",
+			"paths" : 
+			[
+				"CatomMAPF2CONF2.exe"
+			],
+			"targetId" : "CatomMAPF2CONF2::@6890427a1f51a3e7e1df",
+			"targetIndex" : 1,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 31,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/CatomMAPFCBS1",
+			"paths" : 
+			[
+				"CatomMAPFCBS1.exe"
+			],
+			"targetId" : "CatomMAPFCBS1::@6890427a1f51a3e7e1df",
+			"targetIndex" : 2,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 32,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/catomsTp",
+			"paths" : 
+			[
+				"catomsTp.exe"
+			],
+			"targetId" : "catomsTp::@6890427a1f51a3e7e1df",
+			"targetIndex" : 21,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 33,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/catomsTest2",
+			"paths" : 
+			[
+				"catomsTest2.exe"
+			],
+			"targetId" : "catomsTest2::@6890427a1f51a3e7e1df",
+			"targetIndex" : 16,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 34,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/catomsTest3",
+			"paths" : 
+			[
+				"catomsTest3.exe"
+			],
+			"targetId" : "catomsTest3::@6890427a1f51a3e7e1df",
+			"targetIndex" : 17,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 35,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/catomsTest4",
+			"paths" : 
+			[
+				"catomsTest4.exe"
+			],
+			"targetId" : "catomsTest4::@6890427a1f51a3e7e1df",
+			"targetIndex" : 18,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 36,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/catomsTest5",
+			"paths" : 
+			[
+				"catomsTest5.exe"
+			],
+			"targetId" : "catomsTest5::@6890427a1f51a3e7e1df",
+			"targetIndex" : 19,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 37,
+			"component" : "Unspecified",
+			"destination" : "applicationsBin/catomsTest6",
+			"paths" : 
+			[
+				"catomsTest6.exe"
+			],
+			"targetId" : "catomsTest6::@6890427a1f51a3e7e1df",
+			"targetIndex" : 20,
+			"type" : "target"
+		}
+	],
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	}
+}
