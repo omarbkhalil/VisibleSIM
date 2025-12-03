@@ -1,7 +1,0 @@
-"C:\Program Files\JetBrains\CLion 2025.2.1\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_MAKE_PROGRAM=C:/Program Files/JetBrains/CLion 2025.2.1/bin/ninja/win/x64/ninja.exe" -G Ninja -S C:\visiblesim\VisibleSim -B C:\visiblesim\VisibleSim\cmake-build-debug
--- >>> Win32
--- Installation dir:C:/visiblesim/VisibleSim
--- +MinGW
--- Configuring done (0.6s)
--- Generating done (0.3s)
--- Build files have been written to: C:/visiblesim/VisibleSim/cmake-build-debug
