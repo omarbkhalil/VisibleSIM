@@ -483,7 +483,7 @@ add_library(BlinkyBlocks STATIC SHARED ${COMMON_SRC_FILES}
         simulatorCore/src/robots/blinkyBlocks/blinkyBlocksWorld.h
 )
 
-target_link_libraries(BlinkyBlocks -lOpenGL32 -lglu32 -lglewd -lfreeglut -lpthread -lmuparser)
+target_link_libraries(BlinkyBlocks -lOpenGL32 -lglu32 -lglew32d -lfreeglut -lpthread -lmuparser)
 
 add_library(Catoms3D STATIC SHARED ${COMMON_SRC_FILES}
         simulatorCore/src/robots/catoms3D/catoms3DBlock.cpp
